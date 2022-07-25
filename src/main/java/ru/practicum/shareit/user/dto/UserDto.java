@@ -1,8 +1,6 @@
 package ru.practicum.shareit.user.dto;
 
-import lombok.Builder;
-import lombok.Data;
-import lombok.NonNull;
+import lombok.*;
 
 import javax.validation.constraints.*;
 
@@ -12,7 +10,9 @@ import javax.validation.constraints.*;
  */
 @Data
 @Builder
-public class UserDTO {
+@NoArgsConstructor
+@AllArgsConstructor
+public class UserDto {
     @Positive
     private Long id;
     @NotEmpty

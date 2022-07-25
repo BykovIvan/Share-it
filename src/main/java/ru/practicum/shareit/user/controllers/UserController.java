@@ -1,11 +1,12 @@
-package ru.practicum.shareit.user;
+package ru.practicum.shareit.user.controllers;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.exceptions.ConflictException;
 import ru.practicum.shareit.exceptions.NotFoundException;
+import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.dao.UserDao;
-import ru.practicum.shareit.user.dto.UserDTO;
 import ru.practicum.shareit.user.dto.UserMapping;
 
 import javax.validation.Valid;
@@ -27,7 +28,7 @@ public class UserController {
      * Create user
      */
     @PostMapping
-    public UserDTO create(@Valid @RequestBody UserDTO userDto) {
+    public UserDto create(@Valid @RequestBody UserDto userDto) {
         log.info("Получен запрос к эндпоинту /users. Метод POST");
         User user = UserMapping.toUser(userDto);
         checkUser(user);
@@ -39,8 +40,8 @@ public class UserController {
      * Update user by id and body
      */
     @PatchMapping("/{userId}")
-    public UserDTO updateById(@PathVariable("userId") Long userId,
-                              @RequestBody UserDTO userDto) {
+    public UserDto updateById(@PathVariable("userId") Long userId,
+                              @RequestBody UserDto userDto) {
         log.info("Получен запрос к эндпоинту /users. Метод PATCH");
         User user = UserMapping.toUser(userDto);
         checkUser(user);
@@ -52,7 +53,7 @@ public class UserController {
      * Get list of users
      */
     @GetMapping
-    public List<UserDTO> allUsers() {
+    public List<UserDto> allUsers() {
         return userDao.findAllUsers().stream()
                 .map(UserMapping::toUserDto)
                 .collect(Collectors.toList());
@@ -63,7 +64,7 @@ public class UserController {
      * Get user by ID
      */
     @GetMapping("/{userId}")
-    public UserDTO userById(@PathVariable("userId") Long userId) {
+    public UserDto userById(@PathVariable("userId") Long userId) {
         log.info("Получен запрос к эндпоинту /users. Метод GET");
         return UserMapping.toUserDto(userDao.findUserById(userId));
     }
