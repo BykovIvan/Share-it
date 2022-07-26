@@ -25,40 +25,35 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDto create(Long userId, ItemDto itemDto) {
-        if (userId != null){
-            if (userDao.containsUserById(userId)){
-                Item item = ItemMapper.toItem(itemDto, userDao.findUserById(userId));
-                return ItemMapper.toItemDto(itemDao.create(item));
-            } else {
-                throw new NotFoundException("Такого пользователя не существует!");
-            }
-        } else {
+        if (userId == null) {
             throw new NoUserInHeaderException("В запросе отсутсвует пользователь при создании задачи!");
         }
+        if (!userDao.containsUserById(userId)) {
+            throw new NotFoundException("Такого пользователя не существует!");
+        }
+        Item item = ItemMapper.toItem(itemDto, userDao.findUserById(userId));
+        return ItemMapper.toItemDto(itemDao.create(item));
+
+
 
     }
 
     @Override
     public ItemDto update(Long userId, Long itemId, ItemDto itemDto) {
-        if (userId != null){
-            if (userDao.containsUserById(userId)){
-                if (itemDao.containsItemById(itemId)){
-                    if (itemDao.findItemById(itemId).getOwner().getUserId().equals(userId)){
-                        Item item = ItemMapper.toItem(itemDto, userDao.findUserById(userId));
-                        return ItemMapper.toItemDto(itemDao.updateById(itemId, item));
-                    } else {
-                        throw new NotFoundException("Пользователь не является владельцем данной вещи!");
-                    }
-                } else {
-                    throw new NotFoundException("Такой вещи не существует!");
-                }
-            } else {
-                throw new NotFoundException("Такого пользователя не существует!");
-            }
-        } else {
+        if (userId == null) {
             throw new NoUserInHeaderException("В запросе отсутсвует пользователь при создании задачи!");
         }
-
+        if (!userDao.containsUserById(userId)) {
+            throw new NotFoundException("Такого пользователя не существует!");
+        }
+        if (!itemDao.containsItemById(itemId)) {
+            throw new NotFoundException("Такой вещи не существует!");
+        }
+        if (!itemDao.findItemById(itemId).getOwner().getUserId().equals(userId)) {
+            throw new NotFoundException("Пользователь не является владельцем данной вещи!");
+        }
+        Item item = ItemMapper.toItem(itemDto, userDao.findUserById(userId));
+        return ItemMapper.toItemDto(itemDao.updateById(itemId, item));
     }
 
     @Override
@@ -71,38 +66,37 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDto findById(Long userId, Long itemId) {
-        if (userDao.containsUserById(userId)){
-            ItemDto getItemDto = itemDao.findAllItems().stream()
-                    .filter(item -> item.getItemId().equals(itemId))
-                    .findAny()
-                    .map(ItemMapper::toItemDto)
-                    .orElse(null);
-            if (getItemDto != null){
-                return getItemDto;
-            } else {
-                throw new NotFoundException("Такой вещи у пользователя с id " + userId + " нет!");
-            }
-        } else {
+        if (!userDao.containsUserById(userId)) {
             throw new NotFoundException("Такого пользователя не существует!");
         }
+        ItemDto getItemDto = itemDao.findAllItems().stream()
+                .filter(item -> item.getItemId().equals(itemId))
+                .findAny()
+                .map(ItemMapper::toItemDto)
+                .orElse(null);
+        if (getItemDto == null){
+            throw new NotFoundException("Такой вещи у пользователя с id " + userId + " нет!");
+        }
+        return getItemDto;
+
     }
 
     @Override
     public List<ItemDto> findByText(Long userId, String text) {
-        if (userDao.containsUserById(userId)){
-            if (text == null || text.isEmpty()){
-                return new ArrayList<>();
-            } else {
-                return itemDao.findAllItems().stream()
-                        .filter(Item::getAvailable)
-                        .filter(item -> item.getName().toLowerCase().contains(text.toLowerCase())
-                                || item.getDescription().toLowerCase().contains(text.toLowerCase()))
-                        .map(ItemMapper::toItemDto)
-                        .collect(Collectors.toList());
-            }
-        } else {
+        if (!userDao.containsUserById(userId)) {
             throw new NotFoundException("Такого пользователя не существует!");
         }
+        if (text == null || text.isEmpty()){
+            return new ArrayList<>();
+        } else {
+            return itemDao.findAllItems().stream()
+                    .filter(Item::getAvailable)
+                    .filter(item -> item.getName().toLowerCase().contains(text.toLowerCase())
+                            || item.getDescription().toLowerCase().contains(text.toLowerCase()))
+                    .map(ItemMapper::toItemDto)
+                    .collect(Collectors.toList());
+        }
+
     }
 }
 

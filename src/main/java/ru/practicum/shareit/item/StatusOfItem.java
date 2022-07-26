@@ -1,8 +1,8 @@
 package ru.practicum.shareit.item;
 
 public enum StatusOfItem {
-    WAITING,
-    APPROVED,
-    REJECTED,
-    CANCELED
+    WAITING,                //новое бронирование, ожидает бронирования
+    APPROVED,               //бронирование подтверждено владельцем
+    REJECTED,               //бронирование откланено владельцем
+    CANCELED                //бронирование отменено создателем
 }

@@ -9,9 +9,9 @@ import ru.practicum.shareit.user.model.User;
 @Builder
 public class Item {
     private Long itemId;
-    private String name;                         //Имя
+    private String name;                         //Имя вещи
     private String description;                  //Описание
-    private Boolean available;                      //количество, сколько раз вещь была в аренде
+    private Boolean available;                   //доступность
     private User owner;                          //Владелец
     private ItemRequest request;                 //ссылка на запрос вещи
 }

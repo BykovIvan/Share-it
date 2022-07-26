@@ -20,6 +20,7 @@ public class ItemController {
 
     /**
      * Создание предмета
+     * X-Sharer-User-Id - это собственник вещи
      * Create item
      */
     @PostMapping
