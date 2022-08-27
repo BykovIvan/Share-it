@@ -8,6 +8,7 @@ import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.dao.UserDao;
 import ru.practicum.shareit.user.dto.UserMapping;
+import ru.practicum.shareit.user.service.UserService;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -17,83 +18,44 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequestMapping(path = "/users")
 public class UserController {
-    private final UserDao userDao;
+    private final UserService userService;
 
-    public UserController(UserDao userDao) {
-        this.userDao = userDao;
+    public UserController(UserService userService) {
+        this.userService = userService;
     }
 
-    /**
-     * Создание пользователя
-     * Create user
-     */
     @PostMapping
-    public UserDto create(@Valid @RequestBody UserDto userDto) {
+    public UserDto create(@RequestBody UserDto userDto) {
         log.info("Получен запрос к эндпоинту /users. Метод POST");
         User user = UserMapping.toUser(userDto);
-        checkUser(user);
-        return UserMapping.toUserDto(userDao.create(user));
+        return UserMapping.toUserDto(userService.save(user));
     }
 
-    /**
-     * Обновление пользователя по его ID и body
-     * Update user by id and body
-     */
     @PatchMapping("/{userId}")
     public UserDto updateById(@PathVariable("userId") Long userId,
                               @RequestBody UserDto userDto) {
-        log.info("Получен запрос к эндпоинту /users. Метод PATCH");
+        log.info("Получен запрос к эндпоинту /users обновление по id. Метод PATCH");
         User user = UserMapping.toUser(userDto);
-        checkUser(user);
-        return UserMapping.toUserDto(userDao.updateById(userId, user));
+        return UserMapping.toUserDto(userService.update(userId, user));
     }
 
-    /**
-     * Получение списка всех пользователей
-     * Get list of users
-     */
     @GetMapping
     public List<UserDto> allUsers() {
-        return userDao.findAllUsers().stream()
+        log.info("Получен запрос к эндпоинту /users получение всех. Метод GET");
+        return userService.findAll().stream()
                 .map(UserMapping::toUserDto)
                 .collect(Collectors.toList());
     }
 
-    /**
-     * Получение пользователя по его ID
-     * Get user by ID
-     */
     @GetMapping("/{userId}")
     public UserDto userById(@PathVariable("userId") Long userId) {
-        log.info("Получен запрос к эндпоинту /users. Метод GET");
-        return UserMapping.toUserDto(userDao.findUserById(userId));
+        log.info("Получен запрос к эндпоинту /users получение по id. Метод GET");
+        return UserMapping.toUserDto(userService.findById(userId));
     }
 
-    /**
-     * Удаление пользователя по его ID
-     * Delete user by ID
-     */
     @DeleteMapping("/{userId}")
-    public String deleteById(@PathVariable("userId") Long userId) {
-        log.info("Получен запрос к эндпоинту /users. Метод DELETE");
-        if (userDao.deleteUserById(userId)){
-            return "Пользователь успешно удален!";
-        } else {
-            throw new NotFoundException("Нет такого пользователя c ID = " + userId);
-        }
-    }
-
-    /**
-     * Проверка валидации пользователей
-     * Check validation users
-     */
-    private void checkUser(User user) {
-        if (user.getEmail() != null){
-            for (User getUser : userDao.findAllUsers()) {
-                if (user.getEmail().equals(getUser.getEmail())) {
-                    throw new ConflictException("Такой пользователь уже существует");
-                }
-            }
-        }
+    public void deleteById(@PathVariable("userId") Long userId) {
+        log.info("Получен запрос к эндпоинту /users удаление по id. Метод DELETE");
+        userService.deleteById(userId);
     }
 }
