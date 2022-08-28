@@ -1,7 +1,6 @@
-package ru.practicum.shareit.item.dto;
+package ru.practicum.shareit.item;
 
-import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.user.User;
 
 /**
  * Класс для преобразования объекса Item в объект ItemDto для предоставления пользователю и обратно
@@ -18,7 +17,7 @@ public class ItemMapper {
                 .name(item.getName())
                 .description(item.getDescription())
                 .available(item.getAvailable())
-                .request(item.getRequest() != null ? item.getRequest().getId() : null)
+//                .request(item.getRequest() != null ? item.getRequest().getId() : null)
                 .build();
 
     }

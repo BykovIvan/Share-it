@@ -1,6 +1,7 @@
-package ru.practicum.shareit.requests.dto;
+package ru.practicum.shareit.requests;
 
 import ru.practicum.shareit.requests.ItemRequest;
+import ru.practicum.shareit.requests.ItemRequestDto;
 
 /**
  * Класс для преобразования объекса ItemRequest в объект ItemRequestDto для предоставления пользователю и обратно

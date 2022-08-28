@@ -1,15 +1,14 @@
 package ru.practicum.shareit.user.dao;
 
-import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.exceptions.NotFoundException;
-import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.user.User;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Repository
+//@Repository
 public class UserDaoImpl implements UserDao {
     private Long userId = 1L;
     private final Map<Long, User> mapUsers = new HashMap<>();

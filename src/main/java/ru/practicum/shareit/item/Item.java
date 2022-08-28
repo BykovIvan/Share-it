@@ -1,11 +1,10 @@
-package ru.practicum.shareit.item.model;
+package ru.practicum.shareit.item;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.practicum.shareit.requests.ItemRequest;
-import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.user.User;
 
 import javax.persistence.*;
 
@@ -24,13 +23,9 @@ public class Item {
     private String description;                  //Описание
     private Boolean available;                   //доступность
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "user_id")
-    @Column(name = "owner_id")
+    @ManyToOne(fetch = FetchType.LAZY)
     private User owner;                          //Владелец
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "request_id")
-    @Column(name = "request_id")
-    private ItemRequest request;                 //ссылка на запрос вещи
+//    @ManyToOne(fetch = FetchType.EAGER)
+//    private ItemRequest request;                 //ссылка на запрос вещи
 }

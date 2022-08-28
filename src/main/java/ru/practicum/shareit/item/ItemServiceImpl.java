@@ -1,13 +1,9 @@
-package ru.practicum.shareit.item.service;
+package ru.practicum.shareit.item;
 
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exceptions.NoUserInHeaderException;
 import ru.practicum.shareit.exceptions.NotFoundException;
-import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.dto.ItemMapper;
-import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.item.repository.ItemRepository;
-import ru.practicum.shareit.user.repository.UserRepository;
+import ru.practicum.shareit.user.UserService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,12 +11,13 @@ import java.util.stream.Collectors;
 
 @Service
 public class ItemServiceImpl implements ItemService {
+//    private final ItemDao itemRepository;
     private final ItemRepository itemRepository;
-    private final UserRepository userRepository;
+    private final UserService userService;
 
-    public ItemServiceImpl(ItemRepository itemRepository, UserRepository userRepository) {
+    public ItemServiceImpl(ItemRepository itemRepository, UserService userService) {
         this.itemRepository = itemRepository;
-        this.userRepository = userRepository;
+        this.userService = userService;
     }
 
     @Override
@@ -28,10 +25,10 @@ public class ItemServiceImpl implements ItemService {
         if (userId == null) {
             throw new NoUserInHeaderException("В запросе отсутсвует пользователь при создании задачи!");
         }
-        if (userRepository.findById(userId).isEmpty()) {
+        if (userService.containsById(userId)) {
             throw new NotFoundException("Такого пользователя не существует!");
         }
-        Item item = ItemMapper.toItem(itemDto, userRepository.findById(userId).get());
+        Item item = ItemMapper.toItem(itemDto, userService.findById(userId));
         return ItemMapper.toItemDto(itemRepository.save(item));
     }
 
@@ -40,24 +37,28 @@ public class ItemServiceImpl implements ItemService {
         if (userId == null) {
             throw new NoUserInHeaderException("В запросе отсутсвует пользователь при создании задачи!");
         }
-        if (userRepository.findById(userId).isEmpty()) {
+        if (userService.containsById(userId)) {
             throw new NotFoundException("Такого пользователя не существует!");
         }
+//        if (itemRepository.containsItemById(itemId)) {
         if (itemRepository.findById(itemId).isEmpty()) {
             throw new NotFoundException("Такой вещи не существует!");
         }
+//        if (!itemRepository.findItemById(itemId).getOwner().getUserId().equals(userId)) {
         if (!itemRepository.findById(itemId).get().getOwner().getUserId().equals(userId)) {
             throw new NotFoundException("Пользователь не является владельцем данной вещи!");
         }
-        Item item = ItemMapper.toItem(itemDto, userRepository.findById(userId).get());
+        Item item = ItemMapper.toItem(itemDto, userService.findById(userId));
+        item.setItemId(itemId);
         //TODO save with id!!!!
+//        return ItemMapper.toItemDto(itemRepository.create(item));
         return ItemMapper.toItemDto(itemRepository.save(item));
-//        return ItemMapper.toItemDto(itemRepository.updateById(itemId, item));
     }
 
     @Override
     public List<ItemDto> findAllItems(Long userId) {
         return itemRepository.findAll().stream()
+//        return itemRepository.findAllItems().stream()
                 .filter(item -> item.getOwner().getUserId().equals(userId))
                 .map(ItemMapper::toItemDto)
                 .collect(Collectors.toList());
@@ -65,10 +66,11 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDto findById(Long userId, Long itemId) {
-        if (userRepository.findById(userId).isEmpty()) {
+        if (userService.containsById(userId)) {
             throw new NotFoundException("Такого пользователя не существует!");
         }
         ItemDto getItemDto = itemRepository.findAll().stream()
+//        ItemDto getItemDto = itemRepository.findAllItems().stream()
                 .filter(item -> item.getItemId().equals(itemId))
                 .findAny()
                 .map(ItemMapper::toItemDto)
@@ -82,13 +84,14 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<ItemDto> findByText(Long userId, String text) {
-        if (userRepository.findById(userId).isEmpty()) {
+        if (userService.containsById(userId)) {
             throw new NotFoundException("Такого пользователя не существует!");
         }
         if (text == null || text.isEmpty()) {
             return new ArrayList<>();
         } else {
             return itemRepository.findAll().stream()
+//            return itemRepository.findAllItems().stream()
                     .filter(Item::getAvailable)
                     .filter(item -> item.getName().toLowerCase().contains(text.toLowerCase())
                             || item.getDescription().toLowerCase().contains(text.toLowerCase()))

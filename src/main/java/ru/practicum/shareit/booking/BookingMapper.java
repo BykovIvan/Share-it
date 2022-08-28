@@ -1,8 +1,9 @@
-package ru.practicum.shareit.booking.dto;
+package ru.practicum.shareit.booking;
 
 import ru.practicum.shareit.booking.Booking;
-import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.booking.BookingDto;
+import ru.practicum.shareit.item.Item;
+import ru.practicum.shareit.user.User;
 
 /**
  * Класс для преобразования объекса Booking в объект BookingDto для предоставления пользователю и обратно
