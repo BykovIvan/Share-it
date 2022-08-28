@@ -3,6 +3,7 @@ package ru.practicum.shareit.user;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -17,15 +18,16 @@ public class UserController {
     }
 
     @PostMapping
-    public UserDto create(@RequestBody UserDto userDto) {
+    public UserDto create(@Valid @RequestBody UserDto userDto) {
         log.info("Получен запрос к эндпоинту /users. Метод POST");
         User user = UserMapping.toUser(userDto);
-        return UserMapping.toUserDto(userService.save(user));
+        User userGet = userService.save(user);
+        return UserMapping.toUserDto(userGet);
     }
 
     @PatchMapping("/{userId}")
     public UserDto updateById(@PathVariable("userId") Long userId,
-                              @RequestBody UserDto userDto) {
+                              @Valid @RequestBody UserDto userDto) {
         log.info("Получен запрос к эндпоинту /users обновление по id. Метод PATCH");
         User user = UserMapping.toUser(userDto);
         return UserMapping.toUserDto(userService.update(userId, user));

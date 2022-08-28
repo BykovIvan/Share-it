@@ -13,9 +13,8 @@ import javax.validation.constraints.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserDto {
-    @Positive
     private Long id;
-    @NotEmpty
+    @NotBlank
     @NonNull
     private String name;
     @NotBlank

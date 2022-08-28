@@ -19,7 +19,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class Booking {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Timestamp start;
     private Timestamp end;

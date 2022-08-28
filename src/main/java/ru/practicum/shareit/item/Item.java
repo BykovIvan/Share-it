@@ -17,7 +17,7 @@ import javax.persistence.*;
 @Table(name = "items", schema = "public")
 public class Item {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long itemId;
     private String name;                         //Имя вещи
