@@ -11,11 +11,9 @@ import javax.persistence.*;
 @Table(name = "users", schema = "public")
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
     private Long userId;
-    @Column(name = "name")
     private String name;
-    @Column(name = "email")
     private String email;
 }
