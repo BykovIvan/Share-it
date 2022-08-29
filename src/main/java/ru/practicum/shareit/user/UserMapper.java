@@ -1,16 +1,18 @@
 package ru.practicum.shareit.user;
 
-import org.mapstruct.BeanMapping;
-import org.mapstruct.Mapper;
-import org.mapstruct.MappingTarget;
-import org.mapstruct.NullValuePropertyMappingStrategy;
+import org.mapstruct.*;
+
 /**
  * Класс для полного или частичного обновления через DTO для user
  */
 
-@Mapper(componentModel = "spring")
+@Mapper(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE, componentModel = "spring")
 public interface UserMapper {
 
-    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+//    @Mapping(target = "id", ignore = true)
+    User map(UserDto userDto);
+
+    UserDto map(User user);
+    @InheritConfiguration
     void updateCustomerFromDto(UserDto userDto, @MappingTarget User user);
 }
