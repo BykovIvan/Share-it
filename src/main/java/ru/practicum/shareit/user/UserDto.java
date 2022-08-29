@@ -14,12 +14,6 @@ import javax.validation.constraints.*;
 @AllArgsConstructor
 public class UserDto {
     private Long id;
-    @NotBlank
-    @NonNull
     private String name;
-    @NotBlank
-    @NonNull
-    @Size(min = 1, max = 200)
-    @Email()
     private String email;
 }

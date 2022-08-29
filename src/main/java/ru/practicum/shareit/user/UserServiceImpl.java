@@ -1,11 +1,9 @@
 package ru.practicum.shareit.user;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exceptions.ConflictException;
 import ru.practicum.shareit.exceptions.NotFoundException;
-import ru.practicum.shareit.user.User;
-import ru.practicum.shareit.user.UserRepository;
-import ru.practicum.shareit.user.UserService;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,23 +12,29 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository repository;
+    private final UserMapper mapper;
 
-    public UserServiceImpl(UserRepository repository) {
+
+    public UserServiceImpl(UserRepository repository, UserMapper mapper) {
         this.repository = repository;
+        this.mapper = mapper;
     }
 
     @Override
     public User save(User user) {
-        checkUser(user);
         return repository.save(user);
     }
 
     @Override
-    public User update(Long id, User user) {
-        checkUser(user);
-        user.setUserId(id);
-        // TODO Сделать проверку по ID
-        return repository.save(user);
+    public UserDto update(Long id, UserDto userDto) {
+        if (repository.findById(id).isPresent()){
+            User user = repository.findById(id).get();
+            mapper.updateCustomerFromDto(userDto, user);
+            repository.save(user);
+            return UserMapping.toUserDto(repository.findById(id).get());
+        }else {
+            throw new NotFoundException("Такого пользователя не существует!");
+        }
     }
 
     @Override
@@ -61,20 +65,6 @@ public class UserServiceImpl implements UserService {
     public boolean containsById(Long userId) {
         Optional<User> user = repository.findById(userId);
         return user.isPresent();
-    }
-
-    /**
-     * Проверка валидации пользователей
-     * Check validation users
-     */
-    private void checkUser(User user) {
-        if (user.getEmail() != null){
-            for (User getUser : repository.findAll()) {
-                if (user.getEmail().equals(getUser.getEmail())) {
-                    throw new ConflictException("Такой пользователь уже существует");
-                }
-            }
-        }
     }
 
 }

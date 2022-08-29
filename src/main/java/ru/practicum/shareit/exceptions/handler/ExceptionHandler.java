@@ -1,5 +1,6 @@
 package ru.practicum.shareit.exceptions.handler;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -7,6 +8,8 @@ import ru.practicum.shareit.exceptions.ConflictException;
 import ru.practicum.shareit.exceptions.NoUserInHeaderException;
 import ru.practicum.shareit.exceptions.NotFoundException;
 import ru.practicum.shareit.exceptions.model.ErrorResponse;
+
+import javax.validation.ConstraintViolationException;
 
 @RestControllerAdvice
 public class ExceptionHandler {
@@ -42,12 +45,23 @@ public class ExceptionHandler {
     }
 
     /**
+     * Ошибка в запросе, дубликат в email, код 409
+     * Error in request
+     */
+    @org.springframework.web.bind.annotation.ExceptionHandler
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ErrorResponse handleIncorrectParameterException(final DataIntegrityViolationException e) {
+        return new ErrorResponse("Дубликат!");
+    }
+
+    /**
      * Ошибка в запросе, код 400
      * Error in request
      */
     @org.springframework.web.bind.annotation.ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleIncorrectParameterException(final Throwable e) {
+//        return new ErrorResponse(e.getClass().getName());
         return new ErrorResponse("Плохо составленный запрос! Проверь данные!");
     }
 }

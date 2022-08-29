@@ -41,7 +41,7 @@ public class ItemServiceImpl implements ItemService {
             throw new NotFoundException("Такого пользователя не существует!");
         }
 //        if (itemRepository.containsItemById(itemId)) {
-        if (itemRepository.findById(itemId).isEmpty()) {
+        if (itemRepository.findById(itemId).isPresent()) {
             throw new NotFoundException("Такой вещи не существует!");
         }
 //        if (!itemRepository.findItemById(itemId).getOwner().getUserId().equals(userId)) {
@@ -49,7 +49,7 @@ public class ItemServiceImpl implements ItemService {
             throw new NotFoundException("Пользователь не является владельцем данной вещи!");
         }
         Item item = ItemMapper.toItem(itemDto, userService.findById(userId));
-        item.setItemId(itemId);
+        item.setId(itemId);
         //TODO save with id!!!!
 //        return ItemMapper.toItemDto(itemRepository.create(item));
         return ItemMapper.toItemDto(itemRepository.save(item));
@@ -71,7 +71,7 @@ public class ItemServiceImpl implements ItemService {
         }
         ItemDto getItemDto = itemRepository.findAll().stream()
 //        ItemDto getItemDto = itemRepository.findAllItems().stream()
-                .filter(item -> item.getItemId().equals(itemId))
+                .filter(item -> item.getId().equals(itemId))
                 .findAny()
                 .map(ItemMapper::toItemDto)
                 .orElse(null);

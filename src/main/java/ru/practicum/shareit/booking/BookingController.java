@@ -19,9 +19,10 @@ public class BookingController {
 
     @PostMapping
     public Booking create(@RequestBody Booking booking) {
-        log.info("Получен запрос к эндпоинту /users. Метод POST");
+//        log.info("Получен запрос к эндпоинту /users. Метод POST");
 //        User user = UserMapping.toUser(userDto);
 //        return UserMapping.toUserDto(bookingService.save(user));
-        return bookingService.save(booking);
+//        return bookingService.save(booking);
+        return null;
     }
 }

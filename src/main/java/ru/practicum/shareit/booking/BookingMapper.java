@@ -15,15 +15,15 @@ public class BookingMapper {
      * Method to convert Booking to BookingDto
      */
     public static BookingDto toBookingDto(Booking booking) {
-        return BookingDto.builder()
+//        return BookingDto.builder()
 //                .bookingId(booking.getId())
 //                .start(booking.getStart().getTime())
 //                .end(booking.getEnd())
 //                .status(booking.getStatus())
 //                .booker(booking.getBooker())
 //                .item(booking.getItem())
-                .build();
-
+//                .build();
+return null;
     }
 
     /**
@@ -31,14 +31,14 @@ public class BookingMapper {
      * Method to convert BookingDto to Booking
      */
     public static Booking toBooking(BookingDto bookingDto, User user, Item item) {
-        return Booking.builder()
+//        return Booking.builder()
 //                .bookingId(bookingDto.getBookingId())
 //                .booker(user)
 //                .item(item)
 //                .review(bookingDto.getReview())
 //                .start(bookingDto.getStart())
 //                .end(bookingDto.getEnd())
-                .build();
-
+//                .build();
+return null;
     }
 }

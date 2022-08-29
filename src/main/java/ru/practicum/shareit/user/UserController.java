@@ -18,19 +18,19 @@ public class UserController {
     }
 
     @PostMapping
-    public UserDto create(@Valid @RequestBody UserDto userDto) {
+    public UserDto create(@RequestBody UserDto userDto) {
         log.info("Получен запрос к эндпоинту /users. Метод POST");
-        User user = UserMapping.toUser(userDto);
-        User userGet = userService.save(user);
-        return UserMapping.toUserDto(userGet);
+        @Valid User user = UserMapping.toUser(userDto);
+        return UserMapping.toUserDto(userService.save(user));
     }
 
     @PatchMapping("/{userId}")
     public UserDto updateById(@PathVariable("userId") Long userId,
-                              @Valid @RequestBody UserDto userDto) {
+                              @RequestBody UserDto userDto) {
         log.info("Получен запрос к эндпоинту /users обновление по id. Метод PATCH");
-        User user = UserMapping.toUser(userDto);
-        return UserMapping.toUserDto(userService.update(userId, user));
+        return userService.update(userId, userDto);
+//        User user = UserMapping.toUser(userDto);
+//        return UserMapping.toUserDto(userService.update(userId, user));
     }
 
     @GetMapping

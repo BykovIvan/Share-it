@@ -15,9 +15,9 @@ public class ItemDaoImpl implements ItemDao {
 
     @Override
     public Item create(Item item) {
-        item.setItemId(itemId++);
-        mapItems.put(item.getItemId(), item);
-        return mapItems.get(item.getItemId());
+        item.setId(itemId++);
+        mapItems.put(item.getId(), item);
+        return mapItems.get(item.getId());
     }
 
     @Override
