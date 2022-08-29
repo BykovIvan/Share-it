@@ -25,7 +25,7 @@ public class ItemServiceImpl implements ItemService {
         if (userId == null) {
             throw new NoUserInHeaderException("В запросе отсутсвует пользователь при создании задачи!");
         }
-        if (userService.containsById(userId)) {
+        if (!userService.containsById(userId)) {
             throw new NotFoundException("Такого пользователя не существует!");
         }
         Item item = ItemMapper.toItem(itemDto, userService.findById(userId));
