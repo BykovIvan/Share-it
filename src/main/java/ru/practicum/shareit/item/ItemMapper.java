@@ -1,39 +1,20 @@
 package ru.practicum.shareit.item;
 
-import ru.practicum.shareit.user.User;
+import org.mapstruct.BeanMapping;
+import org.mapstruct.Mapper;
+import org.mapstruct.MappingTarget;
+import org.mapstruct.NullValuePropertyMappingStrategy;
 
-/**
- * Класс для преобразования объекса Item в объект ItemDto для предоставления пользователю и обратно
- * Class for converting an Item object to an ItemDto object for presentation to the user and vice versa
- */
-public class ItemMapper {
-    /**
-     * Метод для преобразования Item в ItemDto
-     * Method to convert Item to ItemDto
-     */
-    public static ItemDto toItemDto(Item item) {
-        return ItemDto.builder()
-                .id(item.getId())
-                .name(item.getName())
-                .description(item.getDescription())
-                .available(item.getAvailable())
-//                .request(item.getRequest() != null ? item.getRequest().getId() : null)
-                .build();
+@Mapper(componentModel = "spring")
+public interface ItemMapper {
 
-    }
+    //    @Mapping(target = "id", ignore = true)
+//    Item map(ItemDto itemDto);
 
-    /**
-     * Метод для преобразования ItemDto в Item
-     * Method to convert ItemDto to Item
-     */
-    public static Item toItem(ItemDto itemDTO, User user) {
-        return Item.builder()
-                .name(itemDTO.getName())
-                .description(itemDTO.getDescription())
-                .available(itemDTO.getAvailable())
-                .owner(user)
-                .build();
+//    ItemDto map(Item item);
 
-    }
+    //    @InheritConfiguration
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    void updateItemFromDto(ItemDto itemDto, @MappingTarget Item item);
 
 }

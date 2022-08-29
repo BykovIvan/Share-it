@@ -13,6 +13,8 @@ public interface UserMapper {
     User map(UserDto userDto);
 
     UserDto map(User user);
-    @InheritConfiguration
-    void updateCustomerFromDto(UserDto userDto, @MappingTarget User user);
+//    @InheritConfiguration
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    void updateUserFromDto(UserDto userDto, @MappingTarget User user);
 }
+

@@ -29,7 +29,7 @@ public class UserServiceImpl implements UserService {
     public UserDto update(Long id, UserDto userDto) {
         if (repository.findById(id).isPresent()){
             User user = repository.findById(id).get();
-            mapper.updateCustomerFromDto(userDto, user);
+            mapper.updateUserFromDto(userDto, user);
             repository.save(user);
             return UserMapping.toUserDto(repository.findById(id).get());
         }else {

@@ -44,4 +44,6 @@ public interface ItemService {
      * search for a thing by a word in the query path
      */
     List<ItemDto> findByText(Long userId, String text);
+
+    boolean containsById(Long itemId);
 }
