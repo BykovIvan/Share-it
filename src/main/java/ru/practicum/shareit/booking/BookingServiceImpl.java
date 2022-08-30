@@ -10,10 +10,13 @@ import ru.practicum.shareit.item.ItemService;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserService;
 
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class BookingServiceImpl implements BookingService{
@@ -35,16 +38,16 @@ public class BookingServiceImpl implements BookingService{
         if (!itemService.containsById(bookingDto.getItemId())){
             throw new NotFoundException("Такой вещи не существует!");
         }
-        LocalDateTime startDate = bookingDto.getStart().toLocalDateTime();
-        LocalDateTime endDate = bookingDto.getEnd().toLocalDateTime();
-        LocalDateTime now = LocalDateTime.now();
-        if (startDate.getDayOfMonth() < now.getDayOfMonth()){
+        long startDay = TimeUnit.MILLISECONDS.toDays(bookingDto.getStart().getTime());
+        long endDay = TimeUnit.MILLISECONDS.toDays(bookingDto.getEnd().getTime());
+        long nowDate = TimeUnit.MILLISECONDS.toDays(System.currentTimeMillis());
+        if (startDay < nowDate){
             throw new BadRequestException("Время начала не может быть в прошлом!");
         }
-        if (endDate.getDayOfMonth() < now.getDayOfMonth()){
+        if (endDay < nowDate){
             throw new BadRequestException("Время окончания не может быть в прошлом!");
         }
-        if (endDate.isBefore(startDate)){
+        if (bookingDto.getEnd().before(bookingDto.getStart())){
             throw new BadRequestException("Время окончания не может быть раньше начала бронирования!");
         }
         Item item = itemService.findById(userId, bookingDto.getItemId());
@@ -73,11 +76,7 @@ public class BookingServiceImpl implements BookingService{
         Optional<Booking> bookingGet = bookingRepository.findById(id);
         if (bookingGet.isPresent()){
             Booking booking = bookingGet.get();
-            if (booking.getBooker().getId().equals(id) || booking.getItem().getOwner().getId().equals(id)){
-                return bookingGet.get();
-            } else {
-                throw new NotFoundException("Пользователь не является владельцем или арендатором вещи");
-            }
+            return bookingGet.get();
         } else {
             throw new NotFoundException("Нет такого бронирования!");
         }
@@ -90,6 +89,28 @@ public class BookingServiceImpl implements BookingService{
 
     @Override
     public List<Booking> findAllByIdOwner(Long userId, String state) {
+        return null;
+    }
+
+    @Override
+    public Booking findByState(String state, Long userId) {
+        switch (state) {
+            case "ALL":
+                //сформировать запросы для всех и тп.
+                break;
+            case "CURRENT":
+
+                break;
+            case "PAST":
+
+                break;
+            case "FUTURE":
+
+                break;
+            case "REJECTED":
+
+                break;
+        }
         return null;
     }
 }

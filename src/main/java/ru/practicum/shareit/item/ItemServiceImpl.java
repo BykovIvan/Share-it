@@ -3,8 +3,6 @@ package ru.practicum.shareit.item;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exceptions.NoUserInHeaderException;
 import ru.practicum.shareit.exceptions.NotFoundException;
-import ru.practicum.shareit.user.User;
-import ru.practicum.shareit.user.UserMapping;
 import ru.practicum.shareit.user.UserService;
 
 import java.util.ArrayList;
@@ -66,7 +64,6 @@ public class ItemServiceImpl implements ItemService {
         //TODO Переделать запрос в базу данных через запрос
         return itemRepository.findAll().stream()
                 .filter(item -> item.getOwner().getId().equals(userId))
-//                .map(ItemMapping::toItemDto)
                 .collect(Collectors.toList());
     }
 
@@ -110,5 +107,9 @@ public class ItemServiceImpl implements ItemService {
         Optional<Item> item = itemRepository.findById(itemId);
         return item.isPresent();
     }
+
+    //TODO сделать метод обновления только статуса по id вещи для бронирования
+
+
 }
 

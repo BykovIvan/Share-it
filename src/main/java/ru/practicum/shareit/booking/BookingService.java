@@ -8,4 +8,5 @@ public interface BookingService {
     Booking findById(Long id, Long userId);
     List<Booking> findAllByIdUser(Long userId, String state);
     List<Booking> findAllByIdOwner(Long userId, String state);
+    Booking findByState(String state, Long userId);
 }

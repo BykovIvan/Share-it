@@ -3,6 +3,7 @@ package ru.practicum.shareit.booking;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.ItemDto;
+import ru.practicum.shareit.item.ItemMapping;
 
 import javax.validation.Valid;
 
@@ -25,10 +26,28 @@ public class BookingController {
         return BookingMapping.toBookingDto(booking);
     }
 
+    @PatchMapping("/{id}")
+    public BookingDto updateById(@RequestHeader(value="X-Sharer-User-Id", required = false) Long userId,
+                              @PathVariable("id") Long itemId,
+                              @RequestBody BookingDto bookingDto){
+        log.info("Получен запрос к эндпоинту /bookings. Метод PATCH");
+        return null;
+    }
+
+    @GetMapping("/{id}")
     public BookingDto findById(@RequestHeader(value = "X-Sharer-User-Id", required = false) Long userId,
                                @PathVariable("id") Long bookingId){
         log.info("Получен запрос к эндпоинту /bookings. Метод GET по ID");
         return BookingMapping.toBookingDto(bookingService.findById(bookingId, userId));
     }
 
+    @GetMapping("/{state}")
+    public BookingDto findByState(@RequestHeader(value = "X-Sharer-User-Id", required = false) Long userId,
+                               @PathVariable(value = "state", required = false) String state){
+        if (state == null){
+            state = "ALL";
+        }
+        log.info("Получен запрос к эндпоинту /bookings. Метод GET по State");
+        return BookingMapping.toBookingDto(bookingService.findByState(state, userId));
+    }
 }
