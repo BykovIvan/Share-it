@@ -47,7 +47,7 @@ public class ItemServiceImpl implements ItemService {
         if (!itemRepository.findById(itemId).isPresent()) {
             throw new NotFoundException("Такой вещи не существует!");
         }
-        if (!itemRepository.findById(itemId).get().getOwner().getUserId().equals(userId)) {
+        if (!itemRepository.findById(itemId).get().getOwner().getId().equals(userId)) {
             throw new NotFoundException("Пользователь не является владельцем данной вещи!");
         }
 
@@ -65,7 +65,7 @@ public class ItemServiceImpl implements ItemService {
     public List<Item> findAllItems(Long userId) {
         //TODO Переделать запрос в базу данных через запрос
         return itemRepository.findAll().stream()
-                .filter(item -> item.getOwner().getUserId().equals(userId))
+                .filter(item -> item.getOwner().getId().equals(userId))
 //                .map(ItemMapping::toItemDto)
                 .collect(Collectors.toList());
     }
@@ -79,7 +79,6 @@ public class ItemServiceImpl implements ItemService {
         Item getItemDto = itemRepository.findAll().stream()
                 .filter(item -> item.getId().equals(itemId))
                 .findAny()
-//                .map(ItemMapping::toItemDto)
                 .orElse(null);
         if (getItemDto == null) {
             throw new NotFoundException("Такой вещи у пользователя с id " + userId + " нет!");
@@ -101,7 +100,6 @@ public class ItemServiceImpl implements ItemService {
                     .filter(Item::getAvailable)
                     .filter(item -> item.getName().toLowerCase().contains(text.toLowerCase())
                             || item.getDescription().toLowerCase().contains(text.toLowerCase()))
-//                    .map(ItemMapping::toItemDto)
                     .collect(Collectors.toList());
         }
 

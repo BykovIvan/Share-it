@@ -21,7 +21,8 @@ public class BookingController {
     public BookingDto create(@RequestHeader(value="X-Sharer-User-Id", required = false) Long userId,
                           @RequestBody BookingDto bookingDto) {
         log.info("Получен запрос к эндпоинту /bookings. Метод POST");
-        return BookingMapping.toBookingDto(bookingService.create(userId, bookingDto));
+        Booking booking = bookingService.create(userId, bookingDto);
+        return BookingMapping.toBookingDto(booking);
     }
 
     public BookingDto findById(@RequestHeader(value = "X-Sharer-User-Id", required = false) Long userId,

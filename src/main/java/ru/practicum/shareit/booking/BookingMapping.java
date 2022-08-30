@@ -1,8 +1,10 @@
 package ru.practicum.shareit.booking;
 
 import ru.practicum.shareit.item.Item;
+import ru.practicum.shareit.item.ItemMapping;
 import ru.practicum.shareit.item.StatusOfItem;
 import ru.practicum.shareit.user.User;
+import ru.practicum.shareit.user.UserMapping;
 
 /**
  * Класс для преобразования объекса Booking в объект BookingDto для предоставления пользователю и обратно
@@ -15,13 +17,13 @@ public class BookingMapping {
      */
     public static BookingDto toBookingDto(Booking booking) {
         return BookingDto.builder()
-                .bookingId(booking.getId())
+                .id(booking.getId())
                 .start(booking.getStart())
                 .end(booking.getEnd())
+                .item(ItemMapping.toItemDto(booking.getItem()))
                 .itemId(booking.getItem().getId())
-                .nameItem(booking.getItem().getName())
                 .status(booking.getStatus())
-                .booker(booking.getBooker())
+                .booker(UserMapping.toUserDto(booking.getBooker()))
                 .build();
     }
 

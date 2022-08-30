@@ -10,6 +10,8 @@ import ru.practicum.shareit.item.ItemService;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserService;
 
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,10 +35,22 @@ public class BookingServiceImpl implements BookingService{
         if (!itemService.containsById(bookingDto.getItemId())){
             throw new NotFoundException("Такой вещи не существует!");
         }
+        LocalDateTime startDate = bookingDto.getStart().toLocalDateTime();
+        LocalDateTime endDate = bookingDto.getEnd().toLocalDateTime();
+        LocalDateTime now = LocalDateTime.now();
+        if (startDate.getDayOfMonth() < now.getDayOfMonth()){
+            throw new BadRequestException("Время начала не может быть в прошлом!");
+        }
+        if (endDate.getDayOfMonth() < now.getDayOfMonth()){
+            throw new BadRequestException("Время окончания не может быть в прошлом!");
+        }
+        if (endDate.isBefore(startDate)){
+            throw new BadRequestException("Время окончания не может быть раньше начала бронирования!");
+        }
         Item item = itemService.findById(userId, bookingDto.getItemId());
         User booker = userService.findById(userId);
-        User owner = userService.findById(item.getOwner().getUserId());
-        if (booker.getUserId().equals(owner.getUserId())){
+        User owner = userService.findById(item.getOwner().getId());
+        if (booker.getId().equals(owner.getId())){
             throw new BadRequestException("Владелец не может забронировать свою вещь!");
         }
         if (!item.getAvailable()){
@@ -59,7 +73,7 @@ public class BookingServiceImpl implements BookingService{
         Optional<Booking> bookingGet = bookingRepository.findById(id);
         if (bookingGet.isPresent()){
             Booking booking = bookingGet.get();
-            if (booking.getBooker().getUserId().equals(id) || booking.getItem().getOwner().getUserId().equals(id)){
+            if (booking.getBooker().getId().equals(id) || booking.getItem().getOwner().getId().equals(id)){
                 return bookingGet.get();
             } else {
                 throw new NotFoundException("Пользователь не является владельцем или арендатором вещи");
