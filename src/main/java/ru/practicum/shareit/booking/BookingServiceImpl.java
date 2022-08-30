@@ -1,7 +1,11 @@
 package ru.practicum.shareit.booking;
 
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.exceptions.BadRequestException;
+import ru.practicum.shareit.exceptions.ConflictException;
 import ru.practicum.shareit.exceptions.NotFoundException;
+import ru.practicum.shareit.item.Item;
+import ru.practicum.shareit.item.ItemMapping;
 import ru.practicum.shareit.item.ItemService;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserService;
@@ -22,27 +26,44 @@ public class BookingServiceImpl implements BookingService{
         this.itemService = itemService;
     }
 
-    public Booking create(Long userId, Booking booking){
+    public Booking create(Long userId, BookingDto bookingDto){
         if (!userService.containsById(userId)){
             throw new NotFoundException("Такого пользователя не существует!");
         }
-        if (!itemService.containsById(booking.getItem().getId())){
+        if (!itemService.containsById(bookingDto.getItemId())){
             throw new NotFoundException("Такой вещи не существует!");
         }
+        Item item = itemService.findById(userId, bookingDto.getItemId());
+        User booker = userService.findById(userId);
+        User owner = userService.findById(item.getOwner().getUserId());
+        if (booker.getUserId().equals(owner.getUserId())){
+            throw new BadRequestException("Владелец не может забронировать свою вещь!");
+        }
+        if (!item.getAvailable()){
+            throw new BadRequestException("Вещь не доступна!");
+        }
+
+        Booking booking = BookingMapping.toBooking(bookingDto, booker, item);
         return bookingRepository.save(booking);
     }
 
     @Override
     public Booking changeStatusBookingById(Long bookingId, Long userId, Boolean status) {
+
         return null;
     }
 
     @Override
     public Booking findById(Long id, Long userId) {
         //Сделать проверку получения, получать может только владелец или орендатор
-        Optional<Booking> bookingGet =  bookingRepository.findById(id);
+        Optional<Booking> bookingGet = bookingRepository.findById(id);
         if (bookingGet.isPresent()){
-            return bookingGet.get();
+            Booking booking = bookingGet.get();
+            if (booking.getBooker().getUserId().equals(id) || booking.getItem().getOwner().getUserId().equals(id)){
+                return bookingGet.get();
+            } else {
+                throw new NotFoundException("Пользователь не является владельцем или арендатором вещи");
+            }
         } else {
             throw new NotFoundException("Нет такого бронирования!");
         }

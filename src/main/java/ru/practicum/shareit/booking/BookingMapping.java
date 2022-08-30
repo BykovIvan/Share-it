@@ -1,6 +1,7 @@
 package ru.practicum.shareit.booking;
 
 import ru.practicum.shareit.item.Item;
+import ru.practicum.shareit.item.StatusOfItem;
 import ru.practicum.shareit.user.User;
 
 /**
@@ -13,30 +14,28 @@ public class BookingMapping {
      * Method to convert Booking to BookingDto
      */
     public static BookingDto toBookingDto(Booking booking) {
-//        return BookingDto.builder()
-//                .bookingId(booking.getId())
-//                .start(booking.getStart().getTime())
-//                .end(booking.getEnd())
-//                .status(booking.getStatus())
-//                .booker(booking.getBooker())
-//                .item(booking.getItem())
-//                .build();
-        return null;
+        return BookingDto.builder()
+                .bookingId(booking.getId())
+                .start(booking.getStart())
+                .end(booking.getEnd())
+                .itemId(booking.getItem().getId())
+                .nameItem(booking.getItem().getName())
+                .status(booking.getStatus())
+                .booker(booking.getBooker())
+                .build();
     }
 
     /**
      * Метод для преобразования BookingDto в Booking
      * Method to convert BookingDto to Booking
      */
-    public static Booking toBooking(BookingDto bookingDto, User user, Item item) {
-//        return Booking.builder()
-//                .bookingId(bookingDto.getBookingId())
-//                .booker(user)
-//                .item(item)
-//                .review(bookingDto.getReview())
-//                .start(bookingDto.getStart())
-//                .end(bookingDto.getEnd())
-//                .build();
-        return null;
+    public static Booking toBooking(BookingDto bookingDto, User booker, Item item) {
+        return Booking.builder()
+                .booker(booker)
+                .item(item)
+                .start(bookingDto.getStart())
+                .end(bookingDto.getEnd())
+                .status(StatusOfItem.WAITING)
+                .build();
     }
 }

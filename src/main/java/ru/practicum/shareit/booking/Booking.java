@@ -1,9 +1,6 @@
 package ru.practicum.shareit.booking;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import ru.practicum.shareit.item.StatusOfItem;
 import ru.practicum.shareit.item.Item;
 import ru.practicum.shareit.user.User;
@@ -12,22 +9,29 @@ import javax.persistence.*;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 
-@Data
 @Builder
-@Entity
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Entity
+@Table(name = "bookings", schema = "public")
 public class Booking {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(name = "start_date")
     private Timestamp start;
+    @Column(name = "end_date")
     private Timestamp end;
-    @ManyToOne
+
+    @ManyToOne(fetch = FetchType.LAZY)
     private Item item;                      //Вещь
-    @ManyToOne
+
+    @ManyToOne(fetch = FetchType.LAZY)
     private User booker;                    //Пользователь, который осуществляет бронирование
+
     @Enumerated(EnumType.STRING)
     private StatusOfItem status;            //статус вещи, должен выставлять пользователь
-    private String review;                  //Отзыв, оставляется после успешного бронирования
+//    private String review;                  //Отзыв, оставляется после успешного бронирования
 }

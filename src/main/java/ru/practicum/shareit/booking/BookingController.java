@@ -18,9 +18,16 @@ public class BookingController {
     }
 
     @PostMapping
-    public Booking create(@RequestHeader(value="X-Sharer-User-Id", required = false) Long userId,
-                          @RequestBody Booking booking) {
+    public BookingDto create(@RequestHeader(value="X-Sharer-User-Id", required = false) Long userId,
+                          @RequestBody BookingDto bookingDto) {
         log.info("Получен запрос к эндпоинту /bookings. Метод POST");
-        return bookingService.create(userId, booking);
+        return BookingMapping.toBookingDto(bookingService.create(userId, bookingDto));
     }
+
+    public BookingDto findById(@RequestHeader(value = "X-Sharer-User-Id", required = false) Long userId,
+                               @PathVariable("id") Long bookingId){
+        log.info("Получен запрос к эндпоинту /bookings. Метод GET по ID");
+        return BookingMapping.toBookingDto(bookingService.findById(bookingId, userId));
+    }
+
 }

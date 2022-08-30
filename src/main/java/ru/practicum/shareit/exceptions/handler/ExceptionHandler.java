@@ -4,6 +4,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import ru.practicum.shareit.exceptions.BadRequestException;
 import ru.practicum.shareit.exceptions.ConflictException;
 import ru.practicum.shareit.exceptions.NoUserInHeaderException;
 import ru.practicum.shareit.exceptions.NotFoundException;
@@ -41,6 +42,16 @@ public class ExceptionHandler {
     @org.springframework.web.bind.annotation.ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handleIncorrectParameterException(final NoUserInHeaderException e) {
+        return new ErrorResponse(e.getMessage());
+    }
+
+    /**
+     * Плохой запрос, код 400
+     * Bad Request
+     */
+    @org.springframework.web.bind.annotation.ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleIncorrectParameterException(final BadRequestException e) {
         return new ErrorResponse(e.getMessage());
     }
 

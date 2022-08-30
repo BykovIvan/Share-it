@@ -26,12 +26,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto update(Long id, UserDto userDto) {
+    public User update(Long id, UserDto userDto) {
         if (repository.findById(id).isPresent()){
             User user = repository.findById(id).get();
             mapper.updateUserFromDto(userDto, user);
             repository.save(user);
-            return UserMapping.toUserDto(repository.findById(id).get());
+            return repository.findById(id).get();
         }else {
             throw new NotFoundException("Такого пользователя не существует!");
         }

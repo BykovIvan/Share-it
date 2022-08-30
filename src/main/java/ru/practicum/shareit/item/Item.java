@@ -26,6 +26,7 @@ public class Item {
     @NotNull
     @NotBlank
     private String description;                  //Описание
+    @NotNull
     private Boolean available;                   //доступность
     @ManyToOne(fetch = FetchType.LAZY)
     private User owner;                          //Владелец

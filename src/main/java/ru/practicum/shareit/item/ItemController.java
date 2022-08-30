@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @Slf4j
@@ -23,7 +24,7 @@ public class ItemController {
     public ItemDto create(@RequestHeader(value="X-Sharer-User-Id", required = false) Long userId,
                           @Valid @RequestBody ItemDto itemDto) {
         log.info("Получен запрос к эндпоинту /items. Метод POST");
-        return itemService.create(userId, itemDto);
+        return ItemMapping.toItemDto(itemService.create(userId, itemDto));
     }
 
     @PatchMapping("/{id}")
@@ -31,26 +32,30 @@ public class ItemController {
                               @PathVariable("id") Long itemId,
                               @RequestBody ItemDto itemDto){
         log.info("Получен запрос к эндпоинту /items. Метод PATCH");
-        return itemService.update(userId, itemId, itemDto);
+        return ItemMapping.toItemDto(itemService.update(userId, itemId, itemDto));
     }
 
     @GetMapping
     public List<ItemDto> allItems(@RequestHeader(value="X-Sharer-User-Id") Long userId) {
         log.info("Получен запрос к эндпоинту /items. Метод GET. Поиск всех вещей");
-        return itemService.findAllItems(userId);
+        return itemService.findAllItems(userId).stream()
+                .map(ItemMapping::toItemDto)
+                .collect(Collectors.toList());
     }
 
     @GetMapping("/{id}")
     public ItemDto itemById(@RequestHeader(value="X-Sharer-User-Id") Long userId,
                             @PathVariable("id") Long itemId) {
         log.info("Получен запрос к эндпоинту /items. Метод GET. Поиск по ID");
-        return itemService.findById(userId, itemId);
+        return ItemMapping.toItemDto(itemService.findById(userId, itemId));
     }
 
     @GetMapping("/search")
     public List<ItemDto> itemByText(@RequestHeader(value="X-Sharer-User-Id") Long userId,
                                     @RequestParam("text") String text) {
         log.info("Получен запрос к эндпоинту /items. Метод GET. Поиск по тексту");
-        return itemService.findByText(userId, text);
+        return itemService.findByText(userId, text).stream()
+                .map(ItemMapping::toItemDto)
+                .collect(Collectors.toList());
     }
 }
