@@ -46,14 +46,21 @@ public class BookingController {
         return BookingMapping.toBookingDto(bookingService.findById(bookingId, userId));
     }
 
-    @GetMapping("/")
-    public String findByState(@RequestHeader(value = "X-Sharer-User-Id", required = false) Long userId,
+    //TODO Возможно будет List на выход!!!!!!
+    @GetMapping()
+    public BookingDto findByState(@RequestHeader(value = "X-Sharer-User-Id", required = false) Long userId,
                                @RequestParam(value = "state", required = false) String state){
-        return "Hello";
-//        if (state == null){
-//            state = "ALL";
-//        }
-//        log.info("Получен запрос к эндпоинту /bookings. Метод GET по State");
-//        return BookingMapping.toBookingDto(bookingService.findByState(state, userId));
+        if (state == null){
+            state = "ALL";
+        }
+        log.info("Получен запрос к эндпоинту /bookings. Метод GET по State");
+        return BookingMapping.toBookingDto(bookingService.findByState(state, userId));
     }
+    @GetMapping("/owner")
+    public BookingDto findByIdOfOwner(@RequestHeader(value = "X-Sharer-User-Id", required = false) Long userId,
+                                              @RequestParam(value = "state", required = false) String state){
+        log.info("Получен запрос к эндпоинту /bookings. Метод GET по ID");
+        return null;
+    }
+
 }

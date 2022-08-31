@@ -46,4 +46,6 @@ public interface ItemService {
     List<Item> findByText(Long userId, String text);
 
     boolean containsById(Long itemId);
+
+    Comment addCommentToItem(Long userId, Long itemId, Comment comment);
 }

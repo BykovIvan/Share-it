@@ -115,16 +115,6 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<Booking> findAllByIdUser(Long userId, String state) {
-        return null;
-    }
-
-    @Override
-    public List<Booking> findAllByIdOwner(Long userId, String state) {
-        return null;
-    }
-
-    @Override
     public Booking findByState(String state, Long userId) {
         switch (state) {
             case "ALL":

@@ -24,6 +24,21 @@ public class ItemMapping {
     }
 
     /**
+     * Метод для преобразования Item в ItemDtoForById
+     * Method to convert Item to ItemDtoForById
+     */
+    public static ItemDtoForById toItemDtoForById(Item item, Comment comment) {
+        return ItemDtoForById.builder()
+                .id(item.getId())
+                .name(item.getName())
+                .description(item.getDescription())
+                .available(item.getAvailable())
+                .comment(comment)
+                .build();
+
+    }
+
+    /**
      * Метод для преобразования ItemDto в Item
      * Method to convert ItemDto to Item
      */

@@ -36,6 +36,7 @@ public class ItemController {
     }
 
     @GetMapping
+//    public List<ItemDtoForById> allItems(@RequestHeader(value="X-Sharer-User-Id") Long userId) {
     public List<ItemDto> allItems(@RequestHeader(value="X-Sharer-User-Id") Long userId) {
         log.info("Получен запрос к эндпоинту /items. Метод GET. Поиск всех вещей");
         return itemService.findAllItems(userId).stream()
@@ -44,6 +45,7 @@ public class ItemController {
     }
 
     @GetMapping("/{id}")
+//    public ItemDtoForById itemById(@RequestHeader(value="X-Sharer-User-Id") Long userId,
     public ItemDto itemById(@RequestHeader(value="X-Sharer-User-Id") Long userId,
                             @PathVariable("id") Long itemId) {
         log.info("Получен запрос к эндпоинту /items. Метод GET. Поиск по ID");
@@ -58,4 +60,13 @@ public class ItemController {
                 .map(ItemMapping::toItemDto)
                 .collect(Collectors.toList());
     }
+
+    @PostMapping("/{id}/comment")
+    public Comment addComment(@RequestHeader(value="X-Sharer-User-Id") Long userId,
+                              @PathVariable("id") Long itemId,
+                              @RequestBody Comment comment){
+        log.info("Получен запрос к эндпоинту /items/{id}/comment. Метод Post. Добавление комментария");
+        return itemService.addCommentToItem(userId, itemId, comment);
+    }
+
 }

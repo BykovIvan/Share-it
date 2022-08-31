@@ -15,11 +15,13 @@ public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepository;
     private final UserService userService;
     private final ItemMapper mapper;
+    private final CommentRepository commentRepository;
 
-    public ItemServiceImpl(ItemRepository itemRepository, UserService userService, ItemMapper mapper) {
+    public ItemServiceImpl(ItemRepository itemRepository, UserService userService, ItemMapper mapper, CommentRepository commentRepository) {
         this.itemRepository = itemRepository;
         this.userService = userService;
         this.mapper = mapper;
+        this.commentRepository = commentRepository;
     }
 
     @Override
@@ -49,12 +51,12 @@ public class ItemServiceImpl implements ItemService {
             throw new NotFoundException("Пользователь не является владельцем данной вещи!");
         }
 
-        if (itemRepository.findById(itemId).isPresent()){
+        if (itemRepository.findById(itemId).isPresent()) {
             Item item = itemRepository.findById(itemId).get();
             mapper.updateItemFromDto(itemDto, item);
             itemRepository.save(item);
             return itemRepository.findById(itemId).get();
-        }else {
+        } else {
             throw new NotFoundException("Такого пользователя не существует!");
         }
     }
@@ -100,7 +102,6 @@ public class ItemServiceImpl implements ItemService {
                             || item.getDescription().toLowerCase().contains(text.toLowerCase()))
                     .collect(Collectors.toList());
         }
-
     }
 
     @Override
@@ -109,8 +110,21 @@ public class ItemServiceImpl implements ItemService {
         return item.isPresent();
     }
 
-    //TODO сделать метод обновления только статуса по id вещи для бронирования
-
-
+    @Override
+    public Comment addCommentToItem(Long userId, Long itemId, Comment comment) {
+        if (!userService.containsById(userId)) {
+            throw new NotFoundException("Такого пользователя не существует!");
+        }
+        if (!itemRepository.findById(itemId).isPresent()) {
+            throw new NotFoundException("Такой вещи не существует!");
+        }
+        if (comment.getText() == null || comment.getText().isEmpty()) {
+            throw new NotFoundException("Комментарий отсутсвует!");
+        }
+        comment.setItem(itemRepository.findById(itemId).get());
+        comment.setAuthor(userService.findById(userId));
+        commentRepository.save(comment);
+        return commentRepository.save(comment);
+    }
 }
 
