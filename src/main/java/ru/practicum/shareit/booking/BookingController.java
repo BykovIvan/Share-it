@@ -20,19 +20,29 @@ public class BookingController {
 
     @PostMapping
     public BookingDto create(@RequestHeader(value="X-Sharer-User-Id", required = false) Long userId,
-                          @RequestBody BookingDto bookingDto) {
+                             @RequestBody BookingDto bookingDto) {
         log.info("Получен запрос к эндпоинту /bookings. Метод POST");
         Booking booking = bookingService.create(userId, bookingDto);
         return BookingMapping.toBookingDto(booking);
     }
 
+    /**
+     * подтверждение бронирования вещи только владельцем вещи
+     */
     @PatchMapping("/{id}")
-    public BookingDto updateById(@RequestHeader(value="X-Sharer-User-Id", required = false) Long userId,
-                              @PathVariable("id") Long itemId,
-                              @RequestBody BookingDto bookingDto){
+    public void updateStatusOfItemById(@RequestHeader(value="X-Sharer-User-Id", required = false) Long userId,
+                           @PathVariable("id") Long bookingId,
+                           @RequestParam(value = "approved") Boolean approved){
         log.info("Получен запрос к эндпоинту /bookings. Метод PATCH");
-        return null;
+        bookingService.approvedStatusOfItem(userId, bookingId, approved);
     }
+
+
+
+
+
+
+
 
     @GetMapping("/{id}")
     public BookingDto findById(@RequestHeader(value = "X-Sharer-User-Id", required = false) Long userId,

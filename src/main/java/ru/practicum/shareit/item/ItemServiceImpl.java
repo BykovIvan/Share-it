@@ -92,11 +92,12 @@ public class ItemServiceImpl implements ItemService {
         if (text == null || text.isEmpty()) {
             return new ArrayList<>();
         } else {
+            return itemRepository.search(text).stream()
             //TODO Переделать запрос в базу данных через запрос
-            return itemRepository.findAll().stream()
+//            return itemRepository.findAll().stream()
                     .filter(Item::getAvailable)
-                    .filter(item -> item.getName().toLowerCase().contains(text.toLowerCase())
-                            || item.getDescription().toLowerCase().contains(text.toLowerCase()))
+//                    .filter(item -> item.getName().toLowerCase().contains(text.toLowerCase())
+//                            || item.getDescription().toLowerCase().contains(text.toLowerCase()))
                     .collect(Collectors.toList());
         }
 

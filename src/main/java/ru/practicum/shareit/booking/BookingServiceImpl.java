@@ -7,9 +7,11 @@ import ru.practicum.shareit.exceptions.NotFoundException;
 import ru.practicum.shareit.item.Item;
 import ru.practicum.shareit.item.ItemMapping;
 import ru.practicum.shareit.item.ItemService;
+import ru.practicum.shareit.item.StatusOfItem;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserService;
 
+import java.awt.print.Book;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -65,9 +67,25 @@ public class BookingServiceImpl implements BookingService{
     }
 
     @Override
-    public Booking changeStatusBookingById(Long bookingId, Long userId, Boolean status) {
+    public void approvedStatusOfItem(Long userId, Long bookingId, Boolean approved) {
+        Optional<Booking> bookingOptional = bookingRepository.findById(bookingId);
+        if (!bookingOptional.isPresent()){
+            throw new NotFoundException("Такое бронирование не найдено!");
+        }
+        Booking booking = bookingOptional.get();
+        Item item = bookingOptional.get().getItem();
+        User owner = item.getOwner();
+        if (!owner.getId().equals(userId)){
+            throw new BadRequestException("Пользователь не является владельцем вещи!");
+        }
+        if (approved){
+            item.setAvailable(false);
+            itemService.update(userId, item.getId(), ItemMapping.toItemDto(item));
+            booking.setStatus(StatusOfItem.APPROVED);
 
-        return null;
+//            APPROVED
+//                    REJECTED
+        }
     }
 
     @Override
