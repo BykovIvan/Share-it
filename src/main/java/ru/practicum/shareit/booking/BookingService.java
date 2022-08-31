@@ -1,6 +1,7 @@
 package ru.practicum.shareit.booking;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface BookingService {
     Booking create(Long userId, BookingDto bookingDto);
@@ -9,5 +10,5 @@ public interface BookingService {
     List<Booking> findAllByIdOwner(Long userId, String state);
     Booking findByState(String state, Long userId);
 
-    void approvedStatusOfItem(Long userId, Long bookingId, Boolean approved);
+    Booking approvedStatusOfItem(Long userId, Long bookingId, Boolean approved);
 }

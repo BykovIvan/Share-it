@@ -19,6 +19,7 @@ public class BookingDto {
     private Timestamp end;
     private ItemDto item;                      //Вещь
     private Long itemId;
+    private Long owner;
     private UserDto booker;                    //Пользователь, который осуществляет бронирование
     private StatusOfItem status;            //статус вещи, должен выставлять пользователь
 //    private String review;                  //Отзыв, оставляется после успешного бронирования

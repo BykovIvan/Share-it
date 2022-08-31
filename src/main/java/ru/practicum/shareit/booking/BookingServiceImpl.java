@@ -2,7 +2,7 @@ package ru.practicum.shareit.booking;
 
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exceptions.BadRequestException;
-import ru.practicum.shareit.exceptions.ConflictException;
+import ru.practicum.shareit.exceptions.NoUserInHeaderException;
 import ru.practicum.shareit.exceptions.NotFoundException;
 import ru.practicum.shareit.item.Item;
 import ru.practicum.shareit.item.ItemMapping;
@@ -11,17 +11,12 @@ import ru.practicum.shareit.item.StatusOfItem;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserService;
 
-import java.awt.print.Book;
-import java.sql.Timestamp;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 @Service
-public class BookingServiceImpl implements BookingService{
+public class BookingServiceImpl implements BookingService {
     private final BookingRepository bookingRepository;
     private final UserService userService;
     private final ItemService itemService;
@@ -33,71 +28,90 @@ public class BookingServiceImpl implements BookingService{
         this.itemService = itemService;
     }
 
-    public Booking create(Long userId, BookingDto bookingDto){
-        if (!userService.containsById(userId)){
+    public Booking create(Long userId, BookingDto bookingDto) {
+        if (!userService.containsById(userId)) {
             throw new NotFoundException("Такого пользователя не существует!");
         }
-        if (!itemService.containsById(bookingDto.getItemId())){
+        if (!itemService.containsById(bookingDto.getItemId())) {
             throw new NotFoundException("Такой вещи не существует!");
         }
         long startDay = TimeUnit.MILLISECONDS.toDays(bookingDto.getStart().getTime());
         long endDay = TimeUnit.MILLISECONDS.toDays(bookingDto.getEnd().getTime());
         long nowDate = TimeUnit.MILLISECONDS.toDays(System.currentTimeMillis());
-        if (startDay < nowDate){
+        if (startDay < nowDate) {
             throw new BadRequestException("Время начала не может быть в прошлом!");
         }
-        if (endDay < nowDate){
+        if (endDay < nowDate) {
             throw new BadRequestException("Время окончания не может быть в прошлом!");
         }
-        if (bookingDto.getEnd().before(bookingDto.getStart())){
+        if (bookingDto.getEnd().before(bookingDto.getStart())) {
             throw new BadRequestException("Время окончания не может быть раньше начала бронирования!");
         }
         Item item = itemService.findById(userId, bookingDto.getItemId());
         User booker = userService.findById(userId);
         User owner = userService.findById(item.getOwner().getId());
-        if (booker.getId().equals(owner.getId())){
+        if (booker.getId().equals(owner.getId())) {
             throw new BadRequestException("Владелец не может забронировать свою вещь!");
         }
-        if (!item.getAvailable()){
+        if (!item.getAvailable()) {
             throw new BadRequestException("Вещь не доступна!");
         }
+        List<Booking> listOfItemsById = bookingRepository.findByItemId(item.getId());
 
+        for (Booking booking : listOfItemsById) {
+            if ((bookingDto.getStart().before(booking.getStart()) && bookingDto.getEnd().before(booking.getStart()))
+                || (bookingDto.getStart().after(booking.getEnd()) && bookingDto.getEnd().after(booking.getEnd()))) {
+            } else {
+                throw new BadRequestException("Вещь в данный переод времени забронирована!");
+            }
+        }
         Booking booking = BookingMapping.toBooking(bookingDto, booker, item);
         return bookingRepository.save(booking);
     }
 
     @Override
-    public void approvedStatusOfItem(Long userId, Long bookingId, Boolean approved) {
+    public Booking approvedStatusOfItem(Long userId, Long bookingId, Boolean approved) {
         Optional<Booking> bookingOptional = bookingRepository.findById(bookingId);
-        if (!bookingOptional.isPresent()){
+        if (!bookingOptional.isPresent()) {
             throw new NotFoundException("Такое бронирование не найдено!");
         }
         Booking booking = bookingOptional.get();
         Item item = bookingOptional.get().getItem();
         User owner = item.getOwner();
-        if (!owner.getId().equals(userId)){
-            throw new BadRequestException("Пользователь не является владельцем вещи!");
+        if (!owner.getId().equals(userId)) {
+            throw new NotFoundException("Пользователь не является владельцем вещи!");
         }
-        if (approved){
-            item.setAvailable(false);
+        if (approved) {
             itemService.update(userId, item.getId(), ItemMapping.toItemDto(item));
             booking.setStatus(StatusOfItem.APPROVED);
-
-//            APPROVED
-//                    REJECTED
+            bookingRepository.save(booking);
+        } else {
+            booking.setStatus(StatusOfItem.REJECTED);
+            bookingRepository.save(booking);
         }
+        return booking;
     }
 
     @Override
     public Booking findById(Long id, Long userId) {
-        //Сделать проверку получения, получать может только владелец или орендатор
+        if (!userService.containsById(userId)) {
+            throw new NotFoundException("Такого пользователя не существует!");
+        }
+        if (id == null){
+            throw new NoUserInHeaderException("Отсутсвует id бронирования в запросе!");
+        }
         Optional<Booking> bookingGet = bookingRepository.findById(id);
-        if (bookingGet.isPresent()){
+        if (bookingGet.isPresent()) {
             Booking booking = bookingGet.get();
-            return bookingGet.get();
+            if (booking.getBooker().getId().equals(userId) || booking.getItem().getOwner().getId().equals(userId)){
+                return booking;
+            }else {
+                throw new NoUserInHeaderException("Не является владельцем или арентадателем вещи!");
+            }
         } else {
             throw new NotFoundException("Нет такого бронирования!");
         }
+
     }
 
     @Override

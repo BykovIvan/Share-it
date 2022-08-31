@@ -6,6 +6,7 @@ import ru.practicum.shareit.item.ItemDto;
 import ru.practicum.shareit.item.ItemMapping;
 
 import javax.validation.Valid;
+import java.util.Optional;
 
 @RestController
 @Slf4j
@@ -30,34 +31,29 @@ public class BookingController {
      * подтверждение бронирования вещи только владельцем вещи
      */
     @PatchMapping("/{id}")
-    public void updateStatusOfItemById(@RequestHeader(value="X-Sharer-User-Id", required = false) Long userId,
+    public BookingDto updateStatusOfItemById(@RequestHeader(value="X-Sharer-User-Id", required = false) Long userId,
                            @PathVariable("id") Long bookingId,
                            @RequestParam(value = "approved") Boolean approved){
         log.info("Получен запрос к эндпоинту /bookings. Метод PATCH");
-        bookingService.approvedStatusOfItem(userId, bookingId, approved);
+        Booking booking = bookingService.approvedStatusOfItem(userId, bookingId, approved);
+        return BookingMapping.toBookingDto(booking);
     }
 
-
-
-
-
-
-
-
     @GetMapping("/{id}")
-    public BookingDto findById(@RequestHeader(value = "X-Sharer-User-Id", required = false) Long userId,
-                               @PathVariable("id") Long bookingId){
+    public BookingDto findByIdOfOwnerOrBooker(@RequestHeader(value = "X-Sharer-User-Id", required = false) Long userId,
+                               @PathVariable(value = "id") Long bookingId){
         log.info("Получен запрос к эндпоинту /bookings. Метод GET по ID");
         return BookingMapping.toBookingDto(bookingService.findById(bookingId, userId));
     }
 
-    @GetMapping("/{state}")
-    public BookingDto findByState(@RequestHeader(value = "X-Sharer-User-Id", required = false) Long userId,
-                               @PathVariable(value = "state", required = false) String state){
-        if (state == null){
-            state = "ALL";
-        }
-        log.info("Получен запрос к эндпоинту /bookings. Метод GET по State");
-        return BookingMapping.toBookingDto(bookingService.findByState(state, userId));
+    @GetMapping("/")
+    public String findByState(@RequestHeader(value = "X-Sharer-User-Id", required = false) Long userId,
+                               @RequestParam(value = "state", required = false) String state){
+        return "Hello";
+//        if (state == null){
+//            state = "ALL";
+//        }
+//        log.info("Получен запрос к эндпоинту /bookings. Метод GET по State");
+//        return BookingMapping.toBookingDto(bookingService.findByState(state, userId));
     }
 }

@@ -2,6 +2,7 @@ package ru.practicum.shareit.exceptions.handler;
 
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.practicum.shareit.exceptions.BadRequestException;
@@ -46,6 +47,16 @@ public class ExceptionHandler {
     }
 
     /**
+     * Ошибки сервера, код 500
+     * Error of server
+     */
+    @org.springframework.web.bind.annotation.ExceptionHandler
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorResponse handleIncorrectParameterException(final MissingServletRequestParameterException e) {
+        return new ErrorResponse("В параметрах не указан статус!");
+    }
+
+    /**
      * Плохой запрос, код 400
      * Bad Request
      */
@@ -72,7 +83,7 @@ public class ExceptionHandler {
     @org.springframework.web.bind.annotation.ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleIncorrectParameterException(final Throwable e) {
-//        return new ErrorResponse(e.getClass().getName());
-        return new ErrorResponse("Плохо составленный запрос! Проверь данные!");
+        return new ErrorResponse(e.getClass().getName());
+//        return new ErrorResponse("Плохо составленный запрос! Проверь данные!");
     }
 }
