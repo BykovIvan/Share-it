@@ -33,6 +33,10 @@ public interface ItemService {
      */
     List<Item> findAllItems(Long userId);
 
+    /**
+     * Находит вещь для любого пользователя
+     * Find item for any users
+     */
     Item findById(Long itemId);
 
     /**
@@ -47,7 +51,21 @@ public interface ItemService {
      */
     List<Item> findByText(Long userId, String text);
 
+    /**
+     * Проверяет наличие вещи в хранилище
+     * Check contain item in bd
+     */
     boolean containsById(Long itemId);
 
+    /**
+     * Добавляет коментарий для вещи, добавить может только booker
+     * Add comments for item, can only booker
+     */
     Comment addCommentToItem(Long userId, Long itemId, Comment comment);
+
+    /**
+     * Получение коментариев по id вещи
+     * Get comments by id of Item
+     */
+    List<Comment> getCommentByIdItem(Long itemId);
 }

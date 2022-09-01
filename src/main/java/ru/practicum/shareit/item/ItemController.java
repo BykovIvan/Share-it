@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 public class ItemController {
     private final ItemService itemService;
 
+
     public ItemController(ItemService itemService) {
         this.itemService = itemService;
     }
@@ -45,11 +46,12 @@ public class ItemController {
     }
 
     @GetMapping("/{id}")
-//    public ItemDtoWithComments itemById(@RequestHeader(value="X-Sharer-User-Id") Long userId,
-    public ItemDto itemById(@RequestHeader(value="X-Sharer-User-Id") Long userId,
+    public ItemDtoWithComments itemById(@RequestHeader(value="X-Sharer-User-Id") Long userId,
+//    public ItemDto itemById(@RequestHeader(value="X-Sharer-User-Id") Long userId,
                             @PathVariable("id") Long itemId) {
         log.info("Получен запрос к эндпоинту /items. Метод GET. Поиск по ID");
-        return ItemMapping.toItemDto(itemService.findByUserIdAndItemId(userId, itemId));
+//        return ItemMapping.toItemDto(itemService.findByUserIdAndItemId(userId, itemId));
+        return ItemMapping.toItemDtoWithComments(itemService.findByUserIdAndItemId(userId, itemId), itemService.getCommentByIdItem(itemId));
     }
 
     @GetMapping("/search")

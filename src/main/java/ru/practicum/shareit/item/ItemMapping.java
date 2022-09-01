@@ -2,6 +2,8 @@ package ru.practicum.shareit.item;
 
 import ru.practicum.shareit.user.User;
 
+import java.util.List;
+
 /**
  * Класс для преобразования объекса Item в объект ItemDto для предоставления пользователю и обратно
  * Class for converting an Item object to an ItemDto object for presentation to the user and vice versa
@@ -28,7 +30,7 @@ public class ItemMapping {
      * Метод для преобразования Item в ItemDtoWithComments
      * Method to convert Item to ItemDtoWithComments
      */
-    public static ItemDtoWithComments toItemDtoForById(Item item, Comment comment) {
+    public static ItemDtoWithComments toItemDtoWithComments(Item item, List<Comment> comment) {
         return ItemDtoWithComments.builder()
                 .id(item.getId())
                 .name(item.getName())

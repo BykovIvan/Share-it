@@ -1,6 +1,8 @@
 package ru.practicum.shareit.item;
 
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.booking.Booking;
+import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.exceptions.NoUserInHeaderException;
 import ru.practicum.shareit.exceptions.NotFoundException;
 import ru.practicum.shareit.user.UserService;
@@ -17,11 +19,14 @@ public class ItemServiceImpl implements ItemService {
     private final ItemMapper mapper;
     private final CommentRepository commentRepository;
 
-    public ItemServiceImpl(ItemRepository itemRepository, UserService userService, ItemMapper mapper, CommentRepository commentRepository) {
+    private final BookingRepository bookingRepository;
+
+    public ItemServiceImpl(ItemRepository itemRepository, UserService userService, ItemMapper mapper, CommentRepository commentRepository, BookingRepository bookingRepository) {
         this.itemRepository = itemRepository;
         this.userService = userService;
         this.mapper = mapper;
         this.commentRepository = commentRepository;
+        this.bookingRepository = bookingRepository;
     }
 
     @Override
@@ -118,10 +123,20 @@ public class ItemServiceImpl implements ItemService {
         if (comment.getText() == null || comment.getText().isEmpty()) {
             throw new NotFoundException("Комментарий отсутсвует!");
         }
+        List<Booking> booking = bookingRepository.findByItemId(itemId);
+        if (booking.isEmpty()){
+            throw new NotFoundException("Данный пользователь не бронировал вещь");
+        }
+        //пробежаться по списку и проверить завершенные
         comment.setItem(itemRepository.findById(itemId).get());
         comment.setAuthor(userService.findById(userId));
         commentRepository.save(comment);
         return commentRepository.save(comment);
+    }
+
+    @Override
+    public List<Comment> getCommentByIdItem(Long itemId){
+        return commentRepository.findByItemId(itemId);
     }
 }
 
