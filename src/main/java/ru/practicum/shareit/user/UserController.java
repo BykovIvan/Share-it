@@ -29,8 +29,6 @@ public class UserController {
                               @RequestBody UserDto userDto) {
         log.info("Получен запрос к эндпоинту /users обновление по id. Метод PATCH");
         return UserMapping.toUserDto(userService.update(userId, userDto));
-//        User user = UserMapping.toUser(userDto);
-//        return UserMapping.toUserDto(userService.update(userId, user));
     }
 
     @GetMapping

@@ -14,8 +14,21 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
             " or upper(i.description) like upper(concat('%', ?1, '%'))")
     List<Item> search(String text);
 
-
     List<Item> findByOwnerId(Long userID);
-    Item findByItemIdAndOwnerId(Long itemId, Long userID);
+
+//    @Query(" select i from Item i " +
+//            "where i.id = ?1 " +
+//            "and i.owner.id  = ?2")
+
+//    @Query(" select b from Booking b " +
+//            "JOIN Item i on b.item.id = i.id "+
+//            "where i.owner.id = ?1 " +
+//            "order by b.start asc ")
+
+//        @Query(" select i from Item i " +
+//                "JOIN User u on i.owner.id = u.id "+
+//                "where i.id = ?1 " +
+//                "and u.id  = ?2")
+    Item findByIdAndAvailable(Long itemId, Boolean available);
 
 }

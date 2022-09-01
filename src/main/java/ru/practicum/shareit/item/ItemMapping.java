@@ -18,6 +18,7 @@ public class ItemMapping {
                 .name(item.getName())
                 .description(item.getDescription())
                 .available(item.getAvailable())
+                .owner(item.getOwner().getId())
 //                .request(item.getRequest() != null ? item.getRequest().getId() : null)
                 .build();
 

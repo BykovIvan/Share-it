@@ -33,11 +33,13 @@ public interface ItemService {
      */
     List<Item> findAllItems(Long userId);
 
+    Item findById(Long itemId);
+
     /**
      * находит вещь пользователя по id вещи и id пользователя в запросе
      * finds a user item by item id and user id in the request
      */
-    Item findById(Long userId, Long itemId);
+    Item findByUserIdAndItemId(Long userId, Long itemId);
 
     /**
      * поиск вещи по слову в пути запроса

@@ -18,7 +18,6 @@ import javax.validation.constraints.NotNull;
 public class Item {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    @Column(name = "id")
     private Long id;
     @NotNull
     @NotBlank
@@ -29,7 +28,7 @@ public class Item {
     @NotNull
     @Column(name = "is_available")
     private Boolean available;                   //доступность
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     private User owner;                          //Владелец
 
 //    @ManyToOne(fetch = FetchType.EAGER)

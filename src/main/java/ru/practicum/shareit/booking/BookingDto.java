@@ -4,12 +4,9 @@ import lombok.Builder;
 import lombok.Data;
 import ru.practicum.shareit.item.ItemDto;
 import ru.practicum.shareit.item.StatusOfItem;
-import ru.practicum.shareit.item.Item;
-import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserDto;
 
 import java.sql.Timestamp;
-import java.time.LocalDate;
 
 @Data
 @Builder

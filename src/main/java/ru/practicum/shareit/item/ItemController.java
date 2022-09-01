@@ -49,7 +49,7 @@ public class ItemController {
     public ItemDto itemById(@RequestHeader(value="X-Sharer-User-Id") Long userId,
                             @PathVariable("id") Long itemId) {
         log.info("Получен запрос к эндпоинту /items. Метод GET. Поиск по ID");
-        return ItemMapping.toItemDto(itemService.findById(userId, itemId));
+        return ItemMapping.toItemDto(itemService.findByUserIdAndItemId(userId, itemId));
     }
 
     @GetMapping("/search")

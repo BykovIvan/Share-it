@@ -50,11 +50,11 @@ public class BookingServiceImpl implements BookingService {
         if (bookingDto.getEnd().before(bookingDto.getStart())) {
             throw new BadRequestException("Время окончания не может быть раньше начала бронирования!");
         }
-        Item item = itemService.findById(userId, bookingDto.getItemId());
+        Item item = itemService.findById(bookingDto.getItemId());
         User booker = userService.findById(userId);
         User owner = userService.findById(item.getOwner().getId());
         if (booker.getId().equals(owner.getId())) {
-            throw new BadRequestException("Владелец не может забронировать свою вещь!");
+            throw new NotFoundException("Владелец не может забронировать свою вещь!");
         }
         if (!item.getAvailable()) {
             throw new BadRequestException("Вещь не доступна!");
@@ -79,6 +79,12 @@ public class BookingServiceImpl implements BookingService {
             throw new NotFoundException("Такое бронирование не найдено!");
         }
         Booking booking = bookingOptional.get();
+        if (approved && booking.getStatus().equals(StatusOfItem.APPROVED)){
+            throw new BadRequestException("Статус уже подтвержден!");
+        }
+        if (!approved && booking.getStatus().equals(StatusOfItem.REJECTED)){
+            throw new BadRequestException("Статус уже не подтвержден!");
+        }
         Item item = bookingOptional.get().getItem();
         User owner = item.getOwner();
         if (!owner.getId().equals(userId)) {
@@ -109,7 +115,7 @@ public class BookingServiceImpl implements BookingService {
             if (booking.getBooker().getId().equals(userId) || booking.getItem().getOwner().getId().equals(userId)){
                 return booking;
             }else {
-                throw new NoUserInHeaderException("Не является владельцем или арентадателем вещи!");
+                throw new NotFoundException("Не является владельцем или арентадателем вещи!");
             }
         } else {
             throw new NotFoundException("Нет такого бронирования!");
@@ -142,21 +148,22 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<Booking> findItemByOwnerIdAndState(String state, Long userId) {
+        if (!userService.containsById(userId)) {
+            throw new NotFoundException("Такого пользователя не существует!");
+        }
         switch (state) {
             case "ALL":
-
-//                return bookingRepository.findByOwnerId(userId, Sort.by("start"));
-                return null;
+                return bookingRepository.searchBookingByOwnerId(userId);
             case "CURRENT":
-                return null;
+                return bookingRepository.searchBookingByOwnerIdCurrent(userId, new Timestamp(System.currentTimeMillis()));
             case "PAST":
-                return null;
+                return bookingRepository.searchBookingByOwnerIdPast(userId, new Timestamp(System.currentTimeMillis()));
             case "FUTURE":
-                return null;
+                return bookingRepository.searchBookingByOwnerIdFuture(userId, new Timestamp(System.currentTimeMillis()));
             case "WAITING":
-                return null;
+                return bookingRepository.searchBookingByOwnerIdWaitingAndRejected(userId, StatusOfItem.WAITING);
             case "REJECTED":
-                return null;
+                return bookingRepository.searchBookingByOwnerIdWaitingAndRejected(userId, StatusOfItem.REJECTED);
         }
         throw new NotFoundException("Такого состояния не существует!");
     }

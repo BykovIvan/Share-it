@@ -64,32 +64,27 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public List<Item> findAllItems(Long userId) {
         return itemRepository.findByOwnerId(userId);
-//        return itemRepository.findAll().stream()
-//                .filter(item -> item.getOwner().getId().equals(userId))
-//                .collect(Collectors.toList());
     }
 
     @Override
-    public Item findById(Long userId, Long itemId) {
+    public Item findById(Long itemId){
+        Optional<Item> item = itemRepository.findById(itemId);
+        if (!item.isPresent()){
+            throw new NotFoundException("Такой вещи не найдено");
+        }
+        return item.get();
+    }
+
+    @Override
+    public Item findByUserIdAndItemId(Long userId, Long itemId) {
         if (!userService.containsById(userId)) {
             throw new NotFoundException("Такого пользователя не существует!");
         }
-        Item item = itemRepository.findByItemIdAndOwnerId(itemId, userId);
+        Item item = itemRepository.findByIdAndAvailable(itemId, true);
         if (item == null) {
-            throw new NotFoundException("Такой вещи у пользователя с id " + userId + " нет!");
+            throw new NotFoundException("Такой вещи не существует!");
         }
         return item;
-
-
-//        Item getItemDto = itemRepository.findAll().stream()
-//                .filter(item -> item.getId().equals(itemId))
-//                .findAny()
-//                .orElse(null);
-//        if (getItemDto == null) {
-//            throw new NotFoundException("Такой вещи у пользователя с id " + userId + " нет!");
-//        }
-//        return getItemDto;
-
     }
 
     @Override

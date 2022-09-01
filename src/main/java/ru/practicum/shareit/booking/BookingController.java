@@ -2,12 +2,8 @@ package ru.practicum.shareit.booking;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.item.ItemDto;
-import ru.practicum.shareit.item.ItemMapping;
 
-import javax.validation.Valid;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -25,8 +21,7 @@ public class BookingController {
     public BookingDto create(@RequestHeader(value="X-Sharer-User-Id", required = false) Long userId,
                              @RequestBody BookingDto bookingDto) {
         log.info("Получен запрос к эндпоинту /bookings. Метод POST");
-        Booking booking = bookingService.create(userId, bookingDto);
-        return BookingMapping.toBookingDto(booking);
+        return BookingMapping.toBookingDto(bookingService.create(userId, bookingDto));
     }
 
     /**
@@ -65,7 +60,10 @@ public class BookingController {
     @GetMapping("/owner")
     public List<BookingDto> findItemByOwnerIdAndState(@RequestHeader(value = "X-Sharer-User-Id", required = false) Long userId,
                                               @RequestParam(value = "state", required = false) String state){
-        log.info("Получен запрос к эндпоинту /bookings. Метод GET по ID");
+        if (state == null){
+            state = "ALL";
+        }
+        log.info("Получен запрос к эндпоинту /bookings. Метод GET по вещам владельца");
         return bookingService.findItemByOwnerIdAndState(state, userId).stream()
                 .map(BookingMapping::toBookingDto)
                 .collect(Collectors.toList());
