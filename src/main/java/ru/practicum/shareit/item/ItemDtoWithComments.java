@@ -11,12 +11,11 @@ import java.util.List;
 public class ItemDtoWithComments {
 
     private Long id;
-//    private String name;
-//    private String description;
+    private String name;
+    private String description;
     private Boolean available;
     private Booking lastBooking;
     private Booking nextBooking;
-    private
 //    private Long request;
     private List<Comment> comment;
 

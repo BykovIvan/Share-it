@@ -136,6 +136,10 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<Comment> getCommentByIdItem(Long itemId){
+        List<Comment> list = commentRepository.findByItemId(itemId);
+        if (list == null){
+            return new ArrayList<>();
+        }
         return commentRepository.findByItemId(itemId);
     }
 }

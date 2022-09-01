@@ -83,7 +83,7 @@ public class ExceptionHandler {
     @org.springframework.web.bind.annotation.ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleIncorrectParameterException(final Throwable e) {
-//        return new ErrorResponse(e.getClass().getName());
-        return new ErrorResponse("Плохо составленный запрос! Проверь данные!");
+        return new ErrorResponse(e.getClass().getName());
+//        return new ErrorResponse("Плохо составленный запрос! Проверь данные!");
     }
 }
