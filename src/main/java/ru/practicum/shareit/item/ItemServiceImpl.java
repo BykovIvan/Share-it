@@ -7,6 +7,7 @@ import ru.practicum.shareit.exceptions.NoUserInHeaderException;
 import ru.practicum.shareit.exceptions.NotFoundException;
 import ru.practicum.shareit.user.UserService;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -18,7 +19,6 @@ public class ItemServiceImpl implements ItemService {
     private final UserService userService;
     private final ItemMapper mapper;
     private final CommentRepository commentRepository;
-
     private final BookingRepository bookingRepository;
 
     public ItemServiceImpl(ItemRepository itemRepository, UserService userService, ItemMapper mapper, CommentRepository commentRepository, BookingRepository bookingRepository) {
@@ -123,24 +123,28 @@ public class ItemServiceImpl implements ItemService {
         if (comment.getText() == null || comment.getText().isEmpty()) {
             throw new NotFoundException("Комментарий отсутсвует!");
         }
-        List<Booking> booking = bookingRepository.findByItemId(itemId);
-        if (booking.isEmpty()){
-            throw new NotFoundException("Данный пользователь не бронировал вещь");
-        }
-        //пробежаться по списку и проверить завершенные
+//        List<Booking> booking = bookingRepository.findByItemId(itemId);
+//        if (booking.isEmpty()){
+//            throw new NotFoundException("Данный пользователь не бронировал вещь");
+//        }
+
+        //TODO пробежаться по списку и проверить завершенные
+
         comment.setItem(itemRepository.findById(itemId).get());
         comment.setAuthor(userService.findById(userId));
-        commentRepository.save(comment);
+        comment.setCreated(new Timestamp(System.currentTimeMillis()));
         return commentRepository.save(comment);
     }
 
     @Override
     public List<Comment> getCommentByIdItem(Long itemId){
-        List<Comment> list = commentRepository.findByItemId(itemId);
-        if (list == null){
-            return new ArrayList<>();
-        }
-        return commentRepository.findByItemId(itemId);
+//        List<Comment> list = new ArrayList<>();
+//        Comment comment = commentRepository.findAllByItemId(itemId);
+//        if (list == null){
+//            return new ArrayList<>();
+//        }
+//        list.add(comment);
+        return commentRepository.findAllByItemId(itemId);
     }
 }
 

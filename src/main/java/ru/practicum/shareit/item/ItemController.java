@@ -50,6 +50,9 @@ public class ItemController {
 //    public ItemDto itemById(@RequestHeader(value="X-Sharer-User-Id") Long userId,
                             @PathVariable("id") Long itemId) {
         log.info("Получен запрос к эндпоинту /items. Метод GET. Поиск по ID");
+        Item item = itemService.findByUserIdAndItemId(userId, itemId);
+        List<Comment> comment = itemService.getCommentByIdItem(itemId);
+        ItemDtoWithComments itemDto = ItemMapping.toItemDtoWithComments(item, comment);
 //        return ItemMapping.toItemDto(itemService.findByUserIdAndItemId(userId, itemId));
         return ItemMapping.toItemDtoWithComments(itemService.findByUserIdAndItemId(userId, itemId), itemService.getCommentByIdItem(itemId));
     }
