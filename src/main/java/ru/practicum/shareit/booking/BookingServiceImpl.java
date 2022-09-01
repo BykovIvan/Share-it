@@ -1,5 +1,6 @@
 package ru.practicum.shareit.booking;
 
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exceptions.BadRequestException;
 import ru.practicum.shareit.exceptions.NoUserInHeaderException;
@@ -11,6 +12,8 @@ import ru.practicum.shareit.item.StatusOfItem;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserService;
 
+
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -115,24 +118,46 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public Booking findByState(String state, Long userId) {
+    public List<Booking> findBookingByUserIdAndState(String state, Long userId) {
+        if (!userService.containsById(userId)) {
+            throw new NotFoundException("Такого пользователя не существует!");
+        }
         switch (state) {
             case "ALL":
-                //сформировать запросы для всех и тп.
-                break;
+                return bookingRepository.findByBookerId(userId, Sort.by("start"));
             case "CURRENT":
-
-                break;
+                return bookingRepository.findByBookerIdAndStartAfterAndEndBefore(userId, new Timestamp(System.currentTimeMillis()), new Timestamp(System.currentTimeMillis()), Sort.by("start"));
             case "PAST":
-
-                break;
+                return bookingRepository.findByBookerIdAndEndIsBefore(userId, new Timestamp(System.currentTimeMillis()), Sort.by("start"));
             case "FUTURE":
-
-                break;
+                return bookingRepository.findByBookerIdAndStartAfter(userId, new Timestamp(System.currentTimeMillis()), Sort.by("start"));
+            case "WAITING":
+                return bookingRepository.findByBookerIdAndStatus(userId, StatusOfItem.WAITING, Sort.by("start"));
             case "REJECTED":
-
-                break;
+                return bookingRepository.findByBookerIdAndStatus(userId, StatusOfItem.REJECTED, Sort.by("start"));
         }
-        return null;
+        throw new NotFoundException("Такого состояния не существует!");
+    }
+
+
+    @Override
+    public List<Booking> findItemByOwnerIdAndState(String state, Long userId) {
+        switch (state) {
+            case "ALL":
+
+//                return bookingRepository.findByOwnerId(userId, Sort.by("start"));
+                return null;
+            case "CURRENT":
+                return null;
+            case "PAST":
+                return null;
+            case "FUTURE":
+                return null;
+            case "WAITING":
+                return null;
+            case "REJECTED":
+                return null;
+        }
+        throw new NotFoundException("Такого состояния не существует!");
     }
 }

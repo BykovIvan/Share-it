@@ -63,10 +63,10 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<Item> findAllItems(Long userId) {
-        //TODO Переделать запрос в базу данных через запрос
-        return itemRepository.findAll().stream()
-                .filter(item -> item.getOwner().getId().equals(userId))
-                .collect(Collectors.toList());
+        return itemRepository.findByOwnerId(userId);
+//        return itemRepository.findAll().stream()
+//                .filter(item -> item.getOwner().getId().equals(userId))
+//                .collect(Collectors.toList());
     }
 
     @Override
@@ -74,15 +74,21 @@ public class ItemServiceImpl implements ItemService {
         if (!userService.containsById(userId)) {
             throw new NotFoundException("Такого пользователя не существует!");
         }
-        //TODO Переделать запрос в базу данных через запрос
-        Item getItemDto = itemRepository.findAll().stream()
-                .filter(item -> item.getId().equals(itemId))
-                .findAny()
-                .orElse(null);
-        if (getItemDto == null) {
+        Item item = itemRepository.findByItemIdAndOwnerId(itemId, userId);
+        if (item == null) {
             throw new NotFoundException("Такой вещи у пользователя с id " + userId + " нет!");
         }
-        return getItemDto;
+        return item;
+
+
+//        Item getItemDto = itemRepository.findAll().stream()
+//                .filter(item -> item.getId().equals(itemId))
+//                .findAny()
+//                .orElse(null);
+//        if (getItemDto == null) {
+//            throw new NotFoundException("Такой вещи у пользователя с id " + userId + " нет!");
+//        }
+//        return getItemDto;
 
     }
 
@@ -94,12 +100,8 @@ public class ItemServiceImpl implements ItemService {
         if (text == null || text.isEmpty()) {
             return new ArrayList<>();
         } else {
-//            return itemRepository.search(text).stream()
-            //TODO Переделать запрос в базу данных через запрос
-            return itemRepository.findAll().stream()
+            return itemRepository.search(text).stream()
                     .filter(Item::getAvailable)
-                    .filter(item -> item.getName().toLowerCase().contains(text.toLowerCase())
-                            || item.getDescription().toLowerCase().contains(text.toLowerCase()))
                     .collect(Collectors.toList());
         }
     }

@@ -6,7 +6,9 @@ import ru.practicum.shareit.item.ItemDto;
 import ru.practicum.shareit.item.ItemMapping;
 
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @Slf4j
@@ -46,21 +48,27 @@ public class BookingController {
         return BookingMapping.toBookingDto(bookingService.findById(bookingId, userId));
     }
 
-    //TODO Возможно будет List на выход!!!!!!
+    //Получение списка всех бронирований текущего пользователя.
     @GetMapping()
-    public BookingDto findByState(@RequestHeader(value = "X-Sharer-User-Id", required = false) Long userId,
-                               @RequestParam(value = "state", required = false) String state){
+    public List<BookingDto> findBookingByUserIdAndState(@RequestHeader(value = "X-Sharer-User-Id", required = false) Long userId,
+                                        @RequestParam(value = "state", required = false) String state){
         if (state == null){
             state = "ALL";
         }
         log.info("Получен запрос к эндпоинту /bookings. Метод GET по State");
-        return BookingMapping.toBookingDto(bookingService.findByState(state, userId));
+        return bookingService.findBookingByUserIdAndState(state, userId).stream()
+                .map(BookingMapping::toBookingDto)
+                .collect(Collectors.toList());
     }
+
+    //Получение списка бронирований для всех вещей текущего пользователя.
     @GetMapping("/owner")
-    public BookingDto findByIdOfOwner(@RequestHeader(value = "X-Sharer-User-Id", required = false) Long userId,
+    public List<BookingDto> findItemByOwnerIdAndState(@RequestHeader(value = "X-Sharer-User-Id", required = false) Long userId,
                                               @RequestParam(value = "state", required = false) String state){
         log.info("Получен запрос к эндпоинту /bookings. Метод GET по ID");
-        return null;
+        return bookingService.findItemByOwnerIdAndState(state, userId).stream()
+                .map(BookingMapping::toBookingDto)
+                .collect(Collectors.toList());
     }
 
 }
