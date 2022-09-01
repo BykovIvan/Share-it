@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class ItemDtoForById {
+public class ItemDtoWithComments {
 
     private Long id;
     private String name;
