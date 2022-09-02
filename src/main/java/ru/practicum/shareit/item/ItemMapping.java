@@ -32,13 +32,13 @@ public class ItemMapping {
      * Метод для преобразования Item в ItemDtoWithComments
      * Method to convert Item to ItemDtoWithComments
      */
-    public static ItemDtoWithComments toItemDtoWithComments(Long userId, Item item, List<Comment> comment, List<Booking> bookings) {
+    public static ItemDtoWithComments toItemDtoWithComments(Long userId, Item item, List<CommentDto> comment, List<Booking> bookings) {
         ItemDtoWithComments itemDtoWithComments = ItemDtoWithComments.builder()
                 .id(item.getId())
                 .name(item.getName())
                 .description(item.getDescription())
                 .available(item.getAvailable())
-                .comment(comment)
+                .comments(comment)
                 .build();
 
         if (bookings.isEmpty()){

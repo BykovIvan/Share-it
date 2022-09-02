@@ -2,6 +2,7 @@ package ru.practicum.shareit.item;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.user.UserService;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -13,9 +14,12 @@ import java.util.stream.Collectors;
 public class ItemController {
     private final ItemService itemService;
 
+    private final UserService userService;
 
-    public ItemController(ItemService itemService) {
+
+    public ItemController(ItemService itemService, UserService userService) {
         this.itemService = itemService;
+        this.userService = userService;
     }
 
     /**
@@ -37,11 +41,17 @@ public class ItemController {
     }
 
     @GetMapping
-//    public List<ItemDtoWithComments> allItems(@RequestHeader(value="X-Sharer-User-Id") Long userId) {
-    public List<ItemDto> allItems(@RequestHeader(value="X-Sharer-User-Id") Long userId) {
+    public List<ItemDtoWithComments> allItems(@RequestHeader(value="X-Sharer-User-Id") Long userId) {
+//    public List<ItemDto> allItems(@RequestHeader(value="X-Sharer-User-Id") Long userId) {
         log.info("Получен запрос к эндпоинту /items. Метод GET. Поиск всех вещей");
         return itemService.findAllItems(userId).stream()
-                .map(ItemMapping::toItemDto)
+//                .map(ItemMapping::toItemDto)
+                .map((Item item) -> ItemMapping.toItemDtoWithComments(userId,
+                        itemService.findByUserIdAndItemId(userId, item.getId()),
+                        itemService.getCommentByIdItem(item.getId()).stream()
+                                .map(CommentMapping::toCommentDto)
+                                .collect(Collectors.toList()),
+                        itemService.getBookingByIdItem(item.getId())))
                 .collect(Collectors.toList());
     }
 
@@ -56,7 +66,9 @@ public class ItemController {
 //        return ItemMapping.toItemDto(itemService.findByUserIdAndItemId(userId, itemId));
         return ItemMapping.toItemDtoWithComments(userId,
                                                 itemService.findByUserIdAndItemId(userId, itemId),
-                                                itemService.getCommentByIdItem(itemId),
+                                                itemService.getCommentByIdItem(itemId).stream()
+                                                        .map(CommentMapping::toCommentDto)
+                                                        .collect(Collectors.toList()),
                                                 itemService.getBookingByIdItem(itemId));
     }
 
@@ -70,11 +82,11 @@ public class ItemController {
     }
 
     @PostMapping("/{id}/comment")
-    public Comment addComment(@RequestHeader(value="X-Sharer-User-Id") Long userId,
+    public CommentDto addComment(@RequestHeader(value="X-Sharer-User-Id") Long userId,
                               @PathVariable("id") Long itemId,
-                              @RequestBody Comment comment){
+                              @RequestBody CommentDto commentDto){
         log.info("Получен запрос к эндпоинту /items/{id}/comment. Метод Post. Добавление комментария");
-        return itemService.addCommentToItem(userId, itemId, comment);
+        return CommentMapping.toCommentDto(itemService.addCommentToItem(userId, itemId, CommentMapping.toComment(commentDto, itemService.findById(itemId), userService.findById(userId))));
     }
 
 }

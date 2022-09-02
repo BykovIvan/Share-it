@@ -17,6 +17,6 @@ public class ItemDtoWithComments {
     private Booking lastBooking;
     private Booking nextBooking;
 //    private Long request;
-    private List<Comment> comment;
+    private List<CommentDto> comments;
 
 }

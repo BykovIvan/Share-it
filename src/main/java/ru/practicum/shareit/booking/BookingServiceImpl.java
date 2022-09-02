@@ -17,7 +17,6 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 
 @Service
 public class BookingServiceImpl implements BookingService {
@@ -159,7 +158,7 @@ public class BookingServiceImpl implements BookingService {
             case "REJECTED":
                 return bookingRepository.findByBookerIdAndStatus(userId, StatusOfItem.REJECTED, Sort.by("start"));
         }
-        throw new NotFoundException("Такого состояния не существует!");
+        throw new BadRequestException("Такого состояния не существует!");
     }
 
 
@@ -182,6 +181,6 @@ public class BookingServiceImpl implements BookingService {
             case "REJECTED":
                 return bookingRepository.searchBookingByOwnerIdWaitingAndRejected(userId, StatusOfItem.REJECTED);
         }
-        throw new NotFoundException("Такого состояния не существует!");
+        throw new BadRequestException("Такого состояния не существует!");
     }
 }

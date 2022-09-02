@@ -4,11 +4,13 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.BookingRepository;
+import ru.practicum.shareit.exceptions.BadRequestException;
 import ru.practicum.shareit.exceptions.NoUserInHeaderException;
 import ru.practicum.shareit.exceptions.NotFoundException;
 import ru.practicum.shareit.user.UserService;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -122,12 +124,24 @@ public class ItemServiceImpl implements ItemService {
             throw new NotFoundException("Такой вещи не существует!");
         }
         if (comment.getText() == null || comment.getText().isEmpty()) {
-            throw new NotFoundException("Комментарий отсутсвует!");
+            throw new BadRequestException("Комментарий отсутсвует!");
         }
-//        List<Booking> booking = bookingRepository.findByItemId(itemId);
-//        if (booking.isEmpty()){
-//            throw new NotFoundException("Данный пользователь не бронировал вещь");
-//        }
+//        List<Booking> booking = bookingRepository.findByItemId(itemId, Sort.by("start"));
+        List<Booking> booking = bookingRepository.findByItemIdAndBookerId(itemId, userId, Sort.by("start"));
+        if (booking.isEmpty()){
+            throw new NotFoundException("Бронирование данной вещи не существует!");
+        }
+        for (Booking bookingGet : booking) {
+            if (bookingGet.getEnd().toLocalDateTime().isBefore(LocalDateTime.now())){
+                break;
+//                throw new BadRequestException("Бронирование еще не завершено!");
+            }else {
+                throw new BadRequestException("Пока ни одного бронирования не завершено!");
+            }
+//            else if (bookingGet.getEnd().toLocalDateTime().isAfter(LocalDateTime.now())){
+//                throw new BadRequestException("Бронирование еще не завершено 2!");
+//            }
+        }
 
         //TODO пробежаться по списку и проверить завершенные
 
