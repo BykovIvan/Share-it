@@ -10,9 +10,9 @@ import org.mapstruct.*;
 public interface UserMapper {
 
 //    @Mapping(target = "id", ignore = true)
-    User map(UserDto userDto);
+//    User map(UserDto userDto);
 
-    UserDto map(User user);
+//    UserDto map(User user);
 //    @InheritConfiguration
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateUserFromDto(UserDto userDto, @MappingTarget User user);

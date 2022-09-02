@@ -1,5 +1,7 @@
 package ru.practicum.shareit.item;
 
+import ru.practicum.shareit.booking.Booking;
+
 import java.util.List;
 
 /**
@@ -68,4 +70,10 @@ public interface ItemService {
      * Get comments by id of Item
      */
     List<Comment> getCommentByIdItem(Long itemId);
+
+    /**
+     * Получение бронирований по id вещи
+     * Get Bookings by id of Item
+     */
+    List<Booking> getBookingByIdItem(Long itemId);
 }

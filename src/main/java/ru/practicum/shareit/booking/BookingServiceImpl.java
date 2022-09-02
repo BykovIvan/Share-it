@@ -14,6 +14,7 @@ import ru.practicum.shareit.user.UserService;
 
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -38,18 +39,33 @@ public class BookingServiceImpl implements BookingService {
         if (!itemService.containsById(bookingDto.getItemId())) {
             throw new NotFoundException("Такой вещи не существует!");
         }
-        long startDay = TimeUnit.MILLISECONDS.toDays(bookingDto.getStart().getTime());
-        long endDay = TimeUnit.MILLISECONDS.toDays(bookingDto.getEnd().getTime());
-        long nowDate = TimeUnit.MILLISECONDS.toDays(System.currentTimeMillis());
-        if (startDay < nowDate) {
+        LocalDateTime startDay = bookingDto.getStart();
+        LocalDateTime endDay = bookingDto.getEnd();
+        LocalDateTime nowDate = LocalDateTime.now();
+        if (startDay.isBefore(nowDate)){
             throw new BadRequestException("Время начала не может быть в прошлом!");
         }
-        if (endDay < nowDate) {
+        if (endDay.isBefore(nowDate)) {
             throw new BadRequestException("Время окончания не может быть в прошлом!");
         }
-        if (bookingDto.getEnd().before(bookingDto.getStart())) {
+        if (bookingDto.getEnd().isBefore(bookingDto.getStart())) {
             throw new BadRequestException("Время окончания не может быть раньше начала бронирования!");
         }
+
+//        long startDay = TimeUnit.MILLISECONDS.toDays(bookingDto.getStart().getTime());
+//        long endDay = TimeUnit.MILLISECONDS.toDays(bookingDto.getEnd().getTime());
+//        long nowDate = TimeUnit.MILLISECONDS.toDays(System.currentTimeMillis());
+//        if (startDay < nowDate) {
+//            throw new BadRequestException("Время начала не может быть в прошлом!");
+//        }
+//        if (endDay < nowDate) {
+//            throw new BadRequestException("Время окончания не может быть в прошлом!");
+//        }
+//        if (bookingDto.getEnd().before(bookingDto.getStart())) {
+//            throw new BadRequestException("Время окончания не может быть раньше начала бронирования!");
+//        }
+
+
         Item item = itemService.findById(bookingDto.getItemId());
         User booker = userService.findById(userId);
         User owner = userService.findById(item.getOwner().getId());
@@ -59,11 +75,12 @@ public class BookingServiceImpl implements BookingService {
         if (!item.getAvailable()) {
             throw new BadRequestException("Вещь не доступна!");
         }
-        List<Booking> listOfItemsById = bookingRepository.findByItemId(item.getId());
+        List<Booking> listOfItemsById = bookingRepository.findByItemId(item.getId(), Sort.by("start"));
 
         for (Booking booking : listOfItemsById) {
-            if ((bookingDto.getStart().before(booking.getStart()) && bookingDto.getEnd().before(booking.getStart()))
-                || (bookingDto.getStart().after(booking.getEnd()) && bookingDto.getEnd().after(booking.getEnd()))) {
+            if ((bookingDto.getStart().isBefore(booking.getStart().toLocalDateTime()) && bookingDto.getEnd().isBefore(booking.getStart().toLocalDateTime()))
+                || (bookingDto.getStart().isAfter(booking.getEnd().toLocalDateTime()) && bookingDto.getEnd().isAfter(booking.getEnd().toLocalDateTime()))) {
+
             } else {
                 throw new BadRequestException("Вещь в данный переод времени забронирована!");
             }

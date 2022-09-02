@@ -1,5 +1,6 @@
 package ru.practicum.shareit.item;
 
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.BookingRepository;
@@ -138,13 +139,12 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<Comment> getCommentByIdItem(Long itemId){
-//        List<Comment> list = new ArrayList<>();
-//        Comment comment = commentRepository.findAllByItemId(itemId);
-//        if (list == null){
-//            return new ArrayList<>();
-//        }
-//        list.add(comment);
         return commentRepository.findAllByItemId(itemId);
+    }
+
+    @Override
+    public List<Booking> getBookingByIdItem(Long itemId){
+        return bookingRepository.findByItemId(itemId, Sort.by("start"));
     }
 }
 

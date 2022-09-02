@@ -6,6 +6,8 @@ import ru.practicum.shareit.item.StatusOfItem;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserMapping;
 
+import java.sql.Timestamp;
+
 /**
  * Класс для преобразования объекса Booking в объект BookingDto для предоставления пользователю и обратно
  * Class for converting an Booking object to an BookingDto object for presentation to the user and vice versa
@@ -18,8 +20,8 @@ public class BookingMapping {
     public static BookingDto toBookingDto(Booking booking) {
         return BookingDto.builder()
                 .id(booking.getId())
-                .start(booking.getStart())
-                .end(booking.getEnd())
+                .start(booking.getStart().toLocalDateTime())
+                .end(booking.getEnd().toLocalDateTime())
                 .item(ItemMapping.toItemDto(booking.getItem()))
                 .itemId(booking.getItem().getId())
                 .status(booking.getStatus())
@@ -36,8 +38,8 @@ public class BookingMapping {
         return Booking.builder()
                 .booker(booker)
                 .item(item)
-                .start(bookingDto.getStart())
-                .end(bookingDto.getEnd())
+                .start(Timestamp.valueOf(bookingDto.getStart()))
+                .end(Timestamp.valueOf(bookingDto.getEnd()))
                 .status(StatusOfItem.WAITING)
                 .build();
     }

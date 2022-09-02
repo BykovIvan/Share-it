@@ -1,7 +1,9 @@
 package ru.practicum.shareit.item;
 
+import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.user.User;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -30,8 +32,8 @@ public class ItemMapping {
      * Метод для преобразования Item в ItemDtoWithComments
      * Method to convert Item to ItemDtoWithComments
      */
-    public static ItemDtoWithComments toItemDtoWithComments(Item item, List<Comment> comment) {
-        return ItemDtoWithComments.builder()
+    public static ItemDtoWithComments toItemDtoWithComments(Long userId, Item item, List<Comment> comment, List<Booking> bookings) {
+        ItemDtoWithComments itemDtoWithComments = ItemDtoWithComments.builder()
                 .id(item.getId())
                 .name(item.getName())
                 .description(item.getDescription())
@@ -39,6 +41,29 @@ public class ItemMapping {
                 .comment(comment)
                 .build();
 
+        if (bookings.isEmpty()){
+            return itemDtoWithComments;
+        }
+        if (item.getOwner().getId().equals(userId)) {
+            LocalDateTime timeNow = LocalDateTime.now();
+            for (Booking booking : bookings) {
+                if (booking.getStatus().equals(StatusOfItem.APPROVED) ||
+                        booking.getStatus().equals(StatusOfItem.WAITING)){
+                    LocalDateTime timeStart = booking.getStart().toLocalDateTime().minusHours(3);
+                    LocalDateTime timeEnd = booking.getEnd().toLocalDateTime().minusHours(3);
+                    if (timeStart.isBefore(timeNow) && timeEnd.isBefore(timeNow)){
+                        itemDtoWithComments.setLastBooking(booking);
+                    }
+                    if (timeStart.isAfter(timeNow) && timeEnd.isAfter(timeNow)){
+                        if (itemDtoWithComments.getNextBooking() == null){
+                            itemDtoWithComments.setNextBooking(booking);
+                        }
+                    }
+                }
+
+            }
+        }
+        return itemDtoWithComments;
     }
 
     /**

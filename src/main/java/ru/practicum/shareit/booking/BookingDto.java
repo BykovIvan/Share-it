@@ -7,13 +7,14 @@ import ru.practicum.shareit.item.StatusOfItem;
 import ru.practicum.shareit.user.UserDto;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @Data
 @Builder
 public class BookingDto {
     private Long id;
-    private Timestamp start;
-    private Timestamp end;
+    private LocalDateTime start;
+    private LocalDateTime end;
     private ItemDto item;                      //Вещь
     private Long itemId;
     private Long owner;

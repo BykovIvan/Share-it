@@ -25,7 +25,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     List<Booking> findByBookerIdAndStatus(Long bookerId, StatusOfItem status, Sort sort);
 
-    List<Booking> findByItemId(Long itemId);
+    List<Booking> findByItemId(Long itemId, Sort sort);
 
     @Query(" select b from Booking b " +
             "JOIN Item i on b.item.id = i.id "+

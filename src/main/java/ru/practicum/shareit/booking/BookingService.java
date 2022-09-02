@@ -8,6 +8,5 @@ public interface BookingService {
     Booking findById(Long id, Long userId);
     List<Booking> findBookingByUserIdAndState(String state, Long userId);
     Booking approvedStatusOfItem(Long userId, Long bookingId, Boolean approved);
-
     List<Booking> findItemByOwnerIdAndState(String state, Long userId);
 }
