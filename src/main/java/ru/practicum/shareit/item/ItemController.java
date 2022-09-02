@@ -2,6 +2,7 @@ package ru.practicum.shareit.item;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.booking.BookingMapping;
 import ru.practicum.shareit.user.UserService;
 
 import javax.validation.Valid;
@@ -51,7 +52,9 @@ public class ItemController {
                         itemService.getCommentByIdItem(item.getId()).stream()
                                 .map(CommentMapping::toCommentDto)
                                 .collect(Collectors.toList()),
-                        itemService.getBookingByIdItem(item.getId())))
+                        itemService.getBookingByIdItem(item.getId()).stream()
+                                .map(BookingMapping::toBookingDto)
+                                .collect(Collectors.toList())))
                 .collect(Collectors.toList());
     }
 
@@ -69,7 +72,9 @@ public class ItemController {
                                                 itemService.getCommentByIdItem(itemId).stream()
                                                         .map(CommentMapping::toCommentDto)
                                                         .collect(Collectors.toList()),
-                                                itemService.getBookingByIdItem(itemId));
+                                                itemService.getBookingByIdItem(itemId).stream()
+                                                        .map(BookingMapping::toBookingDto)
+                                                        .collect(Collectors.toList()));
     }
 
     @GetMapping("/search")

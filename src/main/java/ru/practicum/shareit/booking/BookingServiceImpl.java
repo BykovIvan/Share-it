@@ -146,19 +146,19 @@ public class BookingServiceImpl implements BookingService {
         }
         switch (state) {
             case "ALL":
-                return bookingRepository.findByBookerId(userId, Sort.by("start"));
+                return bookingRepository.findByBookerId(userId, Sort.by(Sort.Direction.DESC, "id"));
             case "CURRENT":
-                return bookingRepository.findByBookerIdAndStartAfterAndEndBefore(userId, new Timestamp(System.currentTimeMillis()), new Timestamp(System.currentTimeMillis()), Sort.by("start"));
+                return bookingRepository.findByBookerIdAndStartAfterAndEndBefore(userId, new Timestamp(System.currentTimeMillis()), new Timestamp(System.currentTimeMillis()), Sort.by(Sort.Direction.DESC, "id"));
             case "PAST":
-                return bookingRepository.findByBookerIdAndEndIsBefore(userId, new Timestamp(System.currentTimeMillis()), Sort.by("start"));
+                return bookingRepository.findByBookerIdAndEndIsBefore(userId, new Timestamp(System.currentTimeMillis()), Sort.by(Sort.Direction.DESC, "id"));
             case "FUTURE":
-                return bookingRepository.findByBookerIdAndStartAfter(userId, new Timestamp(System.currentTimeMillis()), Sort.by("start"));
+                return bookingRepository.findByBookerIdAndStartAfter(userId, new Timestamp(System.currentTimeMillis()), Sort.by(Sort.Direction.DESC, "id"));
             case "WAITING":
-                return bookingRepository.findByBookerIdAndStatus(userId, StatusOfItem.WAITING, Sort.by("start"));
+                return bookingRepository.findByBookerIdAndStatus(userId, StatusOfItem.WAITING, Sort.by(Sort.Direction.DESC, "id"));
             case "REJECTED":
-                return bookingRepository.findByBookerIdAndStatus(userId, StatusOfItem.REJECTED, Sort.by("start"));
+                return bookingRepository.findByBookerIdAndStatus(userId, StatusOfItem.REJECTED, Sort.by(Sort.Direction.DESC, "id"));
         }
-        throw new BadRequestException("Такого состояния не существует!");
+        throw new NoUserInHeaderException("Unknown state: UNSUPPORTED_STATUS");
     }
 
 
@@ -181,6 +181,6 @@ public class BookingServiceImpl implements BookingService {
             case "REJECTED":
                 return bookingRepository.searchBookingByOwnerIdWaitingAndRejected(userId, StatusOfItem.REJECTED);
         }
-        throw new BadRequestException("Такого состояния не существует!");
+        throw new NoUserInHeaderException("Unknown state: UNSUPPORTED_STATUS");
     }
 }

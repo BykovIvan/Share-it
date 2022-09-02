@@ -26,6 +26,7 @@ public class BookingMapping {
                 .itemId(booking.getItem().getId())
                 .status(booking.getStatus())
                 .booker(UserMapping.toUserDto(booking.getBooker()))
+                .bookerId(UserMapping.toUserDto(booking.getBooker()).getId())
                 .owner(booking.getItem().getOwner().getId())
                 .build();
     }
