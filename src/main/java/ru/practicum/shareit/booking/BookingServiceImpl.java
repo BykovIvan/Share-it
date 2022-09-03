@@ -148,7 +148,7 @@ public class BookingServiceImpl implements BookingService {
             case "ALL":
                 return bookingRepository.findByBookerId(userId, Sort.by(Sort.Direction.DESC, "id"));
             case "CURRENT":
-                return bookingRepository.findByBookerIdAndStartAfterAndEndBefore(userId, new Timestamp(System.currentTimeMillis()), new Timestamp(System.currentTimeMillis()), Sort.by(Sort.Direction.DESC, "id"));
+                return bookingRepository.findByBookerIdByUserId(userId, new Timestamp(System.currentTimeMillis()));
             case "PAST":
                 return bookingRepository.findByBookerIdAndEndIsBefore(userId, new Timestamp(System.currentTimeMillis()), Sort.by(Sort.Direction.DESC, "id"));
             case "FUTURE":
@@ -169,17 +169,17 @@ public class BookingServiceImpl implements BookingService {
         }
         switch (state) {
             case "ALL":
-                return bookingRepository.searchBookingByOwnerId(userId);
+                return bookingRepository.searchOwnerByOwnerId(userId);
             case "CURRENT":
-                return bookingRepository.searchBookingByOwnerIdCurrent(userId, new Timestamp(System.currentTimeMillis()));
+                return bookingRepository.searchOwnerByOwnerIdCurrent(userId, new Timestamp(System.currentTimeMillis()));
             case "PAST":
-                return bookingRepository.searchBookingByOwnerIdPast(userId, new Timestamp(System.currentTimeMillis()));
+                return bookingRepository.searchOwnerByOwnerIdPast(userId, new Timestamp(System.currentTimeMillis()));
             case "FUTURE":
-                return bookingRepository.searchBookingByOwnerIdFuture(userId, new Timestamp(System.currentTimeMillis()));
+                return bookingRepository.searchOwnerByOwnerIdFuture(userId, new Timestamp(System.currentTimeMillis()));
             case "WAITING":
-                return bookingRepository.searchBookingByOwnerIdWaitingAndRejected(userId, StatusOfItem.WAITING);
+                return bookingRepository.searchOwnerByOwnerIdWaitingAndRejected(userId, StatusOfItem.WAITING);
             case "REJECTED":
-                return bookingRepository.searchBookingByOwnerIdWaitingAndRejected(userId, StatusOfItem.REJECTED);
+                return bookingRepository.searchOwnerByOwnerIdWaitingAndRejected(userId, StatusOfItem.REJECTED);
         }
         throw new NoUserInHeaderException("Unknown state: UNSUPPORTED_STATUS");
     }

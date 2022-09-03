@@ -15,7 +15,13 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     List<Booking> findByBookerId(Long bookerId, Sort sort);
 
-    List<Booking> findByBookerIdAndStartAfterAndEndBefore(Long bookerId, Timestamp start, Timestamp end, Sort sort);
+    @Query(" select b from Booking b " +
+            "JOIN Item i on b.item.id = i.id "+
+            "where b.booker.id = ?1 " +
+            "and b.start < ?2 " +
+            "and b.end > ?2 " +
+            "order by b.id desc ")
+    List<Booking> findByBookerIdByUserId(Long bookerId, Timestamp timestamp);
 
     //Будущие задачи
     List<Booking> findByBookerIdAndStartAfter(Long bookerId, Timestamp now, Sort sort);
@@ -31,7 +37,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             "JOIN Item i on b.item.id = i.id "+
             "where i.owner.id = ?1 " +
             "order by b.id desc ")
-    List<Booking> searchBookingByOwnerId(Long owner);
+    List<Booking> searchOwnerByOwnerId(Long owner);
 
     @Query(" select b from Booking b " +
             "JOIN Item i on b.item.id = i.id "+
@@ -39,7 +45,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             "and b.start < ?2 " +
             "and b.end > ?2 " +
             "order by b.id desc ")
-    List<Booking> searchBookingByOwnerIdCurrent(Long userId, Timestamp timestamp);
+    List<Booking> searchOwnerByOwnerIdCurrent(Long userId, Timestamp timestamp);
 
     @Query(" select b from Booking b " +
             "JOIN Item i on b.item.id = i.id "+
@@ -47,7 +53,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             "and b.start < ?2 " +
             "and b.end < ?2 " +
             "order by b.id desc ")
-    List<Booking> searchBookingByOwnerIdPast(Long userId, Timestamp timestamp);
+    List<Booking> searchOwnerByOwnerIdPast(Long userId, Timestamp timestamp);
 
     @Query(" select b from Booking b " +
             "JOIN Item i on b.item.id = i.id "+
@@ -55,14 +61,14 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             "and b.start > ?2 " +
             "and b.end > ?2 " +
             "order by b.id desc ")
-    List<Booking> searchBookingByOwnerIdFuture(Long userId, Timestamp timestamp);
+    List<Booking> searchOwnerByOwnerIdFuture(Long userId, Timestamp timestamp);
 
     @Query(" select b from Booking b " +
             "JOIN Item i on b.item.id = i.id "+
             "where i.owner.id = ?1 " +
             "and b.status = ?2 " +
             "order by b.id desc ")
-    List<Booking> searchBookingByOwnerIdWaitingAndRejected(Long owner, StatusOfItem status);
+    List<Booking> searchOwnerByOwnerIdWaitingAndRejected(Long owner, StatusOfItem status);
 
 //    SELECT * FROM book
 //    @Query(" select i from Item i " +

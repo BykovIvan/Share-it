@@ -48,6 +48,12 @@ public interface ItemService {
     Item findByUserIdAndItemId(Long userId, Long itemId);
 
     /**
+     * находит вещь пользователя по  id пользователя в запросе
+     * finds a user item by user id in the request
+     */
+    Item findByUserIdAndItemIdAll(Long userId, Long itemId);
+
+    /**
      * поиск вещи по слову в пути запроса
      * search for a thing by a word in the query path
      */

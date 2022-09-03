@@ -71,7 +71,10 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<Item> findAllItems(Long userId) {
-        return itemRepository.findByOwnerId(userId);
+        if (!userService.containsById(userId)) {
+            throw new NotFoundException("Такого пользователя не существует!");
+        }
+        return itemRepository.findByOwnerId(userId, Sort.by(Sort.Direction.ASC, "id"));
     }
 
     @Override
@@ -93,6 +96,11 @@ public class ItemServiceImpl implements ItemService {
             throw new NotFoundException("Такой вещи не существует!");
         }
         return item;
+    }
+
+    @Override
+    public Item findByUserIdAndItemIdAll(Long userId, Long itemId) {
+        return itemRepository.findByIdAndOwnerId(itemId, userId);
     }
 
     @Override
@@ -126,7 +134,6 @@ public class ItemServiceImpl implements ItemService {
         if (comment.getText() == null || comment.getText().isEmpty()) {
             throw new BadRequestException("Комментарий отсутсвует!");
         }
-//        List<Booking> booking = bookingRepository.findByItemId(itemId, Sort.by("start"));
         List<Booking> booking = bookingRepository.findByItemIdAndBookerId(itemId, userId, Sort.by("start"));
         if (booking.isEmpty()){
             throw new NotFoundException("Бронирование данной вещи не существует!");
@@ -134,17 +141,10 @@ public class ItemServiceImpl implements ItemService {
         for (Booking bookingGet : booking) {
             if (bookingGet.getEnd().toLocalDateTime().isBefore(LocalDateTime.now())){
                 break;
-//                throw new BadRequestException("Бронирование еще не завершено!");
             }else {
                 throw new BadRequestException("Пока ни одного бронирования не завершено!");
             }
-//            else if (bookingGet.getEnd().toLocalDateTime().isAfter(LocalDateTime.now())){
-//                throw new BadRequestException("Бронирование еще не завершено 2!");
-//            }
         }
-
-        //TODO пробежаться по списку и проверить завершенные
-
         comment.setItem(itemRepository.findById(itemId).get());
         comment.setAuthor(userService.findById(userId));
         comment.setCreated(new Timestamp(System.currentTimeMillis()));

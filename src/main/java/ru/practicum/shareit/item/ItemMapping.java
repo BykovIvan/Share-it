@@ -24,7 +24,7 @@ public class ItemMapping {
                 .name(item.getName())
                 .description(item.getDescription())
                 .available(item.getAvailable())
-                .owner(item.getOwner().getId())
+                .ownerId(item.getOwner().getId())
 //                .request(item.getRequest() != null ? item.getRequest().getId() : null)
                 .build();
 
@@ -51,9 +51,7 @@ public class ItemMapping {
             for (BookingDto booking : bookings) {
                 if (booking.getStatus().equals(StatusOfItem.APPROVED) ||
                         booking.getStatus().equals(StatusOfItem.WAITING)){
-//                    LocalDateTime timeStart = booking.getStart().toLocalDateTime().minusHours(3);
                     LocalDateTime timeStart = booking.getStart();
-//                    LocalDateTime timeEnd = booking.getEnd().toLocalDateTime().minusHours(3);
                     LocalDateTime timeEnd = booking.getEnd();
                     if (timeStart.isBefore(timeNow) && timeEnd.isBefore(timeNow)){
                         itemDtoWithComments.setLastBooking(booking);

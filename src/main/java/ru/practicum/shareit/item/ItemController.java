@@ -48,7 +48,7 @@ public class ItemController {
         return itemService.findAllItems(userId).stream()
 //                .map(ItemMapping::toItemDto)
                 .map((Item item) -> ItemMapping.toItemDtoWithComments(userId,
-                        itemService.findByUserIdAndItemId(userId, item.getId()),
+                        itemService.findByUserIdAndItemIdAll(userId, item.getId()),
                         itemService.getCommentByIdItem(item.getId()).stream()
                                 .map(CommentMapping::toCommentDto)
                                 .collect(Collectors.toList()),
