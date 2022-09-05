@@ -11,8 +11,6 @@ import ru.practicum.shareit.exceptions.NoUserInHeaderException;
 import ru.practicum.shareit.exceptions.NotFoundException;
 import ru.practicum.shareit.exceptions.model.ErrorResponse;
 
-import javax.validation.ConstraintViolationException;
-
 @RestControllerAdvice
 public class ExceptionHandler {
 
@@ -83,7 +81,6 @@ public class ExceptionHandler {
     @org.springframework.web.bind.annotation.ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleIncorrectParameterException(final Throwable e) {
-//        return new ErrorResponse(e.getClass().getName());
         return new ErrorResponse("Плохо составленный запрос! Проверь данные!");
     }
 }

@@ -50,21 +50,6 @@ public class BookingServiceImpl implements BookingService {
         if (bookingDto.getEnd().isBefore(bookingDto.getStart())) {
             throw new BadRequestException("Время окончания не может быть раньше начала бронирования!");
         }
-
-//        long startDay = TimeUnit.MILLISECONDS.toDays(bookingDto.getStart().getTime());
-//        long endDay = TimeUnit.MILLISECONDS.toDays(bookingDto.getEnd().getTime());
-//        long nowDate = TimeUnit.MILLISECONDS.toDays(System.currentTimeMillis());
-//        if (startDay < nowDate) {
-//            throw new BadRequestException("Время начала не может быть в прошлом!");
-//        }
-//        if (endDay < nowDate) {
-//            throw new BadRequestException("Время окончания не может быть в прошлом!");
-//        }
-//        if (bookingDto.getEnd().before(bookingDto.getStart())) {
-//            throw new BadRequestException("Время окончания не может быть раньше начала бронирования!");
-//        }
-
-
         Item item = itemService.findById(bookingDto.getItemId());
         User booker = userService.findById(userId);
         User owner = userService.findById(item.getOwner().getId());

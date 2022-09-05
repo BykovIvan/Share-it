@@ -10,7 +10,6 @@ import java.sql.Timestamp;
 import java.util.List;
 
 @Repository
-//@EnableJpaRepositories
 public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     List<Booking> findByBookerId(Long bookerId, Sort sort);
@@ -69,12 +68,6 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             "and b.status = ?2 " +
             "order by b.id desc ")
     List<Booking> searchOwnerByOwnerIdWaitingAndRejected(Long owner, StatusOfItem status);
-
-//    SELECT * FROM book
-//    @Query(" select i from Item i " +
-//            "where upper(i.name) like upper(concat('%', ?1, '%')) " +
-//            " or upper(i.description) like upper(concat('%', ?1, '%'))")
-//    List<Item> search(String text);
 
     List<Booking> findByItemIdAndBookerId(Long itemId, Long booker, Sort sort);
 }
