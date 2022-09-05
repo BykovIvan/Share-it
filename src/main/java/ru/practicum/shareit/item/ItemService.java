@@ -17,7 +17,7 @@ public interface ItemService {
      * Checks for the existence of the person who creates, first in the request,
      * then having it in the store then creates the thing
      */
-    Item create(Long userId, ItemDto itemDto);
+    ItemDto create(Long userId, ItemDto itemDto);
 
     /**
      * Метод как для полного обновления вещи, так и для частичного,
@@ -27,13 +27,13 @@ public interface ItemService {
      * also checks for the presence of the user id in the request and in the store
      * only the owner of the item can update
      */
-    Item update(Long userId, Long itemId, ItemDto itemDto);
+    ItemDto update(Long userId, Long itemId, ItemDto itemDto);
 
     /**
      * находит все вещи пользователя, id пользователя в запросе
      * finds all the things of the user, the user id in the request
      */
-    List<Item> findAllItems(Long userId);
+    List<ItemDtoWithComments> findAllItems(Long userId);
 
     /**
      * Находит вещь для любого пользователя
@@ -45,7 +45,7 @@ public interface ItemService {
      * находит вещь пользователя по id вещи и id пользователя в запросе
      * finds a user item by item id and user id in the request
      */
-    Item findByUserIdAndItemId(Long userId, Long itemId);
+    ItemDtoWithComments findByUserIdAndItemId(Long userId, Long itemId);
 
     /**
      * находит вещь пользователя по  id пользователя в запросе
@@ -57,7 +57,7 @@ public interface ItemService {
      * поиск вещи по слову в пути запроса
      * search for a thing by a word in the query path
      */
-    List<Item> findByText(Long userId, String text);
+    List<ItemDto> findByText(Long userId, String text);
 
     /**
      * Проверяет наличие вещи в хранилище
@@ -69,7 +69,7 @@ public interface ItemService {
      * Добавляет коментарий для вещи, добавить может только booker
      * Add comments for item, can only booker
      */
-    Comment addCommentToItem(Long userId, Long itemId, Comment comment);
+    CommentDto addCommentToItem(Long userId, Long itemId, CommentDto commentDto);
 
     /**
      * Получение коментариев по id вещи
