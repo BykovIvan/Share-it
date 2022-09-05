@@ -10,6 +10,7 @@ import ru.practicum.shareit.item.ItemMapping;
 import ru.practicum.shareit.item.ItemService;
 import ru.practicum.shareit.item.StatusOfItem;
 import ru.practicum.shareit.user.User;
+import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.UserService;
 
 
@@ -22,12 +23,15 @@ import java.util.stream.Collectors;
 @Service
 public class BookingServiceImpl implements BookingService {
     private final BookingRepository bookingRepository;
+
+    private final UserRepository userRepository;
     private final UserService userService;
     private final ItemService itemService;
 
 
-    public BookingServiceImpl(BookingRepository bookingRepository, UserService userService, ItemService itemService) {
+    public BookingServiceImpl(BookingRepository bookingRepository, UserRepository userRepository, UserService userService, ItemService itemService) {
         this.bookingRepository = bookingRepository;
+        this.userRepository = userRepository;
         this.userService = userService;
         this.itemService = itemService;
     }
@@ -52,8 +56,8 @@ public class BookingServiceImpl implements BookingService {
             throw new BadRequestException("Время окончания не может быть раньше начала бронирования!");
         }
         Item item = itemService.findById(bookingDto.getItemId());
-        User booker = userService.findById(userId);
-        User owner = userService.findById(item.getOwner().getId());
+        User booker = userRepository.findById(userId).get();
+        User owner = userRepository.findById(item.getOwner().getId()).get();
         if (booker.getId().equals(owner.getId())) {
             throw new NotFoundException("Владелец не может забронировать свою вещь!");
         }

@@ -3,6 +3,7 @@ package ru.practicum.shareit.item;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.BookingMapping;
+import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.UserService;
 
 import javax.validation.Valid;
@@ -15,11 +16,14 @@ import java.util.stream.Collectors;
 public class ItemController {
     private final ItemService itemService;
 
+    private final UserRepository userRepository;
+
     private final UserService userService;
 
 
-    public ItemController(ItemService itemService, UserService userService) {
+    public ItemController(ItemService itemService, UserRepository userRepository, UserService userService) {
         this.itemService = itemService;
+        this.userRepository = userRepository;
         this.userService = userService;
     }
 
@@ -81,7 +85,7 @@ public class ItemController {
                               @PathVariable("id") Long itemId,
                               @RequestBody CommentDto commentDto){
         log.info("Получен запрос к эндпоинту /items/{id}/comment. Метод Post. Добавление комментария");
-        return CommentMapping.toCommentDto(itemService.addCommentToItem(userId, itemId, CommentMapping.toComment(commentDto, itemService.findById(itemId), userService.findById(userId))));
+        return CommentMapping.toCommentDto(itemService.addCommentToItem(userId, itemId, CommentMapping.toComment(commentDto, itemService.findById(itemId), userRepository.findById(userId).get())));
     }
 
 }

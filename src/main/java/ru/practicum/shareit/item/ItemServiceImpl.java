@@ -7,6 +7,7 @@ import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.exceptions.BadRequestException;
 import ru.practicum.shareit.exceptions.NoUserInHeaderException;
 import ru.practicum.shareit.exceptions.NotFoundException;
+import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.UserService;
 
 import java.sql.Timestamp;
@@ -19,13 +20,16 @@ import java.util.stream.Collectors;
 @Service
 public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepository;
+
+    private final UserRepository userRepository;
     private final UserService userService;
     private final ItemMapper mapper;
     private final CommentRepository commentRepository;
     private final BookingRepository bookingRepository;
 
-    public ItemServiceImpl(ItemRepository itemRepository, UserService userService, ItemMapper mapper, CommentRepository commentRepository, BookingRepository bookingRepository) {
+    public ItemServiceImpl(ItemRepository itemRepository, UserRepository userRepository, UserService userService, ItemMapper mapper, CommentRepository commentRepository, BookingRepository bookingRepository) {
         this.itemRepository = itemRepository;
+        this.userRepository = userRepository;
         this.userService = userService;
         this.mapper = mapper;
         this.commentRepository = commentRepository;
@@ -40,7 +44,7 @@ public class ItemServiceImpl implements ItemService {
         if (!userService.containsById(userId)) {
             throw new NotFoundException("Такого пользователя не существует!");
         }
-        Item item = ItemMapping.toItem(itemDto, userService.findById(userId));
+        Item item = ItemMapping.toItem(itemDto, userRepository.findById(userId).get());
         return itemRepository.save(item);
     }
 
@@ -146,7 +150,7 @@ public class ItemServiceImpl implements ItemService {
             }
         }
         comment.setItem(itemRepository.findById(itemId).get());
-        comment.setAuthor(userService.findById(userId));
+        comment.setAuthor(userRepository.findById(userId).get());
         comment.setCreated(new Timestamp(System.currentTimeMillis()));
         return commentRepository.save(comment);
     }

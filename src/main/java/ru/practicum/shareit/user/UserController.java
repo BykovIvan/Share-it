@@ -21,28 +21,26 @@ public class UserController {
     public UserDto create(@RequestBody UserDto userDto) {
         log.info("Получен запрос к эндпоинту /users. Метод POST");
         @Valid User user = UserMapping.toUser(userDto);
-        return UserMapping.toUserDto(userService.save(user));
+        return userService.save(user);
     }
 
     @PatchMapping("/{userId}")
     public UserDto updateById(@PathVariable("userId") Long userId,
                               @RequestBody UserDto userDto) {
         log.info("Получен запрос к эндпоинту /users обновление по id. Метод PATCH");
-        return UserMapping.toUserDto(userService.update(userId, userDto));
+        return userService.update(userId, userDto);
     }
 
     @GetMapping
     public List<UserDto> allUsers() {
         log.info("Получен запрос к эндпоинту /users получение всех. Метод GET");
-        return userService.findAll().stream()
-                .map(UserMapping::toUserDto)
-                .collect(Collectors.toList());
+        return userService.findAll();
     }
 
     @GetMapping("/{userId}")
     public UserDto userById(@PathVariable("userId") Long userId) {
         log.info("Получен запрос к эндпоинту /users получение по id. Метод GET");
-        return UserMapping.toUserDto(userService.findById(userId));
+        return userService.findById(userId);
     }
 
     @DeleteMapping("/{userId}")

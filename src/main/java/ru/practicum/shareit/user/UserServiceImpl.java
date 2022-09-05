@@ -5,6 +5,7 @@ import ru.practicum.shareit.exceptions.NotFoundException;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -19,35 +20,37 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User save(User user) {
-        return repository.save(user);
+    public UserDto save(User user) {
+        return UserMapping.toUserDto(repository.save(user));
     }
 
     @Override
-    public User update(Long id, UserDto userDto) {
+    public UserDto update(Long id, UserDto userDto) {
         if (repository.findById(id).isPresent()){
             User user = repository.findById(id).get();
             mapper.updateUserFromDto(userDto, user);
             repository.save(user);
-            return repository.findById(id).get();
+            return UserMapping.toUserDto(repository.findById(id).get());
         }else {
             throw new NotFoundException("Такого пользователя не существует!");
         }
     }
 
     @Override
-    public User findById(Long id) {
+    public UserDto findById(Long id) {
         Optional<User> userGet =  repository.findById(id);
         if (userGet.isPresent()){
-            return userGet.get();
+            return UserMapping.toUserDto(userGet.get());
         } else {
             throw new NotFoundException("Нет такого пользователя!");
         }
     }
 
     @Override
-    public List<User> findAll() {
-        return repository.findAll();
+    public List<UserDto> findAll() {
+        return repository.findAll().stream()
+                .map(UserMapping::toUserDto)
+                .collect(Collectors.toList());
     }
 
     @Override

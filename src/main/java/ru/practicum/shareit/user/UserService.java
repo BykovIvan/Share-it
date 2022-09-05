@@ -3,10 +3,10 @@ package ru.practicum.shareit.user;
 import java.util.List;
 
 public interface UserService {
-    User save(User user);
-    User update(Long id, UserDto userDto);
-    User findById(Long id);
-    List<User> findAll();
+    UserDto save(User user);
+    UserDto update(Long id, UserDto userDto);
+    UserDto findById(Long id);
+    List<UserDto> findAll();
     void deleteById(Long userId);
     boolean containsById(Long userId);
 }
