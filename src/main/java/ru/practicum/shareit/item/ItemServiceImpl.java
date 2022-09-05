@@ -8,9 +8,7 @@ import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.exceptions.BadRequestException;
 import ru.practicum.shareit.exceptions.NoUserInHeaderException;
 import ru.practicum.shareit.exceptions.NotFoundException;
-import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserRepository;
-import ru.practicum.shareit.user.UserService;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -22,17 +20,14 @@ import java.util.stream.Collectors;
 @Service
 public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepository;
-
     private final UserRepository userRepository;
-    private final UserService userService;
     private final ItemMapper mapper;
     private final CommentRepository commentRepository;
     private final BookingRepository bookingRepository;
 
-    public ItemServiceImpl(ItemRepository itemRepository, UserRepository userRepository, UserService userService, ItemMapper mapper, CommentRepository commentRepository, BookingRepository bookingRepository) {
+    public ItemServiceImpl(ItemRepository itemRepository, UserRepository userRepository, ItemMapper mapper, CommentRepository commentRepository, BookingRepository bookingRepository) {
         this.itemRepository = itemRepository;
         this.userRepository = userRepository;
-        this.userService = userService;
         this.mapper = mapper;
         this.commentRepository = commentRepository;
         this.bookingRepository = bookingRepository;
@@ -55,7 +50,7 @@ public class ItemServiceImpl implements ItemService {
         if (userId == null) {
             throw new NoUserInHeaderException("В запросе отсутсвует пользователь при создании задачи!");
         }
-        if (!userService.containsById(userId)) {
+        if (!userRepository.findById(userId).isPresent()){
             throw new NotFoundException("Такого пользователя не существует!");
         }
         if (!itemRepository.findById(itemId).isPresent()) {
@@ -77,7 +72,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<ItemDtoWithComments> findAllItems(Long userId) {
-        if (!userService.containsById(userId)) {
+        if (!userRepository.findById(userId).isPresent()){
             throw new NotFoundException("Такого пользователя не существует!");
         }
         return itemRepository.findByOwnerId(userId, Sort.by(Sort.Direction.ASC, "id")).stream()
@@ -103,7 +98,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDtoWithComments findByUserIdAndItemId(Long userId, Long itemId) {
-        if (!userService.containsById(userId)) {
+        if (!userRepository.findById(userId).isPresent()){
             throw new NotFoundException("Такого пользователя не существует!");
         }
         Item item = itemRepository.findByIdAndAvailable(itemId, true);
@@ -127,7 +122,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<ItemDto> findByText(Long userId, String text) {
-        if (!userService.containsById(userId)) {
+        if (!userRepository.findById(userId).isPresent()){
             throw new NotFoundException("Такого пользователя не существует!");
         }
         if (text == null || text.isEmpty()) {

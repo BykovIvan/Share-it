@@ -11,7 +11,6 @@ import ru.practicum.shareit.item.ItemService;
 import ru.practicum.shareit.item.StatusOfItem;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserRepository;
-import ru.practicum.shareit.user.UserService;
 
 
 import java.sql.Timestamp;
@@ -23,21 +22,18 @@ import java.util.stream.Collectors;
 @Service
 public class BookingServiceImpl implements BookingService {
     private final BookingRepository bookingRepository;
-
     private final UserRepository userRepository;
-    private final UserService userService;
     private final ItemService itemService;
 
 
-    public BookingServiceImpl(BookingRepository bookingRepository, UserRepository userRepository, UserService userService, ItemService itemService) {
+    public BookingServiceImpl(BookingRepository bookingRepository, UserRepository userRepository, ItemService itemService) {
         this.bookingRepository = bookingRepository;
         this.userRepository = userRepository;
-        this.userService = userService;
         this.itemService = itemService;
     }
 
     public BookingDto create(Long userId, BookingDto bookingDto) {
-        if (!userService.containsById(userId)) {
+        if (!userRepository.findById(userId).isPresent()){
             throw new NotFoundException("Такого пользователя не существует!");
         }
         if (!itemService.containsById(bookingDto.getItemId())) {
@@ -109,7 +105,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public BookingDto findById(Long id, Long userId) {
-        if (!userService.containsById(userId)) {
+        if (!userRepository.findById(userId).isPresent()){
             throw new NotFoundException("Такого пользователя не существует!");
         }
         if (id == null){
@@ -131,7 +127,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<BookingDto> findBookingByUserIdAndState(String state, Long userId) {
-        if (!userService.containsById(userId)) {
+        if (!userRepository.findById(userId).isPresent()){
             throw new NotFoundException("Такого пользователя не существует!");
         }
         switch (state) {
@@ -166,7 +162,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<BookingDto> findItemByOwnerIdAndState(String state, Long userId) {
-        if (!userService.containsById(userId)) {
+        if (!userRepository.findById(userId).isPresent()){
             throw new NotFoundException("Такого пользователя не существует!");
         }
         switch (state) {

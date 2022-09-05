@@ -10,27 +10,27 @@ import java.util.stream.Collectors;
 @Service
 public class UserServiceImpl implements UserService {
 
-    private final UserRepository repository;
+    private final UserRepository userRepository;
     private final UserMapper mapper;
 
 
     public UserServiceImpl(UserRepository repository, UserMapper mapper) {
-        this.repository = repository;
+        this.userRepository = repository;
         this.mapper = mapper;
     }
 
     @Override
     public UserDto save(User user) {
-        return UserMapping.toUserDto(repository.save(user));
+        return UserMapping.toUserDto(userRepository.save(user));
     }
 
     @Override
     public UserDto update(Long id, UserDto userDto) {
-        if (repository.findById(id).isPresent()){
-            User user = repository.findById(id).get();
+        if (userRepository.findById(id).isPresent()){
+            User user = userRepository.findById(id).get();
             mapper.updateUserFromDto(userDto, user);
-            repository.save(user);
-            return UserMapping.toUserDto(repository.findById(id).get());
+            userRepository.save(user);
+            return UserMapping.toUserDto(userRepository.findById(id).get());
         }else {
             throw new NotFoundException("Такого пользователя не существует!");
         }
@@ -38,7 +38,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto findById(Long id) {
-        Optional<User> userGet =  repository.findById(id);
+        Optional<User> userGet =  userRepository.findById(id);
         if (userGet.isPresent()){
             return UserMapping.toUserDto(userGet.get());
         } else {
@@ -48,24 +48,17 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserDto> findAll() {
-        return repository.findAll().stream()
+        return userRepository.findAll().stream()
                 .map(UserMapping::toUserDto)
                 .collect(Collectors.toList());
     }
 
     @Override
     public void deleteById(Long userId) {
-        if (containsById(userId)) {
-            repository.deleteById(userId);
-        } else {
+        if (!userRepository.findById(userId).isPresent()){
             throw new NotFoundException("Нет такого пользователя c ID = " + userId);
         }
-    }
-
-    @Override
-    public boolean containsById(Long userId) {
-        Optional<User> user = repository.findById(userId);
-        return user.isPresent();
+        userRepository.deleteById(userId);
     }
 
 }

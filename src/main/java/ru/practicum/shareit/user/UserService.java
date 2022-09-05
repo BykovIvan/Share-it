@@ -8,5 +8,4 @@ public interface UserService {
     UserDto findById(Long id);
     List<UserDto> findAll();
     void deleteById(Long userId);
-    boolean containsById(Long userId);
 }
