@@ -17,12 +17,15 @@ import javax.validation.constraints.NotNull;
 public class Item {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
     @NotNull
     @NotBlank
+    @Column(name = "name")
     private String name;                         //Имя вещи
     @NotNull
     @NotBlank
+    @Column(name = "description")
     private String description;                  //Описание
     @NotNull
     @Column(name = "is_available")
