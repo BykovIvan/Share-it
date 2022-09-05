@@ -2,8 +2,6 @@ package ru.practicum.shareit.user;
 
 import lombok.*;
 
-import javax.validation.constraints.*;
-
 /**
  * Класс который возвращается полльзователям
  * The class that is returned to users

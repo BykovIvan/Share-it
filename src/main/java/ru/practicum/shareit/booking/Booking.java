@@ -7,7 +7,6 @@ import ru.practicum.shareit.user.User;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
-import java.time.LocalDate;
 
 @Builder
 @Getter
@@ -33,5 +32,4 @@ public class Booking {
 
     @Enumerated(EnumType.STRING)
     private StatusOfItem status;            //статус вещи, должен выставлять пользователь
-//    private String review;                  //Отзыв, оставляется после успешного бронирования
 }

@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @Slf4j
@@ -21,26 +20,23 @@ public class BookingController {
     public BookingDto create(@RequestHeader(value="X-Sharer-User-Id", required = false) Long userId,
                              @RequestBody BookingDto bookingDto) {
         log.info("Получен запрос к эндпоинту /bookings. Метод POST");
-        return BookingMapping.toBookingDto(bookingService.create(userId, bookingDto));
+        return bookingService.create(userId, bookingDto);
     }
 
-    /**
-     * подтверждение бронирования вещи только владельцем вещи
-     */
+    // подтверждение бронирования вещи только владельцем вещи
     @PatchMapping("/{id}")
     public BookingDto updateStatusOfItemById(@RequestHeader(value="X-Sharer-User-Id", required = false) Long userId,
                            @PathVariable("id") Long bookingId,
                            @RequestParam(value = "approved") Boolean approved){
         log.info("Получен запрос к эндпоинту /bookings. Метод PATCH");
-        Booking booking = bookingService.approvedStatusOfItem(userId, bookingId, approved);
-        return BookingMapping.toBookingDto(booking);
+        return bookingService.approvedStatusOfItem(userId, bookingId, approved);
     }
 
     @GetMapping("/{id}")
     public BookingDto findByIdOfOwnerOrBooker(@RequestHeader(value = "X-Sharer-User-Id", required = false) Long userId,
                                @PathVariable(value = "id") Long bookingId){
         log.info("Получен запрос к эндпоинту /bookings. Метод GET по ID");
-        return BookingMapping.toBookingDto(bookingService.findById(bookingId, userId));
+        return bookingService.findById(bookingId, userId);
     }
 
     //Получение списка всех бронирований текущего пользователя.
@@ -51,9 +47,7 @@ public class BookingController {
             state = "ALL";
         }
         log.info("Получен запрос к эндпоинту /bookings. Метод GET по State");
-        return bookingService.findBookingByUserIdAndState(state, userId).stream()
-                .map(BookingMapping::toBookingDto)
-                .collect(Collectors.toList());
+        return bookingService.findBookingByUserIdAndState(state, userId);
     }
 
     //Получение списка бронирований для всех вещей текущего пользователя.
@@ -64,9 +58,7 @@ public class BookingController {
             state = "ALL";
         }
         log.info("Получен запрос к эндпоинту /bookings. Метод GET по вещам владельца");
-        return bookingService.findItemByOwnerIdAndState(state, userId).stream()
-                .map(BookingMapping::toBookingDto)
-                .collect(Collectors.toList());
+        return bookingService.findItemByOwnerIdAndState(state, userId);
     }
 
 }

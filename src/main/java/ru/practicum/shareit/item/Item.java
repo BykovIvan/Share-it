@@ -1,7 +1,6 @@
 package ru.practicum.shareit.item;
 
 import lombok.*;
-import ru.practicum.shareit.requests.ItemRequest;
 import ru.practicum.shareit.user.User;
 
 import javax.persistence.*;
@@ -31,6 +30,4 @@ public class Item {
     @ManyToOne(fetch = FetchType.EAGER)
     private User owner;                          //Владелец
 
-//    @ManyToOne(fetch = FetchType.EAGER)
-//    private ItemRequest request;                 //ссылка на запрос вещи
 }

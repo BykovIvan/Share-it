@@ -6,7 +6,6 @@ import ru.practicum.shareit.item.ItemDto;
 import ru.practicum.shareit.item.StatusOfItem;
 import ru.practicum.shareit.user.UserDto;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 @Data
@@ -21,5 +20,4 @@ public class BookingDto {
     private UserDto booker;                    //Пользователь, который осуществляет бронирование
     private Long bookerId;
     private StatusOfItem status;            //статус вещи, должен выставлять пользователь
-//    private String review;                  //Отзыв, оставляется после успешного бронирования
 }

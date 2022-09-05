@@ -1,8 +1,6 @@
 package ru.practicum.shareit.item;
 
-import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.BookingDto;
-import ru.practicum.shareit.booking.BookingMapping;
 import ru.practicum.shareit.user.User;
 
 import java.time.LocalDateTime;
@@ -25,7 +23,6 @@ public class ItemMapping {
                 .description(item.getDescription())
                 .available(item.getAvailable())
                 .ownerId(item.getOwner().getId())
-//                .request(item.getRequest() != null ? item.getRequest().getId() : null)
                 .build();
 
     }

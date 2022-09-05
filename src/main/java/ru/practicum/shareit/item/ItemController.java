@@ -23,9 +23,6 @@ public class ItemController {
         this.userService = userService;
     }
 
-    /**
-     * X-Sharer-User-Id - это собственник вещи
-     */
     @PostMapping
     public ItemDto create(@RequestHeader(value="X-Sharer-User-Id", required = false) Long userId,
                           @Valid @RequestBody ItemDto itemDto) {
@@ -43,10 +40,8 @@ public class ItemController {
 
     @GetMapping
     public List<ItemDtoWithComments> allItems(@RequestHeader(value="X-Sharer-User-Id") Long userId) {
-//    public List<ItemDto> allItems(@RequestHeader(value="X-Sharer-User-Id") Long userId) {
         log.info("Получен запрос к эндпоинту /items. Метод GET. Поиск всех вещей");
         return itemService.findAllItems(userId).stream()
-//                .map(ItemMapping::toItemDto)
                 .map((Item item) -> ItemMapping.toItemDtoWithComments(userId,
                         itemService.findByUserIdAndItemIdAll(userId, item.getId()),
                         itemService.getCommentByIdItem(item.getId()).stream()
@@ -60,13 +55,8 @@ public class ItemController {
 
     @GetMapping("/{id}")
     public ItemDtoWithComments itemById(@RequestHeader(value="X-Sharer-User-Id") Long userId,
-//    public ItemDto itemById(@RequestHeader(value="X-Sharer-User-Id") Long userId,
                             @PathVariable("id") Long itemId) {
         log.info("Получен запрос к эндпоинту /items. Метод GET. Поиск по ID");
-//        Item item = itemService.findByUserIdAndItemId(userId, itemId);
-//        List<Comment> comment = itemService.getCommentByIdItem(itemId);
-//        ItemDtoWithComments itemDto = ItemMapping.toItemDtoWithComments(item, comment);
-//        return ItemMapping.toItemDto(itemService.findByUserIdAndItemId(userId, itemId));
         return ItemMapping.toItemDtoWithComments(userId,
                                                 itemService.findByUserIdAndItemId(userId, itemId),
                                                 itemService.getCommentByIdItem(itemId).stream()
