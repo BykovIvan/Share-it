@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item;
 
 import lombok.*;
+import ru.practicum.shareit.requests.ItemRequest;
 import ru.practicum.shareit.user.User;
 
 import javax.persistence.*;
@@ -17,20 +18,18 @@ import javax.validation.constraints.NotNull;
 public class Item {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private Long id;
     @NotNull
     @NotBlank
-    @Column(name = "name")
     private String name;                         //Имя вещи
     @NotNull
     @NotBlank
-    @Column(name = "description")
     private String description;                  //Описание
     @NotNull
-    @Column(name = "is_available")
     private Boolean available;                   //доступность
     @ManyToOne(fetch = FetchType.EAGER)
     private User owner;                          //Владелец
+    @ManyToOne(fetch = FetchType.EAGER)
+    private ItemRequest itemRequest;
 
 }

@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item;
 
 import ru.practicum.shareit.booking.BookingDto;
+import ru.practicum.shareit.requests.ItemRequest;
 import ru.practicum.shareit.user.User;
 
 import java.time.LocalDateTime;
@@ -66,6 +67,19 @@ public class ItemMapping {
     }
 
     /**
+     * Метод для преобразования Item в ItemDtoForRequest
+     * Method to convert Item to ItemDtoForRequest
+     */
+    public static ItemDtoForRequest toItemDtoForRequest(Item item, Long userId){
+        return ItemDtoForRequest.builder()
+                .id(item.getId())
+                .name(item.getName())
+                .description(item.getDescription())
+                .requestId(userId)
+                .build();
+    }
+
+    /**
      * Метод для преобразования ItemDto в Item
      * Method to convert ItemDto to Item
      */
@@ -74,6 +88,21 @@ public class ItemMapping {
                 .name(itemDTO.getName())
                 .description(itemDTO.getDescription())
                 .available(itemDTO.getAvailable())
+                .owner(user)
+                .build();
+
+    }
+
+    /**
+     * Метод для преобразования ItemDto в Item
+     * Method to convert ItemDto to Item
+     */
+    public static Item toItem(ItemDto itemDTO, ItemRequest itemRequest, User user) {
+        return Item.builder()
+                .name(itemDTO.getName())
+                .description(itemDTO.getDescription())
+                .available(itemDTO.getAvailable())
+                .itemRequest(itemRequest)
                 .owner(user)
                 .build();
 
