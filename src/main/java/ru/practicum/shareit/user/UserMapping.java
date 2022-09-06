@@ -1,11 +1,9 @@
-package ru.practicum.shareit.user.dto;
-
-import ru.practicum.shareit.user.model.User;
+package ru.practicum.shareit.user;
 
 public class UserMapping {
     public static UserDto toUserDto(User user){
         return UserDto.builder()
-                .id(user.getUserId())
+                .id(user.getId())
                 .name(user.getName())
                 .email(user.getEmail())
                 .build();

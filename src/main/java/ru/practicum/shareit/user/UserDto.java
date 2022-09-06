@@ -1,8 +1,6 @@
-package ru.practicum.shareit.user.dto;
+package ru.practicum.shareit.user;
 
 import lombok.*;
-
-import javax.validation.constraints.*;
 
 /**
  * Класс который возвращается полльзователям
@@ -13,14 +11,7 @@ import javax.validation.constraints.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserDto {
-    @Positive
     private Long id;
-    @NotEmpty
-    @NonNull
     private String name;
-    @NotBlank
-    @NonNull
-    @Size(min = 1, max = 200)
-    @Email()
     private String email;
 }
