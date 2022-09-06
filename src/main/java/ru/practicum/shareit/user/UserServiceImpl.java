@@ -9,10 +9,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
-
     private final UserRepository userRepository;
     private final UserMapper mapper;
-
 
     public UserServiceImpl(UserRepository repository, UserMapper mapper) {
         this.userRepository = repository;
@@ -55,7 +53,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void deleteById(Long userId) {
-        if (!userRepository.findById(userId).isPresent()){
+        if (userRepository.findById(userId).isEmpty()){
             throw new NotFoundException("Нет такого пользователя c ID = " + userId);
         }
         userRepository.deleteById(userId);

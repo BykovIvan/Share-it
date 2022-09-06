@@ -38,7 +38,7 @@ public class ItemServiceImpl implements ItemService {
         if (userId == null) {
             throw new NoUserInHeaderException("В запросе отсутсвует пользователь при создании задачи!");
         }
-        if (!userRepository.findById(userId).isPresent()){
+        if (userRepository.findById(userId).isEmpty()){
             throw new NotFoundException("Такого пользователя не существует!");
         }
         Item item = ItemMapping.toItem(itemDto, userRepository.findById(userId).get());
@@ -50,10 +50,10 @@ public class ItemServiceImpl implements ItemService {
         if (userId == null) {
             throw new NoUserInHeaderException("В запросе отсутсвует пользователь при создании задачи!");
         }
-        if (!userRepository.findById(userId).isPresent()){
+        if (userRepository.findById(userId).isEmpty()){
             throw new NotFoundException("Такого пользователя не существует!");
         }
-        if (!itemRepository.findById(itemId).isPresent()) {
+        if (itemRepository.findById(itemId).isEmpty()) {
             throw new NotFoundException("Такой вещи не существует!");
         }
         if (!itemRepository.findById(itemId).get().getOwner().getId().equals(userId)) {
@@ -72,7 +72,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<ItemDtoWithComments> findAllItems(Long userId) {
-        if (!userRepository.findById(userId).isPresent()){
+        if (userRepository.findById(userId).isEmpty()){
             throw new NotFoundException("Такого пользователя не существует!");
         }
         return itemRepository.findByOwnerId(userId, Sort.by(Sort.Direction.ASC, "id")).stream()
@@ -90,7 +90,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public Item findById(Long itemId){
         Optional<Item> item = itemRepository.findById(itemId);
-        if (!item.isPresent()){
+        if (item.isEmpty()){
             throw new NotFoundException("Такой вещи не найдено");
         }
         return item.get();
@@ -98,7 +98,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDtoWithComments findByUserIdAndItemId(Long userId, Long itemId) {
-        if (!userRepository.findById(userId).isPresent()){
+        if (userRepository.findById(userId).isEmpty()){
             throw new NotFoundException("Такого пользователя не существует!");
         }
         Item item = itemRepository.findByIdAndAvailable(itemId, true);
@@ -122,7 +122,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<ItemDto> findByText(Long userId, String text) {
-        if (!userRepository.findById(userId).isPresent()){
+        if (userRepository.findById(userId).isEmpty()){
             throw new NotFoundException("Такого пользователя не существует!");
         }
         if (text == null || text.isEmpty()) {
@@ -143,10 +143,10 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public CommentDto addCommentToItem(Long userId, Long itemId, CommentDto commentDto) {
-        if (!userRepository.findById(userId).isPresent()){
+        if (userRepository.findById(userId).isEmpty()){
             throw new NotFoundException("Такого пользователя не существует!");
         }
-        if (!itemRepository.findById(itemId).isPresent()) {
+        if (itemRepository.findById(itemId).isEmpty()) {
             throw new NotFoundException("Такой вещи не существует!");
         }
         if (commentDto.getText() == null || commentDto.getText().isEmpty()) {

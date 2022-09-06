@@ -20,4 +20,6 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
 
     Item findByIdAndAvailable(Long itemId, Boolean available);
 
+    Item findByRequestId(Long requestId);
+
 }

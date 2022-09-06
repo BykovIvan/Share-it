@@ -97,14 +97,14 @@ public class ItemMapping {
      * Метод для преобразования ItemDto в Item
      * Method to convert ItemDto to Item
      */
-    public static Item toItem(ItemDto itemDTO, ItemRequest itemRequest, User user) {
-        return Item.builder()
-                .name(itemDTO.getName())
-                .description(itemDTO.getDescription())
-                .available(itemDTO.getAvailable())
-                .itemRequest(itemRequest)
-                .owner(user)
-                .build();
-
-    }
+//    public static Item toItem(ItemDto itemDTO, ItemRequest itemRequest, User user) {
+//        return Item.builder()
+//                .name(itemDTO.getName())
+//                .description(itemDTO.getDescription())
+//                .available(itemDTO.getAvailable())
+//                .itemRequest(itemRequest)
+//                .owner(user)
+//                .build();
+//
+//    }
 }

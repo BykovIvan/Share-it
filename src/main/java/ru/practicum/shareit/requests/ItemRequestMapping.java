@@ -22,6 +22,15 @@ public class ItemRequestMapping {
 
     }
 
+    public static ItemRequestDto toItemRequestDto(ItemRequest itemRequest) {
+        return ItemRequestDto.builder()
+                .id(itemRequest.getId())
+                .description(itemRequest.getDescription())
+                .created(itemRequest.getCreated())
+                .build();
+
+    }
+
     /**
      * Метод для преобразования ItemRequestDto в ItemRequest
      * Method to convert ItemRequestDto to ItemRequest

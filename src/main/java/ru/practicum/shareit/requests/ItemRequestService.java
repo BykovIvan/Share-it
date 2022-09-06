@@ -6,5 +6,7 @@ import java.util.List;
 
 public interface ItemRequestService {
     ItemRequestDto safe(Long userId, ItemRequestDto itemRequestDto);
-    List<ItemDtoForRequest> findRequestByUserId(Long userId);
+    List<ItemRequestDto> findRequestByUserId(Long userId);
+    List<ItemRequestDto> findRequestByParam(Long userId, Long from, Long size);
+    ItemRequestDto findById(Long userId, Long requestId);
 }

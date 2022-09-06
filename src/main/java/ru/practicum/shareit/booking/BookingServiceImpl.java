@@ -33,7 +33,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     public BookingDto create(Long userId, BookingDto bookingDto) {
-        if (!userRepository.findById(userId).isPresent()){
+        if (userRepository.findById(userId).isEmpty()){
             throw new NotFoundException("Такого пользователя не существует!");
         }
         if (!itemService.containsById(bookingDto.getItemId())) {
@@ -77,7 +77,7 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public BookingDto approvedStatusOfItem(Long userId, Long bookingId, Boolean approved) {
         Optional<Booking> bookingOptional = bookingRepository.findById(bookingId);
-        if (!bookingOptional.isPresent()) {
+        if (bookingOptional.isEmpty()) {
             throw new NotFoundException("Такое бронирование не найдено!");
         }
         Booking booking = bookingOptional.get();
@@ -105,7 +105,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public BookingDto findById(Long id, Long userId) {
-        if (!userRepository.findById(userId).isPresent()){
+        if (userRepository.findById(userId).isEmpty()){
             throw new NotFoundException("Такого пользователя не существует!");
         }
         if (id == null){
@@ -127,7 +127,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<BookingDto> findBookingByUserIdAndState(String state, Long userId) {
-        if (!userRepository.findById(userId).isPresent()){
+        if (userRepository.findById(userId).isEmpty()){
             throw new NotFoundException("Такого пользователя не существует!");
         }
         switch (state) {
@@ -162,7 +162,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<BookingDto> findItemByOwnerIdAndState(String state, Long userId) {
-        if (!userRepository.findById(userId).isPresent()){
+        if (userRepository.findById(userId).isEmpty()){
             throw new NotFoundException("Такого пользователя не существует!");
         }
         switch (state) {

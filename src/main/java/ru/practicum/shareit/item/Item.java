@@ -30,6 +30,6 @@ public class Item {
     @ManyToOne(fetch = FetchType.EAGER)
     private User owner;                          //Владелец
     @ManyToOne(fetch = FetchType.EAGER)
-    private ItemRequest itemRequest;
+    private ItemRequest request;
 
 }

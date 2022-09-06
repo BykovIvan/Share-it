@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping(path = "/requests")
@@ -24,10 +25,27 @@ public class ItemRequestController {
     }
 
     @GetMapping
-    public ItemRequestDto findRequestByUserId(@RequestHeader(value = "X-Sharer-User-Id", required = false) Long userId){
-
-        return null;
+    public List<ItemRequestDto> findRequestByUserId(@RequestHeader(value = "X-Sharer-User-Id", required = false) Long userId){
+        log.info("Получен запрос к эндпоинту /requests. Метод GET ALL by UserId");
+        return itemRequestService.findRequestByUserId(userId);
     }
+
+    @GetMapping("/all")
+    public List<ItemRequestDto> findByParam(@RequestHeader(value = "X-Sharer-User-Id", required = false) Long userId,
+                                      @RequestParam("from") Long from,
+                                      @RequestParam("size") Long size) {
+        log.info("Получен запрос к эндпоинту /requests. Метод GET ALL by Param");
+        return itemRequestService.findRequestByParam(userId, from, size);
+    }
+
+    //Могут просматривать все пользователи
+    @GetMapping("/{id}")
+    public ItemRequestDto findById(@RequestHeader(value = "X-Sharer-User-Id", required = false) Long userId,
+                                   @PathVariable("id") Long requestId){
+        log.info("Получен запрос к эндпоинту /requests. Метод GET requestId");
+        return itemRequestService.findById(userId, requestId);
+    }
+
 
 
 }
