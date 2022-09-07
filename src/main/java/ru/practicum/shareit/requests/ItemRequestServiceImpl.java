@@ -1,7 +1,5 @@
 package ru.practicum.shareit.requests;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exceptions.NotFoundException;
@@ -12,7 +10,8 @@ import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.user.UserRepository;
 
 import javax.validation.Valid;
-import java.awt.print.Pageable;
+import ru.practicum.shareit.utils.FromSizeSortPageable;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -56,24 +55,12 @@ public class ItemRequestServiceImpl implements ItemRequestService {
                 .collect(Collectors.toList());
     }
 
-
-
-    //Для реализации пагинации используйте возможности, предоставляемые JpaRepository . Вам нужно определить в
-    //интерфейсе репозитория метод поиска, аналогичный тому, который вы использовали ранее, но принимающий в
-    //качестве параметра также объект Pageable . Например, для поиска вещи ранее использовался метод List<Item>
-    //findByOwnerId , создайте метод Page<Item> findByOwnerId(Long ownerId, Pageable pageable) . Тогда всё остальное для
-    //реализации пагинации на уровне базы данных для вас сделает Spring.
-    //Вам нужно будет только изменить вызов к данному методу, передавая в качестве дополнительного параметра
-    //описание требуемой страницы. Для этого используйте метод PageRequest.of(page, size, sort) . Обратите внимание,
-    //что вам нужно будет преобразовать параметры, передаваемые пользователем, — start и size — к параметрам,
-    //требуемым Spring, — page и тот же size .
     @Override
     public List<ItemRequestDto> findRequestByParam(Long userId, int from, int size) {
         if (userRepository.findById(userId).isEmpty()){
             throw new NotFoundException("Такого пользователя не существует!");
         }
-        //необходимо переделать параметры 
-        return itemRequestRepository.findAll(PageRequest.of(from, size, Sort.by("id"))).stream()
+        return itemRequestRepository.findAll(FromSizeSortPageable.of(from, size, Sort.by(Sort.Direction.DESC, "created"))).stream()
                 .map((ItemRequest itemRequest) -> ItemRequestMapping.toItemRequestDto(itemRequest, itemRepository.findByRequestId(itemRequest.getId()).stream()
                         .map((Item item) -> ItemMapping.toItemDtoForRequest(item, itemRequest.getRequestor().getId()))
                         .collect(Collectors.toList())))
