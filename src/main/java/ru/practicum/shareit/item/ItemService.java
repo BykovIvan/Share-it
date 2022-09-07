@@ -33,7 +33,7 @@ public interface ItemService {
      * находит все вещи пользователя, id пользователя в запросе
      * finds all the things of the user, the user id in the request
      */
-    List<ItemDtoWithComments> findAllItems(Long userId);
+    List<ItemDtoWithComments> findAllItems(Long userId, Integer from, Integer size);
 
     /**
      * Находит вещь для любого пользователя
@@ -57,7 +57,7 @@ public interface ItemService {
      * поиск вещи по слову в пути запроса
      * search for a thing by a word in the query path
      */
-    List<ItemDto> findByText(Long userId, String text);
+    List<ItemDto> findByText(Long userId, String text, Integer from, Integer size);
 
     /**
      * Проверяет наличие вещи в хранилище

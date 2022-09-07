@@ -10,6 +10,7 @@ import ru.practicum.shareit.exceptions.NoUserInHeaderException;
 import ru.practicum.shareit.exceptions.NotFoundException;
 import ru.practicum.shareit.requests.ItemRequestRepository;
 import ru.practicum.shareit.user.UserRepository;
+import ru.practicum.shareit.utils.FromSizeSortPageable;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -84,20 +85,36 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemDtoWithComments> findAllItems(Long userId) {
+    public List<ItemDtoWithComments> findAllItems(Long userId, Integer from, Integer  size) {
         if (userRepository.findById(userId).isEmpty()){
             throw new NotFoundException("Такого пользователя не существует!");
         }
-        return itemRepository.findByOwnerId(userId, Sort.by(Sort.Direction.ASC, "id")).stream()
-                .map((Item item) -> ItemMapping.toItemDtoWithComments(userId,
-                        findByUserIdAndItemIdAll(userId, item.getId()),
-                        getCommentByIdItem(item.getId()).stream()
-                                .map(CommentMapping::toCommentDto)
-                                .collect(Collectors.toList()),
-                        getBookingByIdItem(item.getId()).stream()
-                                .map(BookingMapping::toBookingDto)
-                                .collect(Collectors.toList())))
-                .collect(Collectors.toList());
+        if (from == null || size == null){
+            return itemRepository.findByOwnerId(userId, Sort.by(Sort.Direction.ASC, "id"))
+                    .stream()
+                    .map((Item item) -> ItemMapping.toItemDtoWithComments(userId,
+                            findByUserIdAndItemIdAll(userId, item.getId()),
+                            getCommentByIdItem(item.getId()).stream()
+                                    .map(CommentMapping::toCommentDto)
+                                    .collect(Collectors.toList()),
+                            getBookingByIdItem(item.getId()).stream()
+                                    .map(BookingMapping::toBookingDto)
+                                    .collect(Collectors.toList())))
+                    .collect(Collectors.toList());
+        }else {
+            return itemRepository.findByOwnerId(userId, FromSizeSortPageable.of(from, size, Sort.by(Sort.Direction.ASC, "id")))
+                    .stream()
+                    .map((Item item) -> ItemMapping.toItemDtoWithComments(userId,
+                            findByUserIdAndItemIdAll(userId, item.getId()),
+                            getCommentByIdItem(item.getId()).stream()
+                                    .map(CommentMapping::toCommentDto)
+                                    .collect(Collectors.toList()),
+                            getBookingByIdItem(item.getId()).stream()
+                                    .map(BookingMapping::toBookingDto)
+                                    .collect(Collectors.toList())))
+                    .collect(Collectors.toList());
+        }
+
     }
 
     @Override
@@ -134,14 +151,22 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemDto> findByText(Long userId, String text) {
+    public List<ItemDto> findByText(Long userId, String text, Integer from, Integer size) {
         if (userRepository.findById(userId).isEmpty()){
             throw new NotFoundException("Такого пользователя не существует!");
         }
         if (text == null || text.isEmpty()) {
             return new ArrayList<>();
-        } else {
-            return itemRepository.search(text).stream()
+        } else if (from == null || size == null) {
+            return itemRepository.search(text)
+                    .stream()
+                    .filter(Item::getAvailable)
+                    .map(ItemMapping::toItemDto)
+                    .collect(Collectors.toList());
+        }
+        else {
+            return itemRepository.searchWithPageable(text, FromSizeSortPageable.of(from, size, Sort.by(Sort.Direction.ASC, "id")))
+                    .stream()
                     .filter(Item::getAvailable)
                     .map(ItemMapping::toItemDto)
                     .collect(Collectors.toList());

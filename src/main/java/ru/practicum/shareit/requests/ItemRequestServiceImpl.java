@@ -2,6 +2,7 @@ package ru.practicum.shareit.requests;
 
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.exceptions.BadRequestException;
 import ru.practicum.shareit.exceptions.NotFoundException;
 import ru.practicum.shareit.item.Item;
 import ru.practicum.shareit.item.ItemDtoForRequest;
@@ -49,19 +50,25 @@ public class ItemRequestServiceImpl implements ItemRequestService {
             throw new NotFoundException("Такого пользователя не существует!");
         }
         return itemRequestRepository.findByRequestorId(userId).stream()
-                .map((ItemRequest itemRequest) -> ItemRequestMapping.toItemRequestDto(itemRequest, itemRepository.findByRequestId(itemRequest.getId()).stream()
+                .map((ItemRequest itemRequest) -> ItemRequestMapping.toItemRequestDto(itemRequest, itemRepository.findByRequestId(itemRequest.getId())
+                        .stream()
                         .map((Item item) -> ItemMapping.toItemDtoForRequest(item, itemRequest.getRequestor().getId()))
                         .collect(Collectors.toList())))
                 .collect(Collectors.toList());
     }
 
     @Override
-    public List<ItemRequestDto> findRequestByParam(Long userId, int from, int size) {
+    public List<ItemRequestDto> findRequestByParam(Long userId, Integer from, Integer size) {
         if (userRepository.findById(userId).isEmpty()){
             throw new NotFoundException("Такого пользователя не существует!");
         }
-        return itemRequestRepository.findAll(FromSizeSortPageable.of(from, size, Sort.by(Sort.Direction.DESC, "created"))).stream()
-                .map((ItemRequest itemRequest) -> ItemRequestMapping.toItemRequestDto(itemRequest, itemRepository.findByRequestId(itemRequest.getId()).stream()
+        if (from <= 0 || size <= 0){
+            throw new BadRequestException("Введены неверные параметры!");
+        }
+        return itemRequestRepository.findAll(FromSizeSortPageable.of(from, size, Sort.by(Sort.Direction.DESC, "created")))
+                .stream()
+                .map((ItemRequest itemRequest) -> ItemRequestMapping.toItemRequestDto(itemRequest, itemRepository.findByRequestId(itemRequest.getId())
+                        .stream()
                         .map((Item item) -> ItemMapping.toItemDtoForRequest(item, itemRequest.getRequestor().getId()))
                         .collect(Collectors.toList())))
                 .collect(Collectors.toList());
@@ -76,8 +83,9 @@ public class ItemRequestServiceImpl implements ItemRequestService {
             throw new NotFoundException("Такого запроса не существует!");
         }
         ItemRequest itemRequest = itemRequestRepository.findById(requestId).get();
-        List<ItemDtoForRequest> items = itemRepository.findByRequestId(requestId).stream().
-                map((Item item) -> ItemMapping.toItemDtoForRequest(item, itemRequest.getRequestor().getId()))
+        List<ItemDtoForRequest> items = itemRepository.findByRequestId(requestId)
+                .stream()
+                .map((Item item) -> ItemMapping.toItemDtoForRequest(item, itemRequest.getRequestor().getId()))
                 .collect(Collectors.toList());
 
         return ItemRequestMapping.toItemRequestDto(itemRequest, items);

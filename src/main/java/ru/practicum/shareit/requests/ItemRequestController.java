@@ -24,6 +24,7 @@ public class ItemRequestController {
         return itemRequestService.safe(userId, itemRequestDto);
     }
 
+    // TODO Запросы должны возвращаться в отсортированном порядке от более новых к более старым.
     @GetMapping
     public List<ItemRequestDto> findRequestByUserId(@RequestHeader(value = "X-Sharer-User-Id", required = false) Long userId){
         log.info("Получен запрос к эндпоинту /requests. Метод GET ALL by UserId");
@@ -42,7 +43,7 @@ public class ItemRequestController {
     @GetMapping("/{id}")
     public ItemRequestDto findById(@RequestHeader(value = "X-Sharer-User-Id", required = false) Long userId,
                                    @PathVariable("id") Long requestId){
-        log.info("Получен запрос к эндпоинту /requests. Метод GET requestId");
+        log.info("Получен запрос к эндпоинту /requests. Метод GET by requestId");
         return itemRequestService.findById(userId, requestId);
     }
 

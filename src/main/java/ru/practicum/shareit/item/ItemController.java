@@ -32,9 +32,11 @@ public class ItemController {
     }
 
     @GetMapping
-    public List<ItemDtoWithComments> allItems(@RequestHeader(value="X-Sharer-User-Id") Long userId) {
+    public List<ItemDtoWithComments> allItems(@RequestHeader(value="X-Sharer-User-Id") Long userId,
+                                              @RequestParam(value = "from", required = false) Integer from,
+                                              @RequestParam(value = "size", required = false) Integer size) {
         log.info("Получен запрос к эндпоинту /items. Метод GET. Поиск всех вещей");
-        return itemService.findAllItems(userId);
+        return itemService.findAllItems(userId, from, size);
     }
 
     @GetMapping("/{id}")
@@ -47,9 +49,11 @@ public class ItemController {
 
     @GetMapping("/search")
     public List<ItemDto> itemByText(@RequestHeader(value="X-Sharer-User-Id") Long userId,
-                                    @RequestParam("text") String text) {
+                                    @RequestParam("text") String text,
+                                    @RequestParam(value = "from", required = false) Integer from,
+                                    @RequestParam(value = "size", required = false) Integer size) {
         log.info("Получен запрос к эндпоинту /items. Метод GET. Поиск по тексту");
-        return itemService.findByText(userId, text);
+        return itemService.findByText(userId, text, from, size);
     }
 
     @PostMapping("/{id}/comment")
