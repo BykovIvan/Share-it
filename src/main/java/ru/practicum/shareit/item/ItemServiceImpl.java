@@ -8,6 +8,7 @@ import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.exceptions.BadRequestException;
 import ru.practicum.shareit.exceptions.NoUserInHeaderException;
 import ru.practicum.shareit.exceptions.NotFoundException;
+import ru.practicum.shareit.requests.ItemRequestRepository;
 import ru.practicum.shareit.user.UserRepository;
 
 import java.sql.Timestamp;
@@ -25,12 +26,15 @@ public class ItemServiceImpl implements ItemService {
     private final CommentRepository commentRepository;
     private final BookingRepository bookingRepository;
 
-    public ItemServiceImpl(ItemRepository itemRepository, UserRepository userRepository, ItemMapper mapper, CommentRepository commentRepository, BookingRepository bookingRepository) {
+    private final ItemRequestRepository itemRequestRepository;
+
+    public ItemServiceImpl(ItemRepository itemRepository, UserRepository userRepository, ItemMapper mapper, CommentRepository commentRepository, BookingRepository bookingRepository, ItemRequestRepository itemRequestRepository) {
         this.itemRepository = itemRepository;
         this.userRepository = userRepository;
         this.mapper = mapper;
         this.commentRepository = commentRepository;
         this.bookingRepository = bookingRepository;
+        this.itemRequestRepository = itemRequestRepository;
     }
 
     @Override
@@ -41,7 +45,16 @@ public class ItemServiceImpl implements ItemService {
         if (userRepository.findById(userId).isEmpty()){
             throw new NotFoundException("Такого пользователя не существует!");
         }
-        Item item = ItemMapping.toItem(itemDto, userRepository.findById(userId).get());
+        Item item;
+        if (itemDto.getRequestId() == null){
+            item = ItemMapping.toItem(itemDto, userRepository.findById(userId).get());
+        } else {
+            if (itemRequestRepository.findById(itemDto.getRequestId()).isEmpty()){
+                throw new NotFoundException("Такого запроса не существует!");
+            }
+            item = ItemMapping.toItem(itemDto, itemRequestRepository.findById(itemDto.getRequestId()).get(), userRepository.findById(userId).get());
+        }
+
         return ItemMapping.toItemDto(itemRepository.save(item));
     }
 

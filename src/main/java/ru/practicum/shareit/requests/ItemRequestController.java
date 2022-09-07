@@ -32,8 +32,8 @@ public class ItemRequestController {
 
     @GetMapping("/all")
     public List<ItemRequestDto> findByParam(@RequestHeader(value = "X-Sharer-User-Id", required = false) Long userId,
-                                      @RequestParam("from") Long from,
-                                      @RequestParam("size") Long size) {
+                                      @RequestParam("from") int from,
+                                      @RequestParam("size") int size) {
         log.info("Получен запрос к эндпоинту /requests. Метод GET ALL by Param");
         return itemRequestService.findRequestByParam(userId, from, size);
     }

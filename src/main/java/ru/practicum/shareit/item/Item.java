@@ -26,6 +26,7 @@ public class Item {
     @NotBlank
     private String description;                  //Описание
     @NotNull
+    @Column(name = "is_available")
     private Boolean available;                   //доступность
     @ManyToOne(fetch = FetchType.EAGER)
     private User owner;                          //Владелец

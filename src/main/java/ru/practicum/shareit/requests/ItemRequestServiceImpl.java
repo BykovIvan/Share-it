@@ -1,13 +1,18 @@
 package ru.practicum.shareit.requests;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exceptions.NotFoundException;
 import ru.practicum.shareit.item.Item;
+import ru.practicum.shareit.item.ItemDtoForRequest;
 import ru.practicum.shareit.item.ItemMapping;
 import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.user.UserRepository;
 
 import javax.validation.Valid;
+import java.awt.print.Pageable;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -45,10 +50,13 @@ public class ItemRequestServiceImpl implements ItemRequestService {
             throw new NotFoundException("Такого пользователя не существует!");
         }
         return itemRequestRepository.findByRequestorId(userId).stream()
-//                .map((ItemRequest itemRequest) -> ItemRequestMapping.toItemRequestDto(itemRequest))
-                .map(ItemRequestMapping::toItemRequestDto)
+                .map((ItemRequest itemRequest) -> ItemRequestMapping.toItemRequestDto(itemRequest, itemRepository.findByRequestId(itemRequest.getId()).stream()
+                        .map((Item item) -> ItemMapping.toItemDtoForRequest(item, itemRequest.getRequestor().getId()))
+                        .collect(Collectors.toList())))
                 .collect(Collectors.toList());
     }
+
+
 
     //Для реализации пагинации используйте возможности, предоставляемые JpaRepository . Вам нужно определить в
     //интерфейсе репозитория метод поиска, аналогичный тому, который вы использовали ранее, но принимающий в
@@ -60,8 +68,16 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     //что вам нужно будет преобразовать параметры, передаваемые пользователем, — start и size — к параметрам,
     //требуемым Spring, — page и тот же size .
     @Override
-    public List<ItemRequestDto> findRequestByParam(Long userId, Long from, Long size) {
-        return null;
+    public List<ItemRequestDto> findRequestByParam(Long userId, int from, int size) {
+        if (userRepository.findById(userId).isEmpty()){
+            throw new NotFoundException("Такого пользователя не существует!");
+        }
+        //необходимо переделать параметры 
+        return itemRequestRepository.findAll(PageRequest.of(from, size, Sort.by("id"))).stream()
+                .map((ItemRequest itemRequest) -> ItemRequestMapping.toItemRequestDto(itemRequest, itemRepository.findByRequestId(itemRequest.getId()).stream()
+                        .map((Item item) -> ItemMapping.toItemDtoForRequest(item, itemRequest.getRequestor().getId()))
+                        .collect(Collectors.toList())))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -72,7 +88,11 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         if (itemRequestRepository.findById(requestId).isEmpty()){
             throw new NotFoundException("Такого запроса не существует!");
         }
-        Item item = itemRepository.findByRequestId(requestId);
-        return ItemRequestMapping.toItemRequestDto(itemRequestRepository.findById(requestId).get(), ItemMapping.toItemDtoForRequest(item, userId));
+        ItemRequest itemRequest = itemRequestRepository.findById(requestId).get();
+        List<ItemDtoForRequest> items = itemRepository.findByRequestId(requestId).stream().
+                map((Item item) -> ItemMapping.toItemDtoForRequest(item, itemRequest.getRequestor().getId()))
+                .collect(Collectors.toList());
+
+        return ItemRequestMapping.toItemRequestDto(itemRequest, items);
     }
 }
