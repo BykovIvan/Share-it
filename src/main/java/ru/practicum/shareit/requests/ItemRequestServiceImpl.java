@@ -49,7 +49,8 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         if (userRepository.findById(userId).isEmpty()){
             throw new NotFoundException("Такого пользователя не существует!");
         }
-        return itemRequestRepository.findByRequestorId(userId).stream()
+        return itemRequestRepository.findByRequestorId(userId)
+                .stream()
                 .map((ItemRequest itemRequest) -> ItemRequestMapping.toItemRequestDto(itemRequest, itemRepository.findByRequestId(itemRequest.getId())
                         .stream()
                         .map((Item item) -> ItemMapping.toItemDtoForRequest(item, itemRequest.getRequestor().getId()))
@@ -65,6 +66,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         if (from == null || size == null) {
             return itemRequestRepository.findAll()
                     .stream()
+                    .filter((ItemRequest itemRequest) -> !itemRequest.getId().equals(userId))
                     .map((ItemRequest itemRequest) -> ItemRequestMapping.toItemRequestDto(itemRequest, itemRepository.findByRequestId(itemRequest.getId())
                             .stream()
                             .map((Item item) -> ItemMapping.toItemDtoForRequest(item, itemRequest.getRequestor().getId()))
@@ -76,6 +78,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         }
         return itemRequestRepository.findAll(FromSizeSortPageable.of(from, size, Sort.by(Sort.Direction.DESC, "created")))
                 .stream()
+                .filter((ItemRequest itemRequest) -> !itemRequest.getId().equals(userId))
                 .map((ItemRequest itemRequest) -> ItemRequestMapping.toItemRequestDto(itemRequest, itemRepository.findByRequestId(itemRequest.getId())
                         .stream()
                         .map((Item item) -> ItemMapping.toItemDtoForRequest(item, itemRequest.getRequestor().getId()))

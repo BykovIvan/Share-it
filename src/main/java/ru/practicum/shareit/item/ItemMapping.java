@@ -80,6 +80,7 @@ public class ItemMapping {
                 .id(item.getId())
                 .name(item.getName())
                 .description(item.getDescription())
+                .available(item.getAvailable())
                 .requestId(userId)
                 .build();
     }
