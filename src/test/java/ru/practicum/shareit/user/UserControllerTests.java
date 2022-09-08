@@ -9,36 +9,36 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = UserController.class)
 public class UserControllerTests {
-
     @Autowired
     ObjectMapper mapper;
-
     @MockBean
     UserService userService;
-
     @Autowired
     private MockMvc mvc;
-
-    private UserDto userDto = new UserDto(
-            1L,
-            "John",
-            "john.doe@mail.com");
+    private UserDto userDto = UserDto.builder()
+        .id(1L)
+        .name("John")
+        .email("john.doe@mail.com")
+        .build();
 
     @Test
     void saveNewUser() throws Exception {
         when(userService.save(any()))
                 .thenReturn(userDto);
-
         mvc.perform(post("/users")
                         .content(mapper.writeValueAsString(userDto))
                         .characterEncoding(StandardCharsets.UTF_8)
@@ -46,8 +46,129 @@ public class UserControllerTests {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(userDto.getId()), Long.class))
-                .andExpect(jsonPath("$.name", is(userDto.getName())))
-                .andExpect(jsonPath("$.email", is(userDto.getEmail())));
+                .andExpect(jsonPath("$.name", is(userDto.getName()), String.class))
+                .andExpect(jsonPath("$.email", is(userDto.getEmail()), String.class));
+    }
+
+    @Test
+    void updateUser() throws Exception {
+        when(userService.save(any()))
+                .thenReturn(userDto);
+        mvc.perform(post("/users")
+                        .content(mapper.writeValueAsString(userDto))
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+        UserDto userDtoUpdate = UserDto.builder()
+                .name("Ivan")
+                .email("john.bykov@mail.com")
+                .build();
+        when(userService.update(anyLong(), any()))
+                .thenReturn(userDtoUpdate);
+        mvc.perform(patch("/users/{id}", "1")
+                        .content(mapper.writeValueAsString(userDtoUpdate))
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(userDtoUpdate.getId()), Long.class))
+                .andExpect(jsonPath("$.name", is(userDtoUpdate.getName()), String.class))
+                .andExpect(jsonPath("$.email", is(userDtoUpdate.getEmail()), String.class));
+    }
+
+    @Test
+    void gitUserAll() throws Exception {
+        when(userService.save(any()))
+                .thenReturn(userDto);
+        mvc.perform(post("/users")
+                        .content(mapper.writeValueAsString(userDto))
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+        UserDto userDto2 = UserDto.builder()
+                .id(2L)
+                .name("Ivan")
+                .email("ivan.doe@mail.com")
+                .build();
+        when(userService.save(any()))
+                .thenReturn(userDto2);
+        mvc.perform(post("/users")
+                        .content(mapper.writeValueAsString(userDto))
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+        List<UserDto> listDto = new ArrayList<>();
+        listDto.add(userDto);
+        listDto.add(userDto2);
+        when(userService.findAll())
+                .thenReturn(listDto);
+        mvc.perform(get("/users")
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$[0].id", is(userDto.getId()), Long.class))
+                .andExpect(jsonPath("$[0].name", is(userDto.getName()), String.class))
+                .andExpect(jsonPath("$[0].email", is(userDto.getEmail()), String.class))
+                .andExpect(jsonPath("$[1].id", is(userDto2.getId()), Long.class))
+                .andExpect(jsonPath("$[1].name", is(userDto2.getName()), String.class))
+                .andExpect(jsonPath("$[1].email", is(userDto2.getEmail()), String.class));
+    }
+
+    @Test
+    void gitUserById() throws Exception {
+        when(userService.save(any()))
+                .thenReturn(userDto);
+        mvc.perform(post("/users")
+                        .content(mapper.writeValueAsString(userDto))
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+        when(userService.findById(anyLong()))
+                .thenReturn(userDto);
+        mvc.perform(get("/users/{id}", "1")
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(userDto.getId()), Long.class))
+                .andExpect(jsonPath("$.name", is(userDto.getName()), String.class))
+                .andExpect(jsonPath("$.email", is(userDto.getEmail()), String.class));
+    }
+
+    @Test
+    void gitDeleteByID() throws Exception {
+        when(userService.save(any()))
+                .thenReturn(userDto);
+        mvc.perform(post("/users")
+                        .content(mapper.writeValueAsString(userDto))
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+        UserDto userDto2 = UserDto.builder()
+                .id(2L)
+                .name("Ivan")
+                .email("ivan.doe@mail.com")
+                .build();
+        when(userService.save(any()))
+                .thenReturn(userDto2);
+        mvc.perform(post("/users")
+                        .content(mapper.writeValueAsString(userDto))
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+        mvc.perform(delete("/users/{id}", "2")
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
     }
 
 }
