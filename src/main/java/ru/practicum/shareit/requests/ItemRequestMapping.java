@@ -3,7 +3,6 @@ package ru.practicum.shareit.requests;
 import ru.practicum.shareit.item.ItemDtoForRequest;
 import ru.practicum.shareit.user.User;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -30,7 +29,6 @@ public class ItemRequestMapping {
                 .id(itemRequest.getId())
                 .description(itemRequest.getDescription())
                 .created(itemRequest.getCreated())
-//                .items(new ArrayList<>())
                 .build();
 
     }

@@ -1,8 +1,5 @@
 package ru.practicum.shareit.requests;
 
-import org.springframework.data.domain.Page;
-import ru.practicum.shareit.item.ItemDtoForRequest;
-
 import java.util.List;
 
 public interface ItemRequestService {
