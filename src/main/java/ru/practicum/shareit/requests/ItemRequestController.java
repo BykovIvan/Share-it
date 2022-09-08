@@ -33,8 +33,8 @@ public class ItemRequestController {
 
     @GetMapping("/all")
     public List<ItemRequestDto> findByParam(@RequestHeader(value = "X-Sharer-User-Id", required = false) Long userId,
-                                      @RequestParam("from") int from,
-                                      @RequestParam("size") int size) {
+                                            @RequestParam(value = "from", required = false) Integer from,
+                                            @RequestParam(value = "size", required = false) Integer size) {
         log.info("Получен запрос к эндпоинту /requests. Метод GET ALL by Param");
         return itemRequestService.findRequestByParam(userId, from, size);
     }

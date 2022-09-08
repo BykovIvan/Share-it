@@ -55,7 +55,6 @@ public class ItemServiceImpl implements ItemService {
             }
             item = ItemMapping.toItem(itemDto, itemRequestRepository.findById(itemDto.getRequestId()).get(), userRepository.findById(userId).get());
         }
-
         return ItemMapping.toItemDto(itemRepository.save(item));
     }
 
@@ -102,6 +101,9 @@ public class ItemServiceImpl implements ItemService {
                                     .collect(Collectors.toList())))
                     .collect(Collectors.toList());
         }else {
+            if (from < 0 || size <= 0){
+                throw new BadRequestException("Введены неверные параметры!");
+            }
             return itemRepository.findByOwnerId(userId, FromSizeSortPageable.of(from, size, Sort.by(Sort.Direction.ASC, "id")))
                     .stream()
                     .map((Item item) -> ItemMapping.toItemDtoWithComments(userId,
@@ -165,6 +167,9 @@ public class ItemServiceImpl implements ItemService {
                     .collect(Collectors.toList());
         }
         else {
+            if (from < 0 || size <= 0){
+                throw new BadRequestException("Введены неверные параметры!");
+            }
             return itemRepository.searchWithPageable(text, FromSizeSortPageable.of(from, size, Sort.by(Sort.Direction.ASC, "id")))
                     .stream()
                     .filter(Item::getAvailable)

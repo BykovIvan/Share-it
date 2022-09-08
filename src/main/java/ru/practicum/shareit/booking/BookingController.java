@@ -56,8 +56,8 @@ public class BookingController {
     @GetMapping("/owner")
     public List<BookingDto> findItemByOwnerIdAndState(@RequestHeader(value = "X-Sharer-User-Id", required = false) Long userId,
                                               @RequestParam(value = "state", required = false) String state,
-                                                      @RequestParam(value = "from", required = false) Integer from,
-                                                      @RequestParam(value = "size", required = false) Integer size){
+                                              @RequestParam(value = "from", required = false) Integer from,
+                                              @RequestParam(value = "size", required = false) Integer size){
         if (state == null){
             state = "ALL";
         }

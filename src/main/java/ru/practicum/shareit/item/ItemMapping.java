@@ -18,14 +18,19 @@ public class ItemMapping {
      * Method to convert Item to ItemDto
      */
     public static ItemDto toItemDto(Item item) {
-        return ItemDto.builder()
+        ItemDto itemDto = ItemDto.builder()
                 .id(item.getId())
                 .name(item.getName())
                 .description(item.getDescription())
                 .available(item.getAvailable())
                 .ownerId(item.getOwner().getId())
                 .build();
-
+        if (item.getRequest() == null) {
+            return itemDto;
+        } else {
+            itemDto.setRequestId(item.getRequest().getId());
+            return itemDto;
+        }
     }
 
     /**
