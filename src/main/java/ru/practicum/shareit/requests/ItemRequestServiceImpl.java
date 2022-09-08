@@ -87,7 +87,6 @@ public class ItemRequestServiceImpl implements ItemRequestService {
                 .stream()
                 .map((Item item) -> ItemMapping.toItemDtoForRequest(item, itemRequest.getRequestor().getId()))
                 .collect(Collectors.toList());
-
         return ItemRequestMapping.toItemRequestDto(itemRequest, items);
     }
 }

@@ -42,23 +42,27 @@ public class BookingController {
     //Получение списка всех бронирований текущего пользователя.
     @GetMapping()
     public List<BookingDto> findBookingByUserIdAndState(@RequestHeader(value = "X-Sharer-User-Id", required = false) Long userId,
-                                        @RequestParam(value = "state", required = false) String state){
+                                        @RequestParam(value = "state", required = false) String state,
+                                                        @RequestParam(value = "from", required = false) Integer from,
+                                                        @RequestParam(value = "size", required = false) Integer size){
         if (state == null){
             state = "ALL";
         }
         log.info("Получен запрос к эндпоинту /bookings. Метод GET по State");
-        return bookingService.findBookingByUserIdAndState(state, userId);
+        return bookingService.findBookingByUserIdAndState(state, userId, from, size);
     }
 
     //Получение списка бронирований для всех вещей текущего пользователя.
     @GetMapping("/owner")
     public List<BookingDto> findItemByOwnerIdAndState(@RequestHeader(value = "X-Sharer-User-Id", required = false) Long userId,
-                                              @RequestParam(value = "state", required = false) String state){
+                                              @RequestParam(value = "state", required = false) String state,
+                                                      @RequestParam(value = "from", required = false) Integer from,
+                                                      @RequestParam(value = "size", required = false) Integer size){
         if (state == null){
             state = "ALL";
         }
         log.info("Получен запрос к эндпоинту /bookings. Метод GET по вещам владельца");
-        return bookingService.findItemByOwnerIdAndState(state, userId);
+        return bookingService.findItemByOwnerIdAndState(state, userId, from, size);
     }
 
 }

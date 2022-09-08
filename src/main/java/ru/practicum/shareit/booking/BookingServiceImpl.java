@@ -11,6 +11,7 @@ import ru.practicum.shareit.item.ItemService;
 import ru.practicum.shareit.item.StatusOfItem;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserRepository;
+import ru.practicum.shareit.utils.FromSizeSortPageable;
 
 
 import java.sql.Timestamp;
@@ -126,70 +127,163 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingDto> findBookingByUserIdAndState(String state, Long userId) {
+    public List<BookingDto> findBookingByUserIdAndState(String state, Long userId, Integer from, Integer size) {
         if (userRepository.findById(userId).isEmpty()){
             throw new NotFoundException("Такого пользователя не существует!");
         }
         switch (state) {
             case "ALL":
-                return bookingRepository.findByBookerId(userId, Sort.by(Sort.Direction.DESC, "id")).stream()
-                        .map(BookingMapping::toBookingDto)
-                        .collect(Collectors.toList());
+                if (from == null || size == null){
+                    return bookingRepository.findByBookerId(userId, Sort.by(Sort.Direction.DESC, "id")).stream()
+                            .map(BookingMapping::toBookingDto)
+                            .collect(Collectors.toList());
+                } else {
+                    return bookingRepository.findByBookerId(userId, FromSizeSortPageable.of(from, size, Sort.by(Sort.Direction.DESC, "id")))
+                            .stream()
+                            .map(BookingMapping::toBookingDto)
+                            .collect(Collectors.toList());
+                }
             case "CURRENT":
-                return bookingRepository.findByBookerIdByUserId(userId, new Timestamp(System.currentTimeMillis())).stream()
-                        .map(BookingMapping::toBookingDto)
-                        .collect(Collectors.toList());
+                if (from == null || size == null){
+                    return bookingRepository.findByBookerIdByUserId(userId, new Timestamp(System.currentTimeMillis()), Sort.by(Sort.Direction.DESC, "id"))
+                            .stream()
+                            .map(BookingMapping::toBookingDto)
+                            .collect(Collectors.toList());
+                } else {
+                    return bookingRepository.findByBookerIdByUserId(userId, new Timestamp(System.currentTimeMillis()), FromSizeSortPageable.of(from, size, Sort.by(Sort.Direction.DESC, "id")))
+                            .stream()
+                            .map(BookingMapping::toBookingDto)
+                            .collect(Collectors.toList());
+                }
             case "PAST":
-                return bookingRepository.findByBookerIdAndEndIsBefore(userId, new Timestamp(System.currentTimeMillis()), Sort.by(Sort.Direction.DESC, "id")).stream()
-                        .map(BookingMapping::toBookingDto)
-                        .collect(Collectors.toList());
+                if (from == null || size == null) {
+                    return bookingRepository.findByBookerIdAndEndIsBefore(userId, new Timestamp(System.currentTimeMillis()), Sort.by(Sort.Direction.DESC, "id"))
+                            .stream()
+                            .map(BookingMapping::toBookingDto)
+                            .collect(Collectors.toList());
+                } else {
+                    return bookingRepository.findByBookerIdAndEndIsBefore(userId, new Timestamp(System.currentTimeMillis()), FromSizeSortPageable.of(from, size, Sort.by(Sort.Direction.DESC, "id")))
+                            .stream()
+                            .map(BookingMapping::toBookingDto)
+                            .collect(Collectors.toList());
+                }
             case "FUTURE":
-                return bookingRepository.findByBookerIdAndStartAfter(userId, new Timestamp(System.currentTimeMillis()), Sort.by(Sort.Direction.DESC, "id")).stream()
-                        .map(BookingMapping::toBookingDto)
-                        .collect(Collectors.toList());
+                if (from == null || size == null) {
+                    return bookingRepository.findByBookerIdAndStartAfter(userId, new Timestamp(System.currentTimeMillis()), Sort.by(Sort.Direction.DESC, "id"))
+                            .stream()
+                            .map(BookingMapping::toBookingDto)
+                            .collect(Collectors.toList());
+                } else {
+                    return bookingRepository.findByBookerIdAndStartAfter(userId, new Timestamp(System.currentTimeMillis()), FromSizeSortPageable.of(from, size, Sort.by(Sort.Direction.DESC, "id")))
+                            .stream()
+                            .map(BookingMapping::toBookingDto)
+                            .collect(Collectors.toList());
+                }
             case "WAITING":
-                return bookingRepository.findByBookerIdAndStatus(userId, StatusOfItem.WAITING, Sort.by(Sort.Direction.DESC, "id")).stream()
-                        .map(BookingMapping::toBookingDto)
-                        .collect(Collectors.toList());
+                if (from == null || size == null) {
+                    return bookingRepository.findByBookerIdAndStatus(userId, StatusOfItem.WAITING, Sort.by(Sort.Direction.DESC, "id"))
+                            .stream()
+                            .map(BookingMapping::toBookingDto)
+                            .collect(Collectors.toList());
+                } else {
+                    return bookingRepository.findByBookerIdAndStatus(userId, StatusOfItem.WAITING, FromSizeSortPageable.of(from, size, Sort.by(Sort.Direction.DESC, "id")))
+                            .stream()
+                            .map(BookingMapping::toBookingDto)
+                            .collect(Collectors.toList());
+                }
             case "REJECTED":
-                return bookingRepository.findByBookerIdAndStatus(userId, StatusOfItem.REJECTED, Sort.by(Sort.Direction.DESC, "id")).stream()
-                        .map(BookingMapping::toBookingDto)
-                        .collect(Collectors.toList());
+                if (from == null || size == null) {
+                    return bookingRepository.findByBookerIdAndStatus(userId, StatusOfItem.REJECTED, Sort.by(Sort.Direction.DESC, "id"))
+                            .stream()
+                            .map(BookingMapping::toBookingDto)
+                            .collect(Collectors.toList());
+                } else {
+                    return bookingRepository.findByBookerIdAndStatus(userId, StatusOfItem.REJECTED, FromSizeSortPageable.of(from, size, Sort.by(Sort.Direction.DESC, "id")))
+                            .stream()
+                            .map(BookingMapping::toBookingDto)
+                            .collect(Collectors.toList());
+                }
         }
         throw new NoUserInHeaderException("Unknown state: UNSUPPORTED_STATUS");
     }
 
 
     @Override
-    public List<BookingDto> findItemByOwnerIdAndState(String state, Long userId) {
+    public List<BookingDto> findItemByOwnerIdAndState(String state, Long userId, Integer from, Integer size) {
         if (userRepository.findById(userId).isEmpty()){
             throw new NotFoundException("Такого пользователя не существует!");
         }
         switch (state) {
             case "ALL":
-                return bookingRepository.searchOwnerByOwnerId(userId).stream()
-                        .map(BookingMapping::toBookingDto)
-                        .collect(Collectors.toList());
+                if (from == null || size == null) {
+                    return bookingRepository.searchOwnerByOwnerId(userId, Sort.by(Sort.Direction.DESC, "id")).stream()
+                            .map(BookingMapping::toBookingDto)
+                            .collect(Collectors.toList());
+                } else {
+                    return bookingRepository.searchOwnerByOwnerId(userId, FromSizeSortPageable.of(from, size, Sort.by(Sort.Direction.DESC, "id"))).stream()
+                            .map(BookingMapping::toBookingDto)
+                            .collect(Collectors.toList());
+                }
             case "CURRENT":
-                return bookingRepository.searchOwnerByOwnerIdCurrent(userId, new Timestamp(System.currentTimeMillis())).stream()
-                        .map(BookingMapping::toBookingDto)
-                        .collect(Collectors.toList());
+                if (from == null || size == null) {
+                    return bookingRepository.searchOwnerByOwnerIdCurrent(userId, new Timestamp(System.currentTimeMillis()), Sort.by(Sort.Direction.DESC, "id"))
+                            .stream()
+                            .map(BookingMapping::toBookingDto)
+                            .collect(Collectors.toList());
+                } else {
+                    return bookingRepository.searchOwnerByOwnerIdCurrent(userId, new Timestamp(System.currentTimeMillis()), FromSizeSortPageable.of(from, size, Sort.by(Sort.Direction.DESC, "id")))
+                            .stream()
+                            .map(BookingMapping::toBookingDto)
+                            .collect(Collectors.toList());
+                }
             case "PAST":
-                return bookingRepository.searchOwnerByOwnerIdPast(userId, new Timestamp(System.currentTimeMillis())).stream()
-                        .map(BookingMapping::toBookingDto)
-                        .collect(Collectors.toList());
+                if (from == null || size == null) {
+                    return bookingRepository.searchOwnerByOwnerIdPast(userId, new Timestamp(System.currentTimeMillis()), Sort.by(Sort.Direction.DESC, "id"))
+                            .stream()
+                            .map(BookingMapping::toBookingDto)
+                            .collect(Collectors.toList());
+                } else {
+                    return bookingRepository.searchOwnerByOwnerIdPast(userId, new Timestamp(System.currentTimeMillis()), FromSizeSortPageable.of(from, size, Sort.by(Sort.Direction.DESC, "id")))
+                            .stream()
+                            .map(BookingMapping::toBookingDto)
+                            .collect(Collectors.toList());
+                }
             case "FUTURE":
-                return bookingRepository.searchOwnerByOwnerIdFuture(userId, new Timestamp(System.currentTimeMillis())).stream()
-                        .map(BookingMapping::toBookingDto)
-                        .collect(Collectors.toList());
+                if (from == null || size == null) {
+                    return bookingRepository.searchOwnerByOwnerIdFuture(userId, new Timestamp(System.currentTimeMillis()), Sort.by(Sort.Direction.DESC, "id"))
+                            .stream()
+                            .map(BookingMapping::toBookingDto)
+                            .collect(Collectors.toList());
+                } else {
+                    return bookingRepository.searchOwnerByOwnerIdFuture(userId, new Timestamp(System.currentTimeMillis()), FromSizeSortPageable.of(from, size, Sort.by(Sort.Direction.DESC, "id")))
+                            .stream()
+                            .map(BookingMapping::toBookingDto)
+                            .collect(Collectors.toList());
+                }
             case "WAITING":
-                return bookingRepository.searchOwnerByOwnerIdWaitingAndRejected(userId, StatusOfItem.WAITING).stream()
-                        .map(BookingMapping::toBookingDto)
-                        .collect(Collectors.toList());
+                if (from == null || size == null) {
+                    return bookingRepository.searchOwnerByOwnerIdWaitingAndRejected(userId, StatusOfItem.WAITING, Sort.by(Sort.Direction.DESC, "id"))
+                            .stream()
+                            .map(BookingMapping::toBookingDto)
+                            .collect(Collectors.toList());
+                } else {
+                    return bookingRepository.searchOwnerByOwnerIdWaitingAndRejected(userId, StatusOfItem.WAITING, FromSizeSortPageable.of(from, size, Sort.by(Sort.Direction.DESC, "id")))
+                            .stream()
+                            .map(BookingMapping::toBookingDto)
+                            .collect(Collectors.toList());
+                }
             case "REJECTED":
-                return bookingRepository.searchOwnerByOwnerIdWaitingAndRejected(userId, StatusOfItem.REJECTED).stream()
-                        .map(BookingMapping::toBookingDto)
-                        .collect(Collectors.toList());
+                if (from == null || size == null) {
+                    return bookingRepository.searchOwnerByOwnerIdWaitingAndRejected(userId, StatusOfItem.REJECTED, Sort.by(Sort.Direction.DESC, "id"))
+                            .stream()
+                            .map(BookingMapping::toBookingDto)
+                            .collect(Collectors.toList());
+                } else {
+                    return bookingRepository.searchOwnerByOwnerIdWaitingAndRejected(userId, StatusOfItem.REJECTED, FromSizeSortPageable.of(from, size, Sort.by(Sort.Direction.DESC, "id")))
+                            .stream()
+                            .map(BookingMapping::toBookingDto)
+                            .collect(Collectors.toList());
+                }
         }
         throw new NoUserInHeaderException("Unknown state: UNSUPPORTED_STATUS");
     }
