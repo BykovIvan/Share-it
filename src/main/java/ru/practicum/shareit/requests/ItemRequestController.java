@@ -21,7 +21,7 @@ public class ItemRequestController {
     public ItemRequestDto create(@RequestHeader(value = "X-Sharer-User-Id", required = false) Long userId,
                               @Valid @RequestBody ItemRequestDto itemRequestDto){
         log.info("Получен запрос к эндпоинту /requests. Метод POST");
-        return itemRequestService.safe(userId, itemRequestDto);
+        return itemRequestService.create(userId, itemRequestDto);
     }
 
     @GetMapping

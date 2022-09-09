@@ -31,7 +31,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     }
 
     @Override
-    public ItemRequestDto safe(Long userId, ItemRequestDto itemRequestDto) {
+    public ItemRequestDto create(Long userId, ItemRequestDto itemRequestDto) {
         if (userRepository.findById(userId).isEmpty()){
             throw new NotFoundException("Такого пользователя не существует!");
         }
