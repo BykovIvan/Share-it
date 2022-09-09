@@ -8,7 +8,7 @@ import java.util.List;
 
 @RestController
 @Slf4j
-@RequestMapping("/items")
+@RequestMapping(path = "/items")
 public class ItemController {
     private final ItemService itemService;
 

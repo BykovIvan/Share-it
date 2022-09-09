@@ -20,7 +20,7 @@ public class BookingControllerTest {
     ObjectMapper mapper;
 
     @MockBean
-    UserService userService;
+    BookingService bookingService;
 
     @Autowired
     private MockMvc mvc;
