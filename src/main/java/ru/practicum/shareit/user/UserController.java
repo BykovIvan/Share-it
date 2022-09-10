@@ -19,8 +19,8 @@ public class UserController {
     @PostMapping
     public UserDto create(@RequestBody UserDto userDto) {
         log.info("Получен запрос к эндпоинту /users. Метод POST");
-        @Valid User user = UserMapping.toUser(userDto);
-        return userService.create(user);
+
+        return userService.create(userDto);
     }
 
     @PatchMapping("/{userId}")

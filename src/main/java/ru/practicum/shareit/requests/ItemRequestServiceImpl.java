@@ -10,6 +10,7 @@ import ru.practicum.shareit.item.ItemMapping;
 import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.user.UserRepository;
 
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 import ru.practicum.shareit.utils.FromSizeSortPageable;
 
@@ -31,6 +32,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     }
 
     @Override
+    @Transactional
     public ItemRequestDto create(Long userId, ItemRequestDto itemRequestDto) {
         if (userRepository.findById(userId).isEmpty()){
             throw new NotFoundException("Такого пользователя не существует!");

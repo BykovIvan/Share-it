@@ -14,6 +14,7 @@ import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.utils.FromSizeSortPageable;
 
 
+import javax.transaction.Transactional;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -33,6 +34,8 @@ public class BookingServiceImpl implements BookingService {
         this.itemService = itemService;
     }
 
+    @Override
+    @Transactional
     public BookingDto create(Long userId, BookingDto bookingDto) {
         if (userRepository.findById(userId).isEmpty()){
             throw new NotFoundException("Такого пользователя не существует!");

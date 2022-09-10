@@ -3,6 +3,8 @@ package ru.practicum.shareit.user;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exceptions.NotFoundException;
 
+import javax.transaction.Transactional;
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -18,11 +20,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto create(User user) {
+    @Transactional
+    public UserDto create(UserDto userDto) {
+        @Valid User user = UserMapping.toUser(userDto);
         return UserMapping.toUserDto(userRepository.save(user));
     }
 
     @Override
+    @Transactional
     public UserDto update(Long id, UserDto userDto) {
         if (userRepository.findById(id).isPresent()){
             User user = userRepository.findById(id).get();
