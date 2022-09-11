@@ -26,15 +26,15 @@ public class BookingController {
     // подтверждение бронирования вещи только владельцем вещи
     @PatchMapping("/{id}")
     public BookingDto updateStatusOfItemById(@RequestHeader(value="X-Sharer-User-Id", required = false) Long userId,
-                           @PathVariable("id") Long bookingId,
-                           @RequestParam(value = "approved") Boolean approved){
+                                             @PathVariable("id") Long bookingId,
+                                             @RequestParam(value = "approved") Boolean approved){
         log.info("Получен запрос к эндпоинту /bookings. Метод PATCH");
         return bookingService.approvedStatusOfItem(userId, bookingId, approved);
     }
 
     @GetMapping("/{id}")
     public BookingDto findByIdOfOwnerOrBooker(@RequestHeader(value = "X-Sharer-User-Id", required = false) Long userId,
-                               @PathVariable(value = "id") Long bookingId){
+                                              @PathVariable(value = "id") Long bookingId){
         log.info("Получен запрос к эндпоинту /bookings. Метод GET по ID");
         return bookingService.findById(bookingId, userId);
     }
@@ -42,7 +42,7 @@ public class BookingController {
     //Получение списка всех бронирований текущего пользователя.
     @GetMapping()
     public List<BookingDto> findBookingByUserIdAndState(@RequestHeader(value = "X-Sharer-User-Id", required = false) Long userId,
-                                        @RequestParam(value = "state", required = false) String state,
+                                                        @RequestParam(value = "state", required = false) String state,
                                                         @RequestParam(value = "from", required = false) Integer from,
                                                         @RequestParam(value = "size", required = false) Integer size){
         if (state == null){
@@ -55,9 +55,9 @@ public class BookingController {
     //Получение списка бронирований для всех вещей текущего пользователя.
     @GetMapping("/owner")
     public List<BookingDto> findItemByOwnerIdAndState(@RequestHeader(value = "X-Sharer-User-Id", required = false) Long userId,
-                                              @RequestParam(value = "state", required = false) String state,
-                                              @RequestParam(value = "from", required = false) Integer from,
-                                              @RequestParam(value = "size", required = false) Integer size){
+                                                      @RequestParam(value = "state", required = false) String state,
+                                                      @RequestParam(value = "from", required = false) Integer from,
+                                                      @RequestParam(value = "size", required = false) Integer size){
         if (state == null){
             state = "ALL";
         }

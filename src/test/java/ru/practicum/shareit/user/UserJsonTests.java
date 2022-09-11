@@ -17,7 +17,7 @@ public class UserJsonTests {
     private JacksonTester<User> json;
 
     @Test
-    void testUserDto() throws Exception {
+    void testUserDtoTest() throws Exception {
         UserDto userDto = UserDto.builder()
                 .id(1L)
                 .name("John")
@@ -32,7 +32,7 @@ public class UserJsonTests {
     }
 
     @Test
-    void testUser() throws Exception {
+    void testUserTest() throws Exception {
         User user = User.builder()
                 .id(1L)
                 .name("John")

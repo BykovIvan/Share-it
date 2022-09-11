@@ -24,7 +24,7 @@ public class UserServiceTests {
     private final UserService service;
 
     @Test
-    void saveUser() {
+    void saveUserTest() {
         UserDto userDto = makeUserDto("Пётр", "some@email.com");
         service.create(userDto);
 
@@ -35,6 +35,9 @@ public class UserServiceTests {
         assertThat(user.getName(), equalTo(userDto.getName()));
         assertThat(user.getEmail(), equalTo(userDto.getEmail()));
     }
+
+
+
 
     private UserDto makeUserDto(String name, String email) {
         UserDto dto = new UserDto();

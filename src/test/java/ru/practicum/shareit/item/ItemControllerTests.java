@@ -50,7 +50,7 @@ public class ItemControllerTests {
 
 
     @Test
-    void saveNewItem() throws Exception {
+    void saveNewItemTest() throws Exception {
         when(itemService.create(anyLong(), any()))
                 .thenReturn(itemDto);
 
@@ -69,6 +69,8 @@ public class ItemControllerTests {
                 .andExpect(jsonPath("$.owner", is(itemDto.getOwner()), UserDto.class))
                 .andExpect(jsonPath("$.requestId", is(itemDto.getRequestId()), Long.class));
     }
+
+
 
 
 }

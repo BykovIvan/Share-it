@@ -41,7 +41,7 @@ public class ItemController {
 
     @GetMapping("/{id}")
     public ItemDtoWithComments itemById(@RequestHeader(value="X-Sharer-User-Id") Long userId,
-                            @PathVariable("id") Long itemId) {
+                                        @PathVariable("id") Long itemId) {
         log.info("Получен запрос к эндпоинту /items. Метод GET. Поиск по ID");
         return itemService.findByUserIdAndItemId(userId, itemId);
 
@@ -58,8 +58,8 @@ public class ItemController {
 
     @PostMapping("/{id}/comment")
     public CommentDto addComment(@RequestHeader(value="X-Sharer-User-Id") Long userId,
-                              @PathVariable("id") Long itemId,
-                              @RequestBody CommentDto commentDto){
+                                 @PathVariable("id") Long itemId,
+                                 @RequestBody CommentDto commentDto){
         log.info("Получен запрос к эндпоинту /items/{id}/comment. Метод Post. Добавление комментария");
         return itemService.addCommentToItem(userId, itemId, commentDto);
     }

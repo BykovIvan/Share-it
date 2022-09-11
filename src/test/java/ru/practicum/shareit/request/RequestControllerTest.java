@@ -43,7 +43,7 @@ public class RequestControllerTest {
             .build();
 
     @Test
-    void saveNewUser() throws Exception {
+    void saveNewUserTest() throws Exception {
         when(itemRequestService.create(anyLong(), any()))
                 .thenReturn(itemRequestDto);
         mvc.perform(post("/requests")
@@ -59,7 +59,7 @@ public class RequestControllerTest {
     }
 
     @Test
-    void getRequestByUserId() throws Exception {
+    void getRequestByUserIdTest() throws Exception {
         List<ItemRequestDto> listOfRequest = new ArrayList<>();
         listOfRequest.add(itemRequestDto);
         when(itemRequestService.findRequestByUserId(anyLong()))
@@ -77,7 +77,7 @@ public class RequestControllerTest {
     }
 
     @Test
-    void getRequestByParam() throws Exception {
+    void getRequestByParamTest() throws Exception {
         List<ItemRequestDto> listOfRequest = new ArrayList<>();
         listOfRequest.add(itemRequestDto);
         when(itemRequestService.findRequestByParam(anyLong(), anyInt(), anyInt()))
@@ -97,7 +97,7 @@ public class RequestControllerTest {
     }
 
     @Test
-    void getRequestById() throws Exception {
+    void getRequestByIdTest() throws Exception {
         when(itemRequestService.findById(anyLong(), anyLong()))
                 .thenReturn(itemRequestDto);
         mvc.perform(get("/requests/{id}", "1")

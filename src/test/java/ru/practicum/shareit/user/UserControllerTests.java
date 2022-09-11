@@ -38,7 +38,7 @@ public class UserControllerTests {
         .build();
 
     @Test
-    void saveNewUser() throws Exception {
+    void saveNewUserTest() throws Exception {
         when(userService.create(any()))
                 .thenReturn(userDto);
         mvc.perform(post("/users")
@@ -53,7 +53,7 @@ public class UserControllerTests {
     }
 
     @Test
-    void updateUser() throws Exception {
+    void updateUserTest() throws Exception {
         when(userService.update(anyLong(), any()))
                 .thenReturn(userDto);
         mvc.perform(patch("/users/{id}", "1")
@@ -69,7 +69,7 @@ public class UserControllerTests {
     }
 
     @Test
-    void getUserAll() throws Exception {
+    void getUserAllTest() throws Exception {
         UserDto userDto2 = UserDto.builder()
                 .id(2L)
                 .name("Ivan")
@@ -95,7 +95,7 @@ public class UserControllerTests {
     }
 
     @Test
-    void getUserById() throws Exception {
+    void getUserByIdTest() throws Exception {
         when(userService.findById(anyLong()))
                 .thenReturn(userDto);
         mvc.perform(get("/users/{id}", "1")
@@ -109,7 +109,7 @@ public class UserControllerTests {
     }
 
     @Test
-    void getDeleteByID() throws Exception {
+    void getDeleteByIDTest() throws Exception {
         when(userService.create(any()))
                 .thenReturn(userDto);
         mvc.perform(post("/users")
