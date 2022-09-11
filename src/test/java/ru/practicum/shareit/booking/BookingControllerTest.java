@@ -116,7 +116,6 @@ public class BookingControllerTest {
         when(bookingService.findById(anyLong(), anyLong()))
                 .thenReturn(bookingDto);
         mvc.perform(get("/bookings/{id}", "1")
-                        .content(mapper.writeValueAsString(bookingDto))
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("X-Sharer-User-Id","1")
@@ -140,7 +139,6 @@ public class BookingControllerTest {
         when(bookingService.findBookingByUserIdAndState(anyString(), anyLong(), anyInt(), anyInt()))
                 .thenReturn(listOfBookings);
         mvc.perform(get("/bookings")
-                        .content(mapper.writeValueAsString(bookingDto))
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("X-Sharer-User-Id","1")
@@ -168,7 +166,6 @@ public class BookingControllerTest {
         when(bookingService.findItemByOwnerIdAndState(anyString(), anyLong(), anyInt(), anyInt()))
                 .thenReturn(listOfBookings);
         mvc.perform(get("/bookings/owner")
-                        .content(mapper.writeValueAsString(bookingDto))
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("X-Sharer-User-Id","1")
