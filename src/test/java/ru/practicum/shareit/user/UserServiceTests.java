@@ -115,9 +115,6 @@ public class UserServiceTests {
 
     }
 
-
-
-
     private UserDto makeUserDto(String name, String email) {
         UserDto dto = new UserDto();
         dto.setEmail(email);
