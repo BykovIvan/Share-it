@@ -214,6 +214,8 @@ public class ItemServiceImpl implements ItemService {
         return CommentMapping.toCommentDto(commentRepository.save(comment));
     }
 
+
+
     @Override
     public List<Comment> getCommentByIdItem(Long itemId){
         return commentRepository.findAllByItemId(itemId);

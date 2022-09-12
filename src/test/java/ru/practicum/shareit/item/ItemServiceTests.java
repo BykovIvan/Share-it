@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.BookingDto;
+import ru.practicum.shareit.booking.BookingService;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserDto;
 import ru.practicum.shareit.user.UserService;
@@ -14,6 +15,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -29,6 +31,10 @@ public class ItemServiceTests {
     private final EntityManager em;
     private final ItemService service;
     private final UserService userService;
+
+    private final BookingService bookingService;
+
+
 
     @Test
     void saveItemTest() {
@@ -131,23 +137,65 @@ public class ItemServiceTests {
     void saveCommentTest() {
         UserDto userDto = makeUserDto("Пётр", "some@email.com");
         UserDto getUser = userService.create(userDto);
+
+        UserDto userDto2 = makeUserDto("Пётр2", "some2@email.com");
+        UserDto getUser2 = userService.create(userDto2);
+
         ItemDto itemDto = makeItemDto("Hammer", "Hammer for test", true);
         ItemDto itemDtoGet = service.create(getUser.getId(), itemDto);
-        BookingDto bookingDto = makeBookingDto()
 
-        CommentDto commentDto = makeCommentDto("Hello text", "Ivan");
-        service.addCommentToItem(getUser.getId(), itemDtoGet.getId(), commentDto);
+        BookingDto bookingDto = makeBookingDto(itemDtoGet, getUser);
+        bookingService.create(getUser2.getId(), bookingDto);
+        try {
+            Thread.sleep(4000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        CommentDto commentDto = makeCommentDto("Hello text", userDto2.getName());
+        service.addCommentToItem(getUser2.getId(), itemDtoGet.getId(), commentDto);
 
         TypedQuery<Comment> query = em.createQuery("Select c from Comment c where c.text = :text", Comment.class);
         Comment comment = query.setParameter("text", commentDto.getText()).getSingleResult();
+        CommentDto commentDtoFromSql = CommentMapping.toCommentDto(comment);
 
-        assertThat(comment.getId(), notNullValue());
-        assertThat(comment.getText(), equalTo(commentDto.getText()));
-        assertThat(comment.getAuthor(), equalTo(commentDto.getAuthorName()));
-        assertThat(comment.getCreated(), equalTo(commentDto.getCreated()));
+        assertThat(commentDtoFromSql.getId(), notNullValue());
+        assertThat(commentDtoFromSql.getText(), equalTo(commentDto.getText()));
+        assertThat(commentDtoFromSql.getAuthorName(), equalTo(commentDto.getAuthorName()));
 
     }
 
+    @Test
+    void getCommentByIdTest() {
+        UserDto userDto = makeUserDto("Пётр", "some@email.com");
+        UserDto getUser = userService.create(userDto);
+
+        UserDto userDto2 = makeUserDto("Пётр2", "some2@email.com");
+        UserDto getUser2 = userService.create(userDto2);
+
+        ItemDto itemDto = makeItemDto("Hammer", "Hammer for test", true);
+        ItemDto itemDtoGet = service.create(getUser.getId(), itemDto);
+
+        BookingDto bookingDto = makeBookingDto(itemDtoGet, getUser);
+        bookingService.create(getUser2.getId(), bookingDto);
+        try {
+            Thread.sleep(4000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        CommentDto commentDto = makeCommentDto("Hello text", userDto2.getName());
+        CommentDto commentDtoGet = service.addCommentToItem(getUser2.getId(), itemDtoGet.getId(), commentDto);
+
+        List<Comment> commentDtoGetById = service.getCommentByIdItem(commentDtoGet.getId());
+
+
+        TypedQuery<Comment> query = em.createQuery("Select c from Comment c where c.author.id = :id", Comment.class);
+        List<Comment> comments = query.setParameter("id", commentDtoGet.getId()).getResultList();
+
+//        assertThat(commentDtoFromSql.getId(), notNullValue());
+//        assertThat(commentDtoFromSql.getText(), equalTo(commentDto.getText()));
+//        assertThat(commentDtoFromSql.getAuthorName(), equalTo(commentDto.getAuthorName()));
+
+    }
 
     private ItemDto makeItemDto(String name, String description, Boolean available) {
         ItemDto dto = new ItemDto();
@@ -168,24 +216,21 @@ public class ItemServiceTests {
         CommentDto commentDto = new CommentDto();
         commentDto.setText(text);
         commentDto.setAuthorName(authorName);
-        commentDto.setCreated(LocalDateTime.of(2022, 9, 8, 12, 9, 9));
+        commentDto.setCreated(LocalDateTime.now());
         return commentDto;
     }
     private BookingDto makeBookingDto(ItemDto itemDto, UserDto booker){
         BookingDto bookingDto = new BookingDto();
-        bookingDto.setStart(LocalDateTime.of(2022, 9, 8, 12, 9, 9));
-        bookingDto.setEnd(LocalDateTime.of(2022, 9, 8, 12, 9, 10));
+        bookingDto.setStart(LocalDateTime.now().plusSeconds(1));
+//        bookingDto.setStart(LocalDateTime.of(2022, 9, 8, 12, 9, 9));
+        bookingDto.setEnd(LocalDateTime.now().plusSeconds(2));
+//        bookingDto.setEnd(LocalDateTime.of(2022, 9, 8, 12, 9, 10));
         bookingDto.setItem(itemDto);
         bookingDto.setItemId(itemDto.getId());
-
+        bookingDto.setOwner(1L);
+        bookingDto.setBooker(booker);
+        bookingDto.setStatus(StatusOfItem.WAITING);
         return bookingDto;
     }
-
-
-    private Long owner;
-    private UserDto booker;                    //Пользователь, который осуществляет бронирование
-    private Long bookerId;
-    private StatusOfItem status;            //статус вещи, должен выставлять пользователь
-
 
 }
