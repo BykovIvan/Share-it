@@ -31,7 +31,6 @@ public class ItemServiceTests {
     private final EntityManager em;
     private final ItemService service;
     private final UserService userService;
-
     private final BookingService bookingService;
 
 
@@ -92,8 +91,6 @@ public class ItemServiceTests {
         assertThat(item.getAvailable(), equalTo(itemDtoById.getAvailable()));
 
     }
-
-
 
     @Test
     void findByUserIdAndItemIdAllTest() {
@@ -189,13 +186,51 @@ public class ItemServiceTests {
 
 
         TypedQuery<Comment> query = em.createQuery("Select c from Comment c where c.author.id = :id", Comment.class);
-        List<Comment> comments = query.setParameter("id", commentDtoGet.getId()).getResultList();
+        List<Comment> comments = query.setParameter("id", getUser2.getId()).getResultList();
 
-//        assertThat(commentDtoFromSql.getId(), notNullValue());
-//        assertThat(commentDtoFromSql.getText(), equalTo(commentDto.getText()));
-//        assertThat(commentDtoFromSql.getAuthorName(), equalTo(commentDto.getAuthorName()));
+        assertThat(comments.get(0).getId(), notNullValue());
+        assertThat(comments.get(0).getText(), equalTo(commentDtoGetById.get(0).getText()));
+        assertThat(comments.get(0).getAuthor().getName(), equalTo(commentDtoGetById.get(0).getAuthor().getName()));
+        assertThat(comments.get(0).getAuthor().getEmail(), equalTo(commentDtoGetById.get(0).getAuthor().getEmail()));
 
     }
+
+    @Test
+    void getByUserIdAndItemIdTest() {
+        UserDto userDto = makeUserDto("Пётр", "some@email.com");
+        UserDto getUser = userService.create(userDto);
+
+        UserDto userDto2 = makeUserDto("Пётр2", "some2@email.com");
+        UserDto getUser2 = userService.create(userDto2);
+
+        ItemDto itemDto = makeItemDto("Hammer", "Hammer for test", true);
+        ItemDto itemDtoGet = service.create(getUser.getId(), itemDto);
+
+        BookingDto bookingDto = makeBookingDto(itemDtoGet, getUser);
+        bookingService.create(getUser2.getId(), bookingDto);
+        try {
+            Thread.sleep(4000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        CommentDto commentDto = makeCommentDto("Hello text", userDto2.getName());
+        service.addCommentToItem(getUser2.getId(), itemDtoGet.getId(), commentDto);
+
+        ItemDtoWithComments itemDtoWithComments = service.findByUserIdAndItemId(getUser.getId(), itemDtoGet.getId());
+
+        TypedQuery<Item> query = em.createQuery("Select i from Item i join User u on i.owner.id = u.id where u.id = :ownerId and i.id = :id ", Item.class);
+        Item item = query.setParameter("ownerId", getUser.getId()).setParameter("id", itemDtoGet.getId()).getSingleResult();
+
+
+        assertThat(item.getId(), notNullValue());
+        assertThat(item.getName(), equalTo(itemDtoWithComments.getName()));
+        assertThat(item.getDescription(), equalTo(itemDtoWithComments.getDescription()));
+
+    }
+
+
+//    List<ItemDto> findByText(Long userId, String text, Integer from, Integer size);
+    //    List<ItemDtoWithComments> findAllItems(Long userId, Integer from, Integer size)
 
     private ItemDto makeItemDto(String name, String description, Boolean available) {
         ItemDto dto = new ItemDto();
