@@ -155,9 +155,9 @@ public class ItemJsonTests {
         JsonContent<ItemDtoWithComments> result = jsonWithCommentsDto.write(itemDtoWithComments);
 
         assertThat(result).extractingJsonPathNumberValue("$.id").isEqualTo(1);
-        assertThat(result).extractingJsonPathStringValue("$.name").isEqualTo("John");
-        assertThat(result).extractingJsonPathStringValue("$.description").isEqualTo("john.doe@mail.com");
-        assertThat(result).extractingJsonPathStringValue("$.available").isEqualTo("john.doe@mail.com");
+        assertThat(result).extractingJsonPathStringValue("$.name").isEqualTo("Hammer");
+        assertThat(result).extractingJsonPathStringValue("$.description").isEqualTo("Hammer for you");
+        assertThat(result).extractingJsonPathBooleanValue("$.available").isEqualTo(true);
 
         assertThat(result).extractingJsonPathNumberValue("$.lastBooking.id").isEqualTo(1);
         assertThat(result).extractingJsonPathStringValue("$.lastBooking.start").isEqualTo("2022-09-07T12:45:45");
@@ -170,6 +170,7 @@ public class ItemJsonTests {
         assertThat(result).extractingJsonPathNumberValue("$.lastBooking.item.owner.id").isEqualTo(1);
         assertThat(result).extractingJsonPathStringValue("$.lastBooking.item.owner.name").isEqualTo("Ivan");
         assertThat(result).extractingJsonPathStringValue("$.lastBooking.item.owner.email").isEqualTo("ivan@yandex.ru");
+        assertThat(result).extractingJsonPathNumberValue("$.lastBooking.item.requestId").isEqualTo(1);
         assertThat(result).extractingJsonPathNumberValue("$.lastBooking.itemId").isEqualTo(1);
         assertThat(result).extractingJsonPathNumberValue("$.lastBooking.owner").isEqualTo(1);
         assertThat(result).extractingJsonPathNumberValue("$.lastBooking.bookerId").isEqualTo(1);
@@ -178,30 +179,31 @@ public class ItemJsonTests {
         assertThat(result).extractingJsonPathStringValue("$.lastBooking.booker.email").isEqualTo("john2.doe2@mail.com");
         assertThat(result).extractingJsonPathStringValue("$.lastBooking.status").isEqualTo("WAITING");
 
-        assertThat(result).extractingJsonPathNumberValue("$.nextBooking.id").isEqualTo(1);
-        assertThat(result).extractingJsonPathStringValue("$.nextBooking.start").isEqualTo("2022-09-07T12:45:45");
-        assertThat(result).extractingJsonPathStringValue("$.nextBooking.end").isEqualTo("2022-09-07T12:50:59");
-        assertThat(result).extractingJsonPathNumberValue("$.nextBooking.item.id").isEqualTo(1);
-        assertThat(result).extractingJsonPathStringValue("$.nextBooking.item.name").isEqualTo("Hammer");
-        assertThat(result).extractingJsonPathStringValue("$.nextBooking.item.description").isEqualTo("Hammer for you");
+        assertThat(result).extractingJsonPathNumberValue("$.nextBooking.id").isEqualTo(2);
+        assertThat(result).extractingJsonPathStringValue("$.nextBooking.start").isEqualTo("2022-10-07T12:45:45");
+        assertThat(result).extractingJsonPathStringValue("$.nextBooking.end").isEqualTo("2022-10-07T12:50:59");
+        assertThat(result).extractingJsonPathNumberValue("$.nextBooking.item.id").isEqualTo(2);
+        assertThat(result).extractingJsonPathStringValue("$.nextBooking.item.name").isEqualTo("Hammer2");
+        assertThat(result).extractingJsonPathStringValue("$.nextBooking.item.description").isEqualTo("Hammer2 for you");
         assertThat(result).extractingJsonPathBooleanValue("$.nextBooking.item.available").isEqualTo(true);
         assertThat(result).extractingJsonPathNumberValue("$.nextBooking.item.ownerId").isEqualTo(1);
         assertThat(result).extractingJsonPathNumberValue("$.nextBooking.item.owner.id").isEqualTo(1);
-        assertThat(result).extractingJsonPathStringValue("$.nextBooking.item.owner.name").isEqualTo("Ivan");
-        assertThat(result).extractingJsonPathStringValue("$.nextBooking.item.owner.email").isEqualTo("ivan@yandex.ru");
+        assertThat(result).extractingJsonPathStringValue("$.nextBooking.item.owner.name").isEqualTo("Ivan2");
+        assertThat(result).extractingJsonPathStringValue("$.nextBooking.item.owner.email").isEqualTo("ivan2@yandex.ru");
+        assertThat(result).extractingJsonPathNumberValue("$.lastBooking.item.requestId").isEqualTo(1);
         assertThat(result).extractingJsonPathNumberValue("$.nextBooking.itemId").isEqualTo(1);
         assertThat(result).extractingJsonPathNumberValue("$.nextBooking.owner").isEqualTo(1);
         assertThat(result).extractingJsonPathNumberValue("$.nextBooking.bookerId").isEqualTo(1);
         assertThat(result).extractingJsonPathNumberValue("$.nextBooking.booker.id").isEqualTo(2);
-        assertThat(result).extractingJsonPathStringValue("$.nextBooking.booker.name").isEqualTo("John2");
-        assertThat(result).extractingJsonPathStringValue("$.nextBooking.booker.email").isEqualTo("john2.doe2@mail.com");
+        assertThat(result).extractingJsonPathStringValue("$.nextBooking.booker.name").isEqualTo("John3");
+        assertThat(result).extractingJsonPathStringValue("$.nextBooking.booker.email").isEqualTo("john3.doe2@mail.com");
         assertThat(result).extractingJsonPathStringValue("$.nextBooking.status").isEqualTo("WAITING");
 
-        assertThat(result).extractingJsonPathStringValue("$.comments[0].id").isEqualTo(1);
-        assertThat(result).extractingJsonPathStringValue("$.comments[0].authorName").isEqualTo("WAITING");
-        assertThat(result).extractingJsonPathStringValue("$.comments[0].text").isEqualTo("WAITING");
+        assertThat(result).extractingJsonPathNumberValue("$.comments[0].id").isEqualTo(1);
+        assertThat(result).extractingJsonPathStringValue("$.comments[0].authorName").isEqualTo("Ivan");
+        assertThat(result).extractingJsonPathStringValue("$.comments[0].text").isEqualTo("Hello man");
         assertThat(result).extractingJsonPathStringValue("$.comments[0].created").isEqualTo("2022-09-07T12:50:59");
-        
+
 
     }
 
