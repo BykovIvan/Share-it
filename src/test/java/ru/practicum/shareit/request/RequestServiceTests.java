@@ -10,7 +10,6 @@ import ru.practicum.shareit.requests.ItemRequest;
 import ru.practicum.shareit.requests.ItemRequestDto;
 import ru.practicum.shareit.requests.ItemRequestMapping;
 import ru.practicum.shareit.requests.ItemRequestService;
-import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserDto;
 import ru.practicum.shareit.user.UserMapping;
 import ru.practicum.shareit.user.UserService;
@@ -38,7 +37,6 @@ public class RequestServiceTests {
     private final EntityManager em;
     private final ItemRequestService service;
     private final UserService userService;
-    private final ItemService itemService;
 
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
@@ -87,8 +85,8 @@ public class RequestServiceTests {
                 .collect(Collectors.toList());
 
         assertThat(itemRequest.get(0).getId(), notNullValue());
-        assertThat(itemRequest.get(0).getDescription(), equalTo(itemRequestDto.getDescription()));
-        assertThat(itemRequest.get(0).getCreated().format(formatter), equalTo(itemRequestDto.getCreated().format(formatter)));
+        assertThat(itemRequest.get(0).getDescription(), equalTo(result.get(0).getDescription()));
+        assertThat(itemRequest.get(0).getCreated().format(formatter), equalTo(result.get(0).getCreated().format(formatter)));
     }
 
     @Test
@@ -112,10 +110,38 @@ public class RequestServiceTests {
                 .collect(Collectors.toList());
 
         assertThat(itemRequest.get(0).getId(), notNullValue());
-        assertThat(itemRequest.get(0).getDescription(), equalTo(itemRequestDto.getDescription()));
-        assertThat(itemRequest.get(0).getCreated().format(formatter), equalTo(itemRequestDto.getCreated().format(formatter)));
+        assertThat(itemRequest.get(0).getDescription(), equalTo(result.get(0).getDescription()));
+        assertThat(itemRequest.get(0).getCreated().format(formatter), equalTo(result.get(0).getCreated().format(formatter)));
+
     }
 
+    @Test
+    void findItemRequestByByParamTest() {
+        UserDto userDto = makeUserDto("Ivan", "ivan@yandex.ru");
+        UserDto getUser = userService.create(userDto);
+        UserDto userDto2 = makeUserDto("Ivan2", "ivan2@yandex.ru");
+        UserDto getUser2 = userService.create(userDto2);
+
+        ItemDtoForRequest item = makeItemDtoForRequest("Hammer", "Test for Hammer", true);
+
+        List<ItemDtoForRequest> list = new ArrayList<>();
+        list.add(item);
+
+        ItemRequestDto itemRequestDto = makeItemRequestDto("Test for test", list);
+        ItemRequestDto getItemRequest = service.create(getUser.getId(), itemRequestDto);
+
+        List<ItemRequestDto> result = service.findRequestByParam(getUser2.getId(), 0, 1);
+
+        TypedQuery<ItemRequest> query = em.createQuery("Select i from ItemRequest i where i.id = :id", ItemRequest.class);
+        List<ItemRequestDto> itemRequest = query.setParameter("id", getItemRequest.getId()).getResultList().stream()
+                .map(ItemRequestMapping::toItemRequestDto)
+                .collect(Collectors.toList());
+
+        assertThat(itemRequest.get(0).getId(), notNullValue());
+        assertThat(itemRequest.get(0).getDescription(), equalTo(result.get(0).getDescription()));
+        assertThat(itemRequest.get(0).getCreated().format(formatter), equalTo(result.get(0).getCreated().format(formatter)));
+
+    }
 
     private ItemRequestDto makeItemRequestDto(String description, List<ItemDtoForRequest> listOfItems) {
 
@@ -149,7 +175,5 @@ public class RequestServiceTests {
         dto.setAvailable(available);
         return dto;
     }
-
-
 
 }

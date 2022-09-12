@@ -7,7 +7,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.BookingDto;
 import ru.practicum.shareit.booking.BookingService;
-import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserDto;
 import ru.practicum.shareit.user.UserService;
 
@@ -257,9 +256,7 @@ public class ItemServiceTests {
     private BookingDto makeBookingDto(ItemDto itemDto, UserDto booker){
         BookingDto bookingDto = new BookingDto();
         bookingDto.setStart(LocalDateTime.now().plusSeconds(1));
-//        bookingDto.setStart(LocalDateTime.of(2022, 9, 8, 12, 9, 9));
         bookingDto.setEnd(LocalDateTime.now().plusSeconds(2));
-//        bookingDto.setEnd(LocalDateTime.of(2022, 9, 8, 12, 9, 10));
         bookingDto.setItem(itemDto);
         bookingDto.setItemId(itemDto.getId());
         bookingDto.setOwner(1L);
