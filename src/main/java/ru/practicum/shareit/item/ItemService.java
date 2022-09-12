@@ -3,6 +3,7 @@ package ru.practicum.shareit.item;
 import ru.practicum.shareit.booking.Booking;
 
 import java.util.List;
+
 /**
  * Класс отвечающий за логику работы бронирования
  * The class responsible for the logic of the booking operation
@@ -15,6 +16,7 @@ public interface ItemService {
      * then having it in the store then creates the thing
      */
     ItemDto create(Long userId, ItemDto itemDto);
+
     /**
      * Метод как для полного обновления вещи, так и для частичного,
      * так же проверяет наличие id пользователя в запросе и в хранилище
@@ -24,46 +26,55 @@ public interface ItemService {
      * only the owner of the item can update
      */
     ItemDto update(Long userId, Long itemId, ItemDto itemDto);
+
     /**
      * находит все вещи пользователя, id пользователя в запросе
      * finds all the things of the user, the user id in the request
      */
     List<ItemDtoWithComments> findAllItems(Long userId, Integer from, Integer size);
+
     /**
      * Находит вещь для любого пользователя
      * Find item for any users
      */
     Item findById(Long itemId);
+
     /**
      * находит вещь пользователя по id вещи и id пользователя в запросе
      * finds a user item by item id and user id in the request
      */
     ItemDtoWithComments findByUserIdAndItemId(Long userId, Long itemId);
+
     /**
      * находит вещь пользователя по  id пользователя в запросе
      * finds a user item by user id in the request
      */
     Item findByUserIdAndItemIdAll(Long userId, Long itemId);
+
     /**
      * поиск вещи по слову в пути запроса
      * search for a thing by a word in the query path
      */
     List<ItemDto> findByText(Long userId, String text, Integer from, Integer size);
+
     /**
      * Проверяет наличие вещи в хранилище
      * Check contain item in bd
      */
     boolean containsById(Long itemId);
+
     /**
      * Добавляет коментарий для вещи, добавить может только booker
      * Add comments for item, can only booker
      */
     CommentDto addCommentToItem(Long userId, Long itemId, CommentDto commentDto);
+
     /**
      * Получение коментариев по id вещи
      * Get comments by id of Item
      */
     List<Comment> getCommentByIdItem(Long itemId);
+
     /**
      * Получение бронирований по id вещи
      * Get Bookings by id of Item

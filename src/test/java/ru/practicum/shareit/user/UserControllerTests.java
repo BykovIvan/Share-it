@@ -32,10 +32,10 @@ public class UserControllerTests {
     @Autowired
     private MockMvc mvc;
     private UserDto userDto = UserDto.builder()
-        .id(1L)
-        .name("John")
-        .email("john.doe@mail.com")
-        .build();
+            .id(1L)
+            .name("John")
+            .email("john.doe@mail.com")
+            .build();
 
     @Test
     void saveNewUserTest() throws Exception {

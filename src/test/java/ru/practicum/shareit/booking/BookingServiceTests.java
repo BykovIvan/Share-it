@@ -13,7 +13,6 @@ import ru.practicum.shareit.user.UserService;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
-
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -194,7 +193,7 @@ public class BookingServiceTests {
         assertThat(bookingDtoGet.getStatus(), equalTo(getBookingByState.get(0).getStatus()));
     }
 
-    private BookingDto makeBookingDto(ItemDto itemDto, UserDto booker){
+    private BookingDto makeBookingDto(ItemDto itemDto, UserDto booker) {
         BookingDto bookingDto = new BookingDto();
         bookingDto.setStart(LocalDateTime.now().plusSeconds(1));
         bookingDto.setEnd(LocalDateTime.now().plusSeconds(2));

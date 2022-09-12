@@ -13,7 +13,6 @@ import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.utils.FromSizeSortPageable;
 
-
 import javax.transaction.Transactional;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -37,7 +36,7 @@ public class BookingServiceImpl implements BookingService {
     @Override
     @Transactional
     public BookingDto create(Long userId, BookingDto bookingDto) {
-        if (userRepository.findById(userId).isEmpty()){
+        if (userRepository.findById(userId).isEmpty()) {
             throw new NotFoundException("Такого пользователя не существует!");
         }
         if (!itemService.containsById(bookingDto.getItemId())) {
@@ -46,7 +45,7 @@ public class BookingServiceImpl implements BookingService {
         LocalDateTime startDay = bookingDto.getStart();
         LocalDateTime endDay = bookingDto.getEnd();
         LocalDateTime nowDate = LocalDateTime.now();
-        if (startDay.isBefore(nowDate)){
+        if (startDay.isBefore(nowDate)) {
             throw new BadRequestException("Время начала не может быть в прошлом!");
         }
         if (endDay.isBefore(nowDate)) {
@@ -68,7 +67,7 @@ public class BookingServiceImpl implements BookingService {
 
         for (Booking booking : listOfItemsById) {
             if ((bookingDto.getStart().isBefore(booking.getStart().toLocalDateTime()) && bookingDto.getEnd().isBefore(booking.getStart().toLocalDateTime()))
-                || (bookingDto.getStart().isAfter(booking.getEnd().toLocalDateTime()) && bookingDto.getEnd().isAfter(booking.getEnd().toLocalDateTime()))) {
+                    || (bookingDto.getStart().isAfter(booking.getEnd().toLocalDateTime()) && bookingDto.getEnd().isAfter(booking.getEnd().toLocalDateTime()))) {
 
             } else {
                 throw new BadRequestException("Вещь в данный переод времени забронирована!");
@@ -85,10 +84,10 @@ public class BookingServiceImpl implements BookingService {
             throw new NotFoundException("Такое бронирование не найдено!");
         }
         Booking booking = bookingOptional.get();
-        if (approved && booking.getStatus().equals(StatusOfItem.APPROVED)){
+        if (approved && booking.getStatus().equals(StatusOfItem.APPROVED)) {
             throw new BadRequestException("Статус уже подтвержден!");
         }
-        if (!approved && booking.getStatus().equals(StatusOfItem.REJECTED)){
+        if (!approved && booking.getStatus().equals(StatusOfItem.REJECTED)) {
             throw new BadRequestException("Статус уже не подтвержден!");
         }
         Item item = bookingOptional.get().getItem();
@@ -109,18 +108,18 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public BookingDto findById(Long id, Long userId) {
-        if (userRepository.findById(userId).isEmpty()){
+        if (userRepository.findById(userId).isEmpty()) {
             throw new NotFoundException("Такого пользователя не существует!");
         }
-        if (id == null){
+        if (id == null) {
             throw new NoUserInHeaderException("Отсутсвует id бронирования в запросе!");
         }
         Optional<Booking> bookingGet = bookingRepository.findById(id);
         if (bookingGet.isPresent()) {
             Booking booking = bookingGet.get();
-            if (booking.getBooker().getId().equals(userId) || booking.getItem().getOwner().getId().equals(userId)){
+            if (booking.getBooker().getId().equals(userId) || booking.getItem().getOwner().getId().equals(userId)) {
                 return BookingMapping.toBookingDto(booking);
-            }else {
+            } else {
                 throw new NotFoundException("Не является владельцем или арентадателем вещи!");
             }
         } else {
@@ -131,17 +130,17 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<BookingDto> findBookingByUserIdAndState(String state, Long userId, Integer from, Integer size) {
-        if (userRepository.findById(userId).isEmpty()){
+        if (userRepository.findById(userId).isEmpty()) {
             throw new NotFoundException("Такого пользователя не существует!");
         }
         switch (state) {
             case "ALL":
-                if (from == null || size == null){
+                if (from == null || size == null) {
                     return bookingRepository.findByBookerId(userId, Sort.by(Sort.Direction.DESC, "id")).stream()
                             .map(BookingMapping::toBookingDto)
                             .collect(Collectors.toList());
                 } else {
-                    if (from < 0 || size <= 0){
+                    if (from < 0 || size <= 0) {
                         throw new BadRequestException("Введены неверные параметры!");
                     }
                     return bookingRepository.findByBookerId(userId, FromSizeSortPageable.of(from, size, Sort.by(Sort.Direction.DESC, "id")))
@@ -150,13 +149,13 @@ public class BookingServiceImpl implements BookingService {
                             .collect(Collectors.toList());
                 }
             case "CURRENT":
-                if (from == null || size == null){
+                if (from == null || size == null) {
                     return bookingRepository.findByBookerIdByUserId(userId, new Timestamp(System.currentTimeMillis()), Sort.by(Sort.Direction.DESC, "id"))
                             .stream()
                             .map(BookingMapping::toBookingDto)
                             .collect(Collectors.toList());
                 } else {
-                    if (from < 0 || size <= 0){
+                    if (from < 0 || size <= 0) {
                         throw new BadRequestException("Введены неверные параметры!");
                     }
                     return bookingRepository.findByBookerIdByUserId(userId, new Timestamp(System.currentTimeMillis()), FromSizeSortPageable.of(from, size, Sort.by(Sort.Direction.DESC, "id")))
@@ -171,7 +170,7 @@ public class BookingServiceImpl implements BookingService {
                             .map(BookingMapping::toBookingDto)
                             .collect(Collectors.toList());
                 } else {
-                    if (from < 0 || size <= 0){
+                    if (from < 0 || size <= 0) {
                         throw new BadRequestException("Введены неверные параметры!");
                     }
                     return bookingRepository.findByBookerIdAndEndIsBefore(userId, new Timestamp(System.currentTimeMillis()), FromSizeSortPageable.of(from, size, Sort.by(Sort.Direction.DESC, "id")))
@@ -186,7 +185,7 @@ public class BookingServiceImpl implements BookingService {
                             .map(BookingMapping::toBookingDto)
                             .collect(Collectors.toList());
                 } else {
-                    if (from < 0 || size <= 0){
+                    if (from < 0 || size <= 0) {
                         throw new BadRequestException("Введены неверные параметры!");
                     }
                     return bookingRepository.findByBookerIdAndStartAfter(userId, new Timestamp(System.currentTimeMillis()), FromSizeSortPageable.of(from, size, Sort.by(Sort.Direction.DESC, "id")))
@@ -201,7 +200,7 @@ public class BookingServiceImpl implements BookingService {
                             .map(BookingMapping::toBookingDto)
                             .collect(Collectors.toList());
                 } else {
-                    if (from < 0 || size <= 0){
+                    if (from < 0 || size <= 0) {
                         throw new BadRequestException("Введены неверные параметры!");
                     }
                     return bookingRepository.findByBookerIdAndStatus(userId, StatusOfItem.WAITING, FromSizeSortPageable.of(from, size, Sort.by(Sort.Direction.DESC, "id")))
@@ -216,7 +215,7 @@ public class BookingServiceImpl implements BookingService {
                             .map(BookingMapping::toBookingDto)
                             .collect(Collectors.toList());
                 } else {
-                    if (from < 0 || size <= 0){
+                    if (from < 0 || size <= 0) {
                         throw new BadRequestException("Введены неверные параметры!");
                     }
                     return bookingRepository.findByBookerIdAndStatus(userId, StatusOfItem.REJECTED, FromSizeSortPageable.of(from, size, Sort.by(Sort.Direction.DESC, "id")))
@@ -231,7 +230,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<BookingDto> findItemByOwnerIdAndState(String state, Long userId, Integer from, Integer size) {
-        if (userRepository.findById(userId).isEmpty()){
+        if (userRepository.findById(userId).isEmpty()) {
             throw new NotFoundException("Такого пользователя не существует!");
         }
         switch (state) {
@@ -241,7 +240,7 @@ public class BookingServiceImpl implements BookingService {
                             .map(BookingMapping::toBookingDto)
                             .collect(Collectors.toList());
                 } else {
-                    if (from < 0 || size <= 0){
+                    if (from < 0 || size <= 0) {
                         throw new BadRequestException("Введены неверные параметры!");
                     }
                     return bookingRepository.searchOwnerByOwnerId(userId, FromSizeSortPageable.of(from, size, Sort.by(Sort.Direction.DESC, "id"))).stream()
@@ -255,7 +254,7 @@ public class BookingServiceImpl implements BookingService {
                             .map(BookingMapping::toBookingDto)
                             .collect(Collectors.toList());
                 } else {
-                    if (from < 0 || size <= 0){
+                    if (from < 0 || size <= 0) {
                         throw new BadRequestException("Введены неверные параметры!");
                     }
                     return bookingRepository.searchOwnerByOwnerIdCurrent(userId, new Timestamp(System.currentTimeMillis()), FromSizeSortPageable.of(from, size, Sort.by(Sort.Direction.DESC, "id")))
@@ -270,7 +269,7 @@ public class BookingServiceImpl implements BookingService {
                             .map(BookingMapping::toBookingDto)
                             .collect(Collectors.toList());
                 } else {
-                    if (from < 0 || size <= 0){
+                    if (from < 0 || size <= 0) {
                         throw new BadRequestException("Введены неверные параметры!");
                     }
                     return bookingRepository.searchOwnerByOwnerIdPast(userId, new Timestamp(System.currentTimeMillis()), FromSizeSortPageable.of(from, size, Sort.by(Sort.Direction.DESC, "id")))
@@ -285,7 +284,7 @@ public class BookingServiceImpl implements BookingService {
                             .map(BookingMapping::toBookingDto)
                             .collect(Collectors.toList());
                 } else {
-                    if (from < 0 || size <= 0){
+                    if (from < 0 || size <= 0) {
                         throw new BadRequestException("Введены неверные параметры!");
                     }
                     return bookingRepository.searchOwnerByOwnerIdFuture(userId, new Timestamp(System.currentTimeMillis()), FromSizeSortPageable.of(from, size, Sort.by(Sort.Direction.DESC, "id")))
@@ -300,7 +299,7 @@ public class BookingServiceImpl implements BookingService {
                             .map(BookingMapping::toBookingDto)
                             .collect(Collectors.toList());
                 } else {
-                    if (from < 0 || size <= 0){
+                    if (from < 0 || size <= 0) {
                         throw new BadRequestException("Введены неверные параметры!");
                     }
                     return bookingRepository.searchOwnerByOwnerIdWaitingAndRejected(userId, StatusOfItem.WAITING, FromSizeSortPageable.of(from, size, Sort.by(Sort.Direction.DESC, "id")))
@@ -315,7 +314,7 @@ public class BookingServiceImpl implements BookingService {
                             .map(BookingMapping::toBookingDto)
                             .collect(Collectors.toList());
                 } else {
-                    if (from < 0 || size <= 0){
+                    if (from < 0 || size <= 0) {
                         throw new BadRequestException("Введены неверные параметры!");
                     }
                     return bookingRepository.searchOwnerByOwnerIdWaitingAndRejected(userId, StatusOfItem.REJECTED, FromSizeSortPageable.of(from, size, Sort.by(Sort.Direction.DESC, "id")))

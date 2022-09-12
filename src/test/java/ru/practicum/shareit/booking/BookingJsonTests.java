@@ -29,8 +29,8 @@ public class BookingJsonTests {
     void testBookingDtoTest() throws Exception {
         BookingDto bookingDto = BookingDto.builder()
                 .id(1L)
-                .start(LocalDateTime.of(2022, 9,7,12,45,45))
-                .end(LocalDateTime.of(2022, 9,7,12,50,59))
+                .start(LocalDateTime.of(2022, 9, 7, 12, 45, 45))
+                .end(LocalDateTime.of(2022, 9, 7, 12, 50, 59))
                 .item(ItemDto.builder()
                         .id(1L)
                         .name("Hammer")
@@ -81,8 +81,8 @@ public class BookingJsonTests {
     void testBookingTest() throws Exception {
         Booking booking = Booking.builder()
                 .id(1L)
-                .start(Timestamp.valueOf(LocalDateTime.of(2022, 9,7,12,45,45)))
-                .end(Timestamp.valueOf(LocalDateTime.of(2022, 9,7,12,45,50)))
+                .start(Timestamp.valueOf(LocalDateTime.of(2022, 9, 7, 12, 45, 45)))
+                .end(Timestamp.valueOf(LocalDateTime.of(2022, 9, 7, 12, 45, 50)))
                 .item(Item.builder()
                         .id(1L)
                         .name("Hammer")
@@ -101,7 +101,7 @@ public class BookingJsonTests {
                                         .name("Ivan3")
                                         .email("ivan3@mail.ru")
                                         .build())
-                                .created(LocalDateTime.of(2022, 9,7,12,45,30))
+                                .created(LocalDateTime.of(2022, 9, 7, 12, 45, 30))
                                 .build())
                         .build())
                 .booker(User.builder()
@@ -115,10 +115,10 @@ public class BookingJsonTests {
         JsonContent<Booking> result = json.write(booking);
 
         assertThat(result).extractingJsonPathNumberValue("$.id").isEqualTo(1);
-        assertThat(result).extractingJsonPathStringValue("$.start").isEqualTo("2022-09-07T09:45:45.000+00:00");
-//        assertThat(result).extractingJsonPathStringValue("$.start").isEqualTo("2022-09-07T12:45:45.000+00:00");
-        assertThat(result).extractingJsonPathStringValue("$.end").isEqualTo("2022-09-07T09:45:50.000+00:00");
-//        assertThat(result).extractingJsonPathStringValue("$.end").isEqualTo("2022-09-07T12:45:50.000+00:00");
+//        assertThat(result).extractingJsonPathStringValue("$.start").isEqualTo("2022-09-07T09:45:45.000+00:00");
+        assertThat(result).extractingJsonPathStringValue("$.start").isEqualTo("2022-09-07T12:45:45.000+00:00");
+//        assertThat(result).extractingJsonPathStringValue("$.end").isEqualTo("2022-09-07T09:45:50.000+00:00");
+        assertThat(result).extractingJsonPathStringValue("$.end").isEqualTo("2022-09-07T12:45:50.000+00:00");
         assertThat(result).extractingJsonPathNumberValue("$.item.id").isEqualTo(1);
         assertThat(result).extractingJsonPathStringValue("$.item.name").isEqualTo("Hammer");
         assertThat(result).extractingJsonPathStringValue("$.item.description").isEqualTo("Hammer for you");

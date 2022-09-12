@@ -21,7 +21,7 @@ public class JPAUserEMTests {
     }
 
     @Test
-    public void saveBootStrappingTest(){
+    public void saveBootStrappingTest() {
         User user = new User();
         user.setName("Ivan");
         user.setEmail("ivan@yandex.ru");
@@ -33,7 +33,7 @@ public class JPAUserEMTests {
 
 
     @Test
-    public void saveTest(){
+    public void saveTest() {
         User user = new User();
         user.setName("Ivan");
         user.setEmail("ivan@yandex.ru");

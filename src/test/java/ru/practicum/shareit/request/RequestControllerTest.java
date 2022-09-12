@@ -20,7 +20,8 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -39,7 +40,7 @@ public class RequestControllerTest {
     private ItemRequestDto itemRequestDto = ItemRequestDto.builder()
             .id(1L)
             .description("Test for test")
-            .created(LocalDateTime.of(2022, 9, 9, 10, 12,23))
+            .created(LocalDateTime.of(2022, 9, 9, 10, 12, 23))
             .build();
 
     @Test
@@ -50,7 +51,7 @@ public class RequestControllerTest {
                         .content(mapper.writeValueAsString(itemRequestDto))
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("X-Sharer-User-Id","1")
+                        .header("X-Sharer-User-Id", "1")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(itemRequestDto.getId()), Long.class))
@@ -67,7 +68,7 @@ public class RequestControllerTest {
         mvc.perform(get("/requests")
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("X-Sharer-User-Id","1")
+                        .header("X-Sharer-User-Id", "1")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))
@@ -85,7 +86,7 @@ public class RequestControllerTest {
         mvc.perform(get("/requests/all")
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("X-Sharer-User-Id","1")
+                        .header("X-Sharer-User-Id", "1")
                         .param("from", "0")
                         .param("size", "2")
                         .accept(MediaType.APPLICATION_JSON))
@@ -103,7 +104,7 @@ public class RequestControllerTest {
         mvc.perform(get("/requests/{id}", "1")
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("X-Sharer-User-Id","1")
+                        .header("X-Sharer-User-Id", "1")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(itemRequestDto.getId()), Long.class))

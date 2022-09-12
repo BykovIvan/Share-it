@@ -9,11 +9,10 @@ import ru.practicum.shareit.item.ItemDtoForRequest;
 import ru.practicum.shareit.item.ItemMapping;
 import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.user.UserRepository;
+import ru.practicum.shareit.utils.FromSizeSortPageable;
 
 import javax.transaction.Transactional;
 import javax.validation.Valid;
-import ru.practicum.shareit.utils.FromSizeSortPageable;
-
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -34,10 +33,10 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     @Override
     @Transactional
     public ItemRequestDto create(Long userId, ItemRequestDto itemRequestDto) {
-        if (userRepository.findById(userId).isEmpty()){
+        if (userRepository.findById(userId).isEmpty()) {
             throw new NotFoundException("Такого пользователя не существует!");
         }
-        if (itemRequestDto.getDescription().isEmpty() || itemRequestDto.getDescription() == null){
+        if (itemRequestDto.getDescription().isEmpty() || itemRequestDto.getDescription() == null) {
             throw new NotFoundException("Отсутсвует описание в запросе!");
         }
         @Valid ItemRequest itemRequest = ItemRequestMapping.toItemRequest(itemRequestDto, userRepository.findById(userId).get());
@@ -48,7 +47,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
     @Override
     public List<ItemRequestDto> findRequestByUserId(Long userId) {
-        if (userRepository.findById(userId).isEmpty()){
+        if (userRepository.findById(userId).isEmpty()) {
             throw new NotFoundException("Такого пользователя не существует!");
         }
         return itemRequestRepository.findByRequestorId(userId)
@@ -62,7 +61,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
     @Override
     public List<ItemRequestDto> findRequestByParam(Long userId, Integer from, Integer size) {
-        if (userRepository.findById(userId).isEmpty()){
+        if (userRepository.findById(userId).isEmpty()) {
             throw new NotFoundException("Такого пользователя не существует!");
         }
         if (from == null || size == null) {
@@ -75,7 +74,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
                             .collect(Collectors.toList())))
                     .collect(Collectors.toList());
         }
-        if (from < 0 || size <= 0){
+        if (from < 0 || size <= 0) {
             throw new BadRequestException("Введены неверные параметры!");
         }
         return itemRequestRepository.findAll(FromSizeSortPageable.of(from, size, Sort.by(Sort.Direction.DESC, "created")))
@@ -90,10 +89,10 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
     @Override
     public ItemRequestDto findById(Long userId, Long requestId) {
-        if (userRepository.findById(userId).isEmpty()){
+        if (userRepository.findById(userId).isEmpty()) {
             throw new NotFoundException("Такого пользователя не существует!");
         }
-        if (itemRequestRepository.findById(requestId).isEmpty()){
+        if (itemRequestRepository.findById(requestId).isEmpty()) {
             throw new NotFoundException("Такого запроса не существует!");
         }
         ItemRequest itemRequest = itemRequestRepository.findById(requestId).get();

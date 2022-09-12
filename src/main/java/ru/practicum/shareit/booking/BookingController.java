@@ -17,7 +17,7 @@ public class BookingController {
     }
 
     @PostMapping
-    public BookingDto create(@RequestHeader(value="X-Sharer-User-Id", required = false) Long userId,
+    public BookingDto create(@RequestHeader(value = "X-Sharer-User-Id", required = false) Long userId,
                              @RequestBody BookingDto bookingDto) {
         log.info("Получен запрос к эндпоинту /bookings. Метод POST");
         return bookingService.create(userId, bookingDto);
@@ -25,16 +25,16 @@ public class BookingController {
 
     // подтверждение бронирования вещи только владельцем вещи
     @PatchMapping("/{id}")
-    public BookingDto updateStatusOfItemById(@RequestHeader(value="X-Sharer-User-Id", required = false) Long userId,
+    public BookingDto updateStatusOfItemById(@RequestHeader(value = "X-Sharer-User-Id", required = false) Long userId,
                                              @PathVariable("id") Long bookingId,
-                                             @RequestParam(value = "approved") Boolean approved){
+                                             @RequestParam(value = "approved") Boolean approved) {
         log.info("Получен запрос к эндпоинту /bookings. Метод PATCH");
         return bookingService.approvedStatusOfItem(userId, bookingId, approved);
     }
 
     @GetMapping("/{id}")
     public BookingDto findByIdOfOwnerOrBooker(@RequestHeader(value = "X-Sharer-User-Id", required = false) Long userId,
-                                              @PathVariable(value = "id") Long bookingId){
+                                              @PathVariable(value = "id") Long bookingId) {
         log.info("Получен запрос к эндпоинту /bookings. Метод GET по ID");
         return bookingService.findById(bookingId, userId);
     }
@@ -44,8 +44,8 @@ public class BookingController {
     public List<BookingDto> findBookingByUserIdAndState(@RequestHeader(value = "X-Sharer-User-Id", required = false) Long userId,
                                                         @RequestParam(value = "state", required = false) String state,
                                                         @RequestParam(value = "from", required = false) Integer from,
-                                                        @RequestParam(value = "size", required = false) Integer size){
-        if (state == null){
+                                                        @RequestParam(value = "size", required = false) Integer size) {
+        if (state == null) {
             state = "ALL";
         }
         log.info("Получен запрос к эндпоинту /bookings. Метод GET по State");
@@ -57,8 +57,8 @@ public class BookingController {
     public List<BookingDto> findItemByOwnerIdAndState(@RequestHeader(value = "X-Sharer-User-Id", required = false) Long userId,
                                                       @RequestParam(value = "state", required = false) String state,
                                                       @RequestParam(value = "from", required = false) Integer from,
-                                                      @RequestParam(value = "size", required = false) Integer size){
-        if (state == null){
+                                                      @RequestParam(value = "size", required = false) Integer size) {
+        if (state == null) {
             state = "ALL";
         }
         log.info("Получен запрос к эндпоинту /bookings. Метод GET по вещам владельца");

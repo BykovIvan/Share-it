@@ -27,7 +27,6 @@ public class ItemServiceImpl implements ItemService {
     private final ItemMapper mapper;
     private final CommentRepository commentRepository;
     private final BookingRepository bookingRepository;
-
     private final ItemRequestRepository itemRequestRepository;
 
     public ItemServiceImpl(ItemRepository itemRepository, UserRepository userRepository, ItemMapper mapper, CommentRepository commentRepository, BookingRepository bookingRepository, ItemRequestRepository itemRequestRepository) {
@@ -45,14 +44,14 @@ public class ItemServiceImpl implements ItemService {
         if (userId == null) {
             throw new NoUserInHeaderException("В запросе отсутсвует пользователь при создании задачи!");
         }
-        if (userRepository.findById(userId).isEmpty()){
+        if (userRepository.findById(userId).isEmpty()) {
             throw new NotFoundException("Такого пользователя не существует!");
         }
         Item item;
-        if (itemDto.getRequestId() == null){
+        if (itemDto.getRequestId() == null) {
             item = ItemMapping.toItem(itemDto, userRepository.findById(userId).get());
         } else {
-            if (itemRequestRepository.findById(itemDto.getRequestId()).isEmpty()){
+            if (itemRequestRepository.findById(itemDto.getRequestId()).isEmpty()) {
                 throw new NotFoundException("Такого запроса не существует!");
             }
             item = ItemMapping.toItem(itemDto, itemRequestRepository.findById(itemDto.getRequestId()).get(), userRepository.findById(userId).get());
@@ -66,7 +65,7 @@ public class ItemServiceImpl implements ItemService {
         if (userId == null) {
             throw new NoUserInHeaderException("В запросе отсутсвует пользователь при создании задачи!");
         }
-        if (userRepository.findById(userId).isEmpty()){
+        if (userRepository.findById(userId).isEmpty()) {
             throw new NotFoundException("Такого пользователя не существует!");
         }
         if (itemRepository.findById(itemId).isEmpty()) {
@@ -87,11 +86,11 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemDtoWithComments> findAllItems(Long userId, Integer from, Integer  size) {
-        if (userRepository.findById(userId).isEmpty()){
+    public List<ItemDtoWithComments> findAllItems(Long userId, Integer from, Integer size) {
+        if (userRepository.findById(userId).isEmpty()) {
             throw new NotFoundException("Такого пользователя не существует!");
         }
-        if (from == null || size == null){
+        if (from == null || size == null) {
             return itemRepository.findByOwnerId(userId, Sort.by(Sort.Direction.ASC, "id"))
                     .stream()
                     .map((Item item) -> ItemMapping.toItemDtoWithComments(userId,
@@ -103,8 +102,8 @@ public class ItemServiceImpl implements ItemService {
                                     .map(BookingMapping::toBookingDto)
                                     .collect(Collectors.toList())))
                     .collect(Collectors.toList());
-        }else {
-            if (from < 0 || size <= 0){
+        } else {
+            if (from < 0 || size <= 0) {
                 throw new BadRequestException("Введены неверные параметры!");
             }
             return itemRepository.findByOwnerId(userId, FromSizeSortPageable.of(from, size, Sort.by(Sort.Direction.ASC, "id")))
@@ -123,9 +122,9 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public Item findById(Long itemId){
+    public Item findById(Long itemId) {
         Optional<Item> item = itemRepository.findById(itemId);
-        if (item.isEmpty()){
+        if (item.isEmpty()) {
             throw new NotFoundException("Такой вещи не найдено");
         }
         return item.get();
@@ -133,7 +132,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDtoWithComments findByUserIdAndItemId(Long userId, Long itemId) {
-        if (userRepository.findById(userId).isEmpty()){
+        if (userRepository.findById(userId).isEmpty()) {
             throw new NotFoundException("Такого пользователя не существует!");
         }
         Item item = itemRepository.findByIdAndAvailable(itemId, true);
@@ -157,7 +156,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<ItemDto> findByText(Long userId, String text, Integer from, Integer size) {
-        if (userRepository.findById(userId).isEmpty()){
+        if (userRepository.findById(userId).isEmpty()) {
             throw new NotFoundException("Такого пользователя не существует!");
         }
         if (text == null || text.isEmpty()) {
@@ -168,9 +167,8 @@ public class ItemServiceImpl implements ItemService {
                     .filter(Item::getAvailable)
                     .map(ItemMapping::toItemDto)
                     .collect(Collectors.toList());
-        }
-        else {
-            if (from < 0 || size <= 0){
+        } else {
+            if (from < 0 || size <= 0) {
                 throw new BadRequestException("Введены неверные параметры!");
             }
             return itemRepository.searchWithPageable(text, FromSizeSortPageable.of(from, size, Sort.by(Sort.Direction.ASC, "id")))
@@ -189,7 +187,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public CommentDto addCommentToItem(Long userId, Long itemId, CommentDto commentDto) {
-        if (userRepository.findById(userId).isEmpty()){
+        if (userRepository.findById(userId).isEmpty()) {
             throw new NotFoundException("Такого пользователя не существует!");
         }
         if (itemRepository.findById(itemId).isEmpty()) {
@@ -199,13 +197,13 @@ public class ItemServiceImpl implements ItemService {
             throw new BadRequestException("Комментарий отсутсвует!");
         }
         List<Booking> booking = bookingRepository.findByItemIdAndBookerId(itemId, userId, Sort.by("start"));
-        if (booking.isEmpty()){
+        if (booking.isEmpty()) {
             throw new NotFoundException("Бронирование данной вещи не существует!");
         }
         for (Booking bookingGet : booking) {
-            if (bookingGet.getEnd().toLocalDateTime().isBefore(LocalDateTime.now())){
+            if (bookingGet.getEnd().toLocalDateTime().isBefore(LocalDateTime.now())) {
                 break;
-            }else {
+            } else {
                 throw new BadRequestException("Пока ни одного бронирования не завершено!");
             }
         }
@@ -215,14 +213,13 @@ public class ItemServiceImpl implements ItemService {
     }
 
 
-
     @Override
-    public List<Comment> getCommentByIdItem(Long itemId){
+    public List<Comment> getCommentByIdItem(Long itemId) {
         return commentRepository.findAllByItemId(itemId);
     }
 
     @Override
-    public List<Booking> getBookingByIdItem(Long itemId){
+    public List<Booking> getBookingByIdItem(Long itemId) {
         return bookingRepository.findByItemId(itemId, Sort.by("start"));
     }
 }

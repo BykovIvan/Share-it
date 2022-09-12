@@ -29,20 +29,20 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UserDto update(Long id, UserDto userDto) {
-        if (userRepository.findById(id).isPresent()){
+        if (userRepository.findById(id).isPresent()) {
             User user = userRepository.findById(id).get();
             mapper.updateUserFromDto(userDto, user);
             userRepository.save(user);
             return UserMapping.toUserDto(userRepository.findById(id).get());
-        }else {
+        } else {
             throw new NotFoundException("Такого пользователя не существует!");
         }
     }
 
     @Override
     public UserDto findById(Long id) {
-        Optional<User> userGet =  userRepository.findById(id);
-        if (userGet.isPresent()){
+        Optional<User> userGet = userRepository.findById(id);
+        if (userGet.isPresent()) {
             return UserMapping.toUserDto(userGet.get());
         } else {
             throw new NotFoundException("Нет такого пользователя!");
@@ -58,7 +58,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void deleteById(Long userId) {
-        if (userRepository.findById(userId).isEmpty()){
+        if (userRepository.findById(userId).isEmpty()) {
             throw new NotFoundException("Нет такого пользователя c ID = " + userId);
         }
         userRepository.deleteById(userId);

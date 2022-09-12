@@ -12,7 +12,6 @@ import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserRepository;
 
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -50,12 +49,12 @@ public class JPABookingEMTests {
                 .available(true)
                 .build());
         Booking booking = repository.save(Booking.builder()
-                        .start(new Timestamp(System.currentTimeMillis()))
-                        .end(new Timestamp(System.currentTimeMillis()))
-                        .booker(user)
-                        .item(item)
-                        .status(StatusOfItem.WAITING)
-                        .build());
+                .start(new Timestamp(System.currentTimeMillis()))
+                .end(new Timestamp(System.currentTimeMillis()))
+                .booker(user)
+                .item(item)
+                .status(StatusOfItem.WAITING)
+                .build());
         Assertions.assertNotNull(booking.getId());
     }
 

@@ -24,7 +24,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
-
 @WebMvcTest(controllers = ItemController.class)
 public class ItemControllerTests {
 
@@ -56,7 +55,7 @@ public class ItemControllerTests {
             .id(1L)
             .authorName("Ivan")
             .text("Hello man")
-            .created(LocalDateTime.of(2022, 9,7,12,50,59))
+            .created(LocalDateTime.of(2022, 9, 7, 12, 50, 59))
             .build();
 
     private ItemDtoWithComments itemDtoWithComments = ItemDtoWithComments.builder()
@@ -66,8 +65,8 @@ public class ItemControllerTests {
             .available(true)
             .lastBooking(BookingDto.builder()
                     .id(1L)
-                    .start(LocalDateTime.of(2022, 9,7,12,45,45))
-                    .end(LocalDateTime.of(2022, 9,7,12,50,59))
+                    .start(LocalDateTime.of(2022, 9, 7, 12, 45, 45))
+                    .end(LocalDateTime.of(2022, 9, 7, 12, 50, 59))
                     .item(ItemDto.builder()
                             .id(1L)
                             .name("Hammer")
@@ -93,8 +92,8 @@ public class ItemControllerTests {
                     .build())
             .nextBooking(BookingDto.builder()
                     .id(2L)
-                    .start(LocalDateTime.of(2022, 10,7,12,45,45))
-                    .end(LocalDateTime.of(2022, 10,7,12,50,59))
+                    .start(LocalDateTime.of(2022, 10, 7, 12, 45, 45))
+                    .end(LocalDateTime.of(2022, 10, 7, 12, 50, 59))
                     .item(ItemDto.builder()
                             .id(2L)
                             .name("Hammer2")
@@ -130,7 +129,7 @@ public class ItemControllerTests {
                         .content(mapper.writeValueAsString(itemDto))
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("X-Sharer-User-Id","1")
+                        .header("X-Sharer-User-Id", "1")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(itemDto.getId()), Long.class))
@@ -151,7 +150,7 @@ public class ItemControllerTests {
                         .content(mapper.writeValueAsString(itemDto))
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("X-Sharer-User-Id","1")
+                        .header("X-Sharer-User-Id", "1")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(itemDto.getId()), Long.class))
@@ -175,7 +174,7 @@ public class ItemControllerTests {
         mvc.perform(get("/items")
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("X-Sharer-User-Id","1")
+                        .header("X-Sharer-User-Id", "1")
                         .param("from", "0")
                         .param("size", "2")
                         .accept(MediaType.APPLICATION_JSON))
@@ -201,7 +200,7 @@ public class ItemControllerTests {
         mvc.perform(get("/items/{id}", "1")
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("X-Sharer-User-Id","1")
+                        .header("X-Sharer-User-Id", "1")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(itemDtoWithComments.getId()), Long.class))
@@ -226,7 +225,7 @@ public class ItemControllerTests {
         mvc.perform(get("/items/search")
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("X-Sharer-User-Id","1")
+                        .header("X-Sharer-User-Id", "1")
                         .param("text", "Bla")
                         .param("from", "0")
                         .param("size", "2")
@@ -251,7 +250,7 @@ public class ItemControllerTests {
                         .content(mapper.writeValueAsString(comment))
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("X-Sharer-User-Id","1")
+                        .header("X-Sharer-User-Id", "1")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(comment.getId()), Long.class))

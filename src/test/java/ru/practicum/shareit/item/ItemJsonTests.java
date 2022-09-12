@@ -31,7 +31,7 @@ public class ItemJsonTests {
     @Test
     void testItemDtoTest() throws Exception {
 
-         ItemDto itemDto = ItemDto.builder()
+        ItemDto itemDto = ItemDto.builder()
                 .id(1L)
                 .name("Hammer")
                 .description("Hammer for you")
@@ -85,7 +85,7 @@ public class ItemJsonTests {
                 .id(1L)
                 .authorName("Ivan")
                 .text("Hello man")
-                .created(LocalDateTime.of(2022, 9,7,12,50,59))
+                .created(LocalDateTime.of(2022, 9, 7, 12, 50, 59))
                 .build();
         listOfComments.add(comment);
 
@@ -97,8 +97,8 @@ public class ItemJsonTests {
                 .available(true)
                 .lastBooking(BookingDto.builder()
                         .id(1L)
-                        .start(LocalDateTime.of(2022, 9,7,12,45,45))
-                        .end(LocalDateTime.of(2022, 9,7,12,50,59))
+                        .start(LocalDateTime.of(2022, 9, 7, 12, 45, 45))
+                        .end(LocalDateTime.of(2022, 9, 7, 12, 50, 59))
                         .item(ItemDto.builder()
                                 .id(1L)
                                 .name("Hammer")
@@ -124,8 +124,8 @@ public class ItemJsonTests {
                         .build())
                 .nextBooking(BookingDto.builder()
                         .id(2L)
-                        .start(LocalDateTime.of(2022, 10,7,12,45,45))
-                        .end(LocalDateTime.of(2022, 10,7,12,50,59))
+                        .start(LocalDateTime.of(2022, 10, 7, 12, 45, 45))
+                        .end(LocalDateTime.of(2022, 10, 7, 12, 50, 59))
                         .item(ItemDto.builder()
                                 .id(2L)
                                 .name("Hammer2")
@@ -227,7 +227,7 @@ public class ItemJsonTests {
                                 .name("Ivan3")
                                 .email("ivan3@mail.ru")
                                 .build())
-                        .created(LocalDateTime.of(2022, 9,7,12,45,30))
+                        .created(LocalDateTime.of(2022, 9, 7, 12, 45, 30))
                         .build())
                 .build();
 

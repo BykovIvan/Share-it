@@ -39,7 +39,7 @@ public class RequestJsonTests {
         ItemRequestDto itemRequestDto = ItemRequestDto.builder()
                 .id(1L)
                 .description("Test for test")
-                .created(LocalDateTime.of(2022, 9, 9, 10, 12,23))
+                .created(LocalDateTime.of(2022, 9, 9, 10, 12, 23))
                 .items(listOfItem)
                 .build();
 
@@ -66,7 +66,7 @@ public class RequestJsonTests {
                         .name("Ivan")
                         .email("ivan@mail.ru")
                         .build())
-                .created(LocalDateTime.of(2022, 9, 9, 10, 12,23))
+                .created(LocalDateTime.of(2022, 9, 9, 10, 12, 23))
                 .build();
 
         JsonContent<ItemRequest> result = json.write(itemRequest);

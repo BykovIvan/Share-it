@@ -46,21 +46,21 @@ public class ItemMapping {
                 .comments(comment)
                 .build();
 
-        if (bookings.isEmpty()){
+        if (bookings.isEmpty()) {
             return itemDtoWithComments;
         }
         if (item.getOwner().getId().equals(userId)) {
             LocalDateTime timeNow = LocalDateTime.now();
             for (BookingDto booking : bookings) {
                 if (booking.getStatus().equals(StatusOfItem.APPROVED) ||
-                        booking.getStatus().equals(StatusOfItem.WAITING)){
+                        booking.getStatus().equals(StatusOfItem.WAITING)) {
                     LocalDateTime timeStart = booking.getStart();
                     LocalDateTime timeEnd = booking.getEnd();
-                    if (timeStart.isBefore(timeNow) && timeEnd.isBefore(timeNow)){
+                    if (timeStart.isBefore(timeNow) && timeEnd.isBefore(timeNow)) {
                         itemDtoWithComments.setLastBooking(booking);
                     }
-                    if (timeStart.isAfter(timeNow) && timeEnd.isAfter(timeNow)){
-                        if (itemDtoWithComments.getNextBooking() == null){
+                    if (timeStart.isAfter(timeNow) && timeEnd.isAfter(timeNow)) {
+                        if (itemDtoWithComments.getNextBooking() == null) {
                             itemDtoWithComments.setNextBooking(booking);
                         }
                     }
@@ -75,7 +75,7 @@ public class ItemMapping {
      * Метод для преобразования Item в ItemDtoForRequest
      * Method to convert Item to ItemDtoForRequest
      */
-    public static ItemDtoForRequest toItemDtoForRequest(Item item, Long userId){
+    public static ItemDtoForRequest toItemDtoForRequest(Item item, Long userId) {
         return ItemDtoForRequest.builder()
                 .id(item.getId())
                 .name(item.getName())

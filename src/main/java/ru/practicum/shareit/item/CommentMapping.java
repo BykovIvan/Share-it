@@ -6,7 +6,7 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 public class CommentMapping {
-    public static CommentDto toCommentDto(Comment comment){
+    public static CommentDto toCommentDto(Comment comment) {
         return CommentDto.builder()
                 .id(comment.getId())
                 .text(comment.getText())
@@ -15,7 +15,7 @@ public class CommentMapping {
                 .build();
     }
 
-    public static Comment toComment(CommentDto commentDto, Item item, User author){
+    public static Comment toComment(CommentDto commentDto, Item item, User author) {
         return Comment.builder()
                 .text(commentDto.getText())
                 .created(Timestamp.valueOf(LocalDateTime.now()))

@@ -12,7 +12,6 @@ import ru.practicum.shareit.user.UserService;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
-
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -31,8 +30,6 @@ public class ItemServiceTests {
     private final ItemService service;
     private final UserService userService;
     private final BookingService bookingService;
-
-
 
     @Test
     void saveItemTest() {
@@ -109,7 +106,6 @@ public class ItemServiceTests {
         assertThat(item.getAvailable(), equalTo(itemDtoById.getAvailable()));
 
     }
-
 
 
     @Test
@@ -246,14 +242,15 @@ public class ItemServiceTests {
         return dto;
     }
 
-    private CommentDto makeCommentDto(String text, String authorName){
+    private CommentDto makeCommentDto(String text, String authorName) {
         CommentDto commentDto = new CommentDto();
         commentDto.setText(text);
         commentDto.setAuthorName(authorName);
         commentDto.setCreated(LocalDateTime.now());
         return commentDto;
     }
-    private BookingDto makeBookingDto(ItemDto itemDto, UserDto booker){
+
+    private BookingDto makeBookingDto(ItemDto itemDto, UserDto booker) {
         BookingDto bookingDto = new BookingDto();
         bookingDto.setStart(LocalDateTime.now().plusSeconds(1));
         bookingDto.setEnd(LocalDateTime.now().plusSeconds(2));

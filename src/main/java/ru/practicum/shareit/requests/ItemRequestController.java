@@ -19,13 +19,13 @@ public class ItemRequestController {
 
     @PostMapping
     public ItemRequestDto create(@RequestHeader(value = "X-Sharer-User-Id", required = false) Long userId,
-                                 @Valid @RequestBody ItemRequestDto itemRequestDto){
+                                 @Valid @RequestBody ItemRequestDto itemRequestDto) {
         log.info("Получен запрос к эндпоинту /requests. Метод POST");
         return itemRequestService.create(userId, itemRequestDto);
     }
 
     @GetMapping
-    public List<ItemRequestDto> findRequestByUserId(@RequestHeader(value = "X-Sharer-User-Id", required = false) Long userId){
+    public List<ItemRequestDto> findRequestByUserId(@RequestHeader(value = "X-Sharer-User-Id", required = false) Long userId) {
         log.info("Получен запрос к эндпоинту /requests. Метод GET ALL by UserId");
         return itemRequestService.findRequestByUserId(userId);
     }
@@ -41,11 +41,10 @@ public class ItemRequestController {
     //Могут просматривать все пользователи
     @GetMapping("/{id}")
     public ItemRequestDto findById(@RequestHeader(value = "X-Sharer-User-Id", required = false) Long userId,
-                                   @PathVariable("id") Long requestId){
+                                   @PathVariable("id") Long requestId) {
         log.info("Получен запрос к эндпоинту /requests. Метод GET by requestId");
         return itemRequestService.findById(userId, requestId);
     }
-
 
 
 }

@@ -17,22 +17,22 @@ public class ItemController {
     }
 
     @PostMapping
-    public ItemDto create(@RequestHeader(value="X-Sharer-User-Id", required = false) Long userId,
+    public ItemDto create(@RequestHeader(value = "X-Sharer-User-Id", required = false) Long userId,
                           @Valid @RequestBody ItemDto itemDto) {
         log.info("Получен запрос к эндпоинту /items. Метод POST");
         return itemService.create(userId, itemDto);
     }
 
     @PatchMapping("/{id}")
-    public ItemDto updateById(@RequestHeader(value="X-Sharer-User-Id", required = false) Long userId,
+    public ItemDto updateById(@RequestHeader(value = "X-Sharer-User-Id", required = false) Long userId,
                               @PathVariable("id") Long itemId,
-                              @RequestBody ItemDto itemDto){
+                              @RequestBody ItemDto itemDto) {
         log.info("Получен запрос к эндпоинту /items. Метод PATCH");
         return itemService.update(userId, itemId, itemDto);
     }
 
     @GetMapping
-    public List<ItemDtoWithComments> allItems(@RequestHeader(value="X-Sharer-User-Id") Long userId,
+    public List<ItemDtoWithComments> allItems(@RequestHeader(value = "X-Sharer-User-Id") Long userId,
                                               @RequestParam(value = "from", required = false) Integer from,
                                               @RequestParam(value = "size", required = false) Integer size) {
         log.info("Получен запрос к эндпоинту /items. Метод GET. Поиск всех вещей");
@@ -40,7 +40,7 @@ public class ItemController {
     }
 
     @GetMapping("/{id}")
-    public ItemDtoWithComments itemById(@RequestHeader(value="X-Sharer-User-Id") Long userId,
+    public ItemDtoWithComments itemById(@RequestHeader(value = "X-Sharer-User-Id") Long userId,
                                         @PathVariable("id") Long itemId) {
         log.info("Получен запрос к эндпоинту /items. Метод GET. Поиск по ID");
         return itemService.findByUserIdAndItemId(userId, itemId);
@@ -48,7 +48,7 @@ public class ItemController {
     }
 
     @GetMapping("/search")
-    public List<ItemDto> itemByText(@RequestHeader(value="X-Sharer-User-Id") Long userId,
+    public List<ItemDto> itemByText(@RequestHeader(value = "X-Sharer-User-Id") Long userId,
                                     @RequestParam("text") String text,
                                     @RequestParam(value = "from", required = false) Integer from,
                                     @RequestParam(value = "size", required = false) Integer size) {
@@ -57,9 +57,9 @@ public class ItemController {
     }
 
     @PostMapping("/{id}/comment")
-    public CommentDto addComment(@RequestHeader(value="X-Sharer-User-Id") Long userId,
+    public CommentDto addComment(@RequestHeader(value = "X-Sharer-User-Id") Long userId,
                                  @PathVariable("id") Long itemId,
-                                 @RequestBody CommentDto commentDto){
+                                 @RequestBody CommentDto commentDto) {
         log.info("Получен запрос к эндпоинту /items/{id}/comment. Метод Post. Добавление комментария");
         return itemService.addCommentToItem(userId, itemId, commentDto);
     }

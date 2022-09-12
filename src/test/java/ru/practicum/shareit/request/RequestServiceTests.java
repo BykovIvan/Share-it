@@ -5,7 +5,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.shareit.item.*;
+import ru.practicum.shareit.item.ItemDto;
+import ru.practicum.shareit.item.ItemDtoForRequest;
 import ru.practicum.shareit.requests.ItemRequest;
 import ru.practicum.shareit.requests.ItemRequestDto;
 import ru.practicum.shareit.requests.ItemRequestMapping;
@@ -16,7 +17,6 @@ import ru.practicum.shareit.user.UserService;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
-
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
