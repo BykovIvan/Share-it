@@ -37,11 +37,11 @@ public class ItemRequestMapping {
      * Метод для преобразования ItemRequestDto в ItemRequest
      * Method to convert ItemRequestDto to ItemRequest
      */
-    public static ItemRequest toItemRequest(ItemRequestDto ItemRequestDto, User user) {
+    public static ItemRequest toItemRequest(ItemRequestDto itemRequestDto, User user) {
         return ItemRequest.builder()
-                .id(ItemRequestDto.getId())
+                .id(itemRequestDto.getId())
                 .requestor(user)
-                .description(ItemRequestDto.getDescription())
+                .description(itemRequestDto.getDescription())
                 .build();
 
     }
