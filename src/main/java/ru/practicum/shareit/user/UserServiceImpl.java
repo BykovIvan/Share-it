@@ -12,11 +12,9 @@ import java.util.stream.Collectors;
 @Service
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
-    private final UserMapper mapper;
 
-    public UserServiceImpl(UserRepository repository, UserMapper mapper) {
+    public UserServiceImpl(UserRepository repository) {
         this.userRepository = repository;
-        this.mapper = mapper;
     }
 
     @Override
@@ -31,7 +29,12 @@ public class UserServiceImpl implements UserService {
     public UserDto update(Long id, UserDto userDto) {
         if (userRepository.findById(id).isPresent()) {
             User user = userRepository.findById(id).get();
-            mapper.updateUserFromDto(userDto, user);
+            if (userDto.getName() != null) {
+                user.setName(userDto.getName());
+            }
+            if (userDto.getEmail() != null) {
+                user.setEmail(userDto.getEmail());
+            }
             userRepository.save(user);
             return UserMapping.toUserDto(userRepository.findById(id).get());
         } else {

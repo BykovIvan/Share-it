@@ -9,6 +9,8 @@ import ru.practicum.shareit.exceptions.BadRequestException;
 import ru.practicum.shareit.exceptions.NoUserInHeaderException;
 import ru.practicum.shareit.exceptions.NotFoundException;
 import ru.practicum.shareit.requests.ItemRequestRepository;
+import ru.practicum.shareit.user.User;
+import ru.practicum.shareit.user.UserDto;
 import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.utils.FromSizeSortPageable;
 
@@ -24,15 +26,13 @@ import java.util.stream.Collectors;
 public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
-    private final ItemMapper mapper;
     private final CommentRepository commentRepository;
     private final BookingRepository bookingRepository;
     private final ItemRequestRepository itemRequestRepository;
 
-    public ItemServiceImpl(ItemRepository itemRepository, UserRepository userRepository, ItemMapper mapper, CommentRepository commentRepository, BookingRepository bookingRepository, ItemRequestRepository itemRequestRepository) {
+    public ItemServiceImpl(ItemRepository itemRepository, UserRepository userRepository, CommentRepository commentRepository, BookingRepository bookingRepository, ItemRequestRepository itemRequestRepository) {
         this.itemRepository = itemRepository;
         this.userRepository = userRepository;
-        this.mapper = mapper;
         this.commentRepository = commentRepository;
         this.bookingRepository = bookingRepository;
         this.itemRequestRepository = itemRequestRepository;
@@ -77,11 +77,38 @@ public class ItemServiceImpl implements ItemService {
 
         if (itemRepository.findById(itemId).isPresent()) {
             Item item = itemRepository.findById(itemId).get();
-            mapper.updateItemFromDto(itemDto, item);
+
+            if (itemDto.getName() != null) {
+                item.setName(itemDto.getName());
+            }
+            if (itemDto.getDescription() != null) {
+                item.setDescription(itemDto.getDescription());
+            }
+            if (itemDto.getAvailable() != null) {
+                item.setAvailable(itemDto.getAvailable());
+            }
+            if (itemDto.getOwner() != null) {
+                if (item.getOwner() == null) {
+                    item.setOwner(User.builder().build());
+                }
+                userDtoToUser(itemDto.getOwner(), item.getOwner());
+            }
             itemRepository.save(item);
             return ItemMapping.toItemDto(itemRepository.findById(itemId).get());
         } else {
             throw new NotFoundException("Такого пользователя не существует!");
+        }
+    }
+
+    protected void userDtoToUser(UserDto userDto, User mappingTarget) {
+        if (userDto.getId() != null) {
+            mappingTarget.setId(userDto.getId());
+        }
+        if (userDto.getName() != null) {
+            mappingTarget.setName(userDto.getName());
+        }
+        if (userDto.getEmail() != null) {
+            mappingTarget.setEmail(userDto.getEmail());
         }
     }
 

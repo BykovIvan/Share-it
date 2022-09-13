@@ -95,7 +95,7 @@ public class ItemServiceTests {
         ItemDto itemDto = makeItemDto("Hammer", "Hammer for test", true);
         ItemDto itemDtoGet = service.create(getUser.getId(), itemDto);
 
-        Item itemDtoById = service.findByUserIdAndItemIdAll(itemDtoGet.getId(), itemDtoGet.getId());
+        Item itemDtoById = service.findByUserIdAndItemIdAll(getUser.getId(), itemDtoGet.getId());
 
         TypedQuery<Item> query = em.createQuery("Select i from Item i where i.id = :id", Item.class);
         Item item = query.setParameter("id", itemDtoGet.getId()).getSingleResult();
@@ -174,14 +174,14 @@ public class ItemServiceTests {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
+
         CommentDto commentDto = makeCommentDto("Hello text", userDto2.getName());
         CommentDto commentDtoGet = service.addCommentToItem(getUser2.getId(), itemDtoGet.getId(), commentDto);
 
-        List<Comment> commentDtoGetById = service.getCommentByIdItem(commentDtoGet.getId());
+        List<Comment> commentDtoGetById = service.getCommentByIdItem(itemDtoGet.getId());
 
-
-        TypedQuery<Comment> query = em.createQuery("Select c from Comment c where c.author.id = :id", Comment.class);
-        List<Comment> comments = query.setParameter("id", getUser2.getId()).getResultList();
+        TypedQuery<Comment> query = em.createQuery("Select c from Comment c where c.text = :text", Comment.class);
+        List<Comment> comments = query.setParameter("text", commentDto.getText()).getResultList();
 
         assertThat(comments.get(0).getId(), notNullValue());
         assertThat(comments.get(0).getText(), equalTo(commentDtoGetById.get(0).getText()));
@@ -222,10 +222,6 @@ public class ItemServiceTests {
         assertThat(item.getDescription(), equalTo(itemDtoWithComments.getDescription()));
 
     }
-
-
-//    List<ItemDto> findByText(Long userId, String text, Integer from, Integer size);
-    //    List<ItemDtoWithComments> findAllItems(Long userId, Integer from, Integer size)
 
     private ItemDto makeItemDto(String name, String description, Boolean available) {
         ItemDto dto = new ItemDto();

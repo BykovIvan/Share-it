@@ -51,66 +51,66 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     @Query(" select b from Booking b " +
             "JOIN Item i on b.item.id = i.id " +
             "where i.owner.id = ?1 ")
-    List<Booking> searchOwnerByOwnerId(Long owner, Sort sort);
+    List<Booking> searchBookingsByOwnerId(Long owner, Sort sort);
 
     @Query(" select b from Booking b " +
             "JOIN Item i on b.item.id = i.id " +
             "where i.owner.id = ?1 ")
-    Page<Booking> searchOwnerByOwnerId(Long owner, Pageable pageable);
+    Page<Booking> searchBookingsByOwnerId(Long owner, Pageable pageable);
 
     @Query(" select b from Booking b " +
             "JOIN Item i on b.item.id = i.id " +
             "where i.owner.id = ?1 " +
             "and b.start < ?2 " +
             "and b.end > ?2 ")
-    List<Booking> searchOwnerByOwnerIdCurrent(Long userId, Timestamp timestamp, Sort sort);
+    List<Booking> searchBookingByOwnerIdCurrent(Long userId, Timestamp timestamp, Sort sort);
 
     @Query(" select b from Booking b " +
             "JOIN Item i on b.item.id = i.id " +
             "where i.owner.id = ?1 " +
             "and b.start < ?2 " +
             "and b.end > ?2 ")
-    Page<Booking> searchOwnerByOwnerIdCurrent(Long userId, Timestamp timestamp, Pageable pageable);
-
-    @Query(" select b from Booking b " +
-            "JOIN Item i on b.item.id = i.id " +
-            "where i.owner.id = ?1 " +
-            "and b.start < ?2 " +
-            "and b.end < ?2 ")
-    List<Booking> searchOwnerByOwnerIdPast(Long userId, Timestamp timestamp, Sort sort);
+    Page<Booking> searchBookingByOwnerIdCurrent(Long userId, Timestamp timestamp, Pageable pageable);
 
     @Query(" select b from Booking b " +
             "JOIN Item i on b.item.id = i.id " +
             "where i.owner.id = ?1 " +
             "and b.start < ?2 " +
             "and b.end < ?2 ")
-    Page<Booking> searchOwnerByOwnerIdPast(Long userId, Timestamp timestamp, Pageable pageable);
+    List<Booking> searchBookingsByOwnerIdPast(Long userId, Timestamp timestamp, Sort sort);
+
+    @Query(" select b from Booking b " +
+            "JOIN Item i on b.item.id = i.id " +
+            "where i.owner.id = ?1 " +
+            "and b.start < ?2 " +
+            "and b.end < ?2 ")
+    Page<Booking> searchBookingsByOwnerIdPast(Long userId, Timestamp timestamp, Pageable pageable);
 
     @Query(" select b from Booking b " +
             "JOIN Item i on b.item.id = i.id " +
             "where i.owner.id = ?1 " +
             "and b.start > ?2 " +
             "and b.end > ?2 ")
-    List<Booking> searchOwnerByOwnerIdFuture(Long userId, Timestamp timestamp, Sort sort);
+    List<Booking> searchBookingsByOwnerIdFuture(Long userId, Timestamp timestamp, Sort sort);
 
     @Query(" select b from Booking b " +
             "JOIN Item i on b.item.id = i.id " +
             "where i.owner.id = ?1 " +
             "and b.start > ?2 " +
             "and b.end > ?2 ")
-    Page<Booking> searchOwnerByOwnerIdFuture(Long userId, Timestamp timestamp, Pageable pageable);
+    Page<Booking> searchBookingsByOwnerIdFuture(Long userId, Timestamp timestamp, Pageable pageable);
 
     @Query(" select b from Booking b " +
             "JOIN Item i on b.item.id = i.id " +
             "where i.owner.id = ?1 " +
             "and b.status = ?2 ")
-    List<Booking> searchOwnerByOwnerIdWaitingAndRejected(Long owner, StatusOfItem status, Sort sort);
+    List<Booking> searchBookingsByOwnerIdWaitingAndRejected(Long owner, StatusOfItem status, Sort sort);
 
     @Query(" select b from Booking b " +
             "JOIN Item i on b.item.id = i.id " +
             "where i.owner.id = ?1 " +
             "and b.status = ?2 ")
-    Page<Booking> searchOwnerByOwnerIdWaitingAndRejected(Long owner, StatusOfItem status, Pageable pageable);
+    Page<Booking> searchBookingsByOwnerIdWaitingAndRejected(Long owner, StatusOfItem status, Pageable pageable);
 
     List<Booking> findByItemIdAndBookerId(Long itemId, Long booker, Sort sort);
 }

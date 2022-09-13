@@ -60,7 +60,6 @@ public class JPAItemEMTests {
         List<Item> items2 = repository.search("Text");
         assertThat(items2).hasSize(1).contains(item2);
 
-
     }
 
 
