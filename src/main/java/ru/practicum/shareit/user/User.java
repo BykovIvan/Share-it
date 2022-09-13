@@ -13,7 +13,7 @@ import javax.validation.constraints.Size;
 @Getter
 @Setter
 @Entity
-@Table(name = "users", schema = "public")
+@Table(name = "users", schema = "public", uniqueConstraints = @UniqueConstraint(columnNames = "email"))
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,5 +25,6 @@ public class User {
     @NonNull
     @Size(min = 1, max = 200)
     @Email()
+
     private String email;
 }
