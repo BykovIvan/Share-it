@@ -75,41 +75,19 @@ public class ItemServiceImpl implements ItemService {
             throw new NotFoundException("Пользователь не является владельцем данной вещи!");
         }
 
-        if (itemRepository.findById(itemId).isPresent()) {
-            Item item = itemRepository.findById(itemId).get();
+        Item item = itemRepository.findById(itemId).get();
+        if (itemDto.getName() != null) {
+            item.setName(itemDto.getName());
+        }
+        if (itemDto.getDescription() != null) {
+            item.setDescription(itemDto.getDescription());
+        }
+        if (itemDto.getAvailable() != null) {
+            item.setAvailable(itemDto.getAvailable());
+        }
+        itemRepository.save(item);
+        return ItemMapping.toItemDto(itemRepository.findById(itemId).get());
 
-            if (itemDto.getName() != null) {
-                item.setName(itemDto.getName());
-            }
-            if (itemDto.getDescription() != null) {
-                item.setDescription(itemDto.getDescription());
-            }
-            if (itemDto.getAvailable() != null) {
-                item.setAvailable(itemDto.getAvailable());
-            }
-            if (itemDto.getOwner() != null) {
-                if (item.getOwner() == null) {
-                    item.setOwner(User.builder().build());
-                }
-                userDtoToUser(itemDto.getOwner(), item.getOwner());
-            }
-            itemRepository.save(item);
-            return ItemMapping.toItemDto(itemRepository.findById(itemId).get());
-        } else {
-            throw new NotFoundException("Такого пользователя не существует!");
-        }
-    }
-
-    protected void userDtoToUser(UserDto userDto, User mappingTarget) {
-        if (userDto.getId() != null) {
-            mappingTarget.setId(userDto.getId());
-        }
-        if (userDto.getName() != null) {
-            mappingTarget.setName(userDto.getName());
-        }
-        if (userDto.getEmail() != null) {
-            mappingTarget.setEmail(userDto.getEmail());
-        }
     }
 
     @Override
