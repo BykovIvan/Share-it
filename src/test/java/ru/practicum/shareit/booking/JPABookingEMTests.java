@@ -116,6 +116,7 @@ public class JPABookingEMTests {
         List<Booking> list = repository.searchBookingsByOwnerId(user2.getId(), Sort.by(Sort.Direction.DESC, "id"));
         assertThat(list).hasSize(1).contains(booking);
     }
+
     @Test
     public void findCurrentByOwnerIdTest() {
         User user = userRepository.save(User.builder()
@@ -144,6 +145,7 @@ public class JPABookingEMTests {
         List<Booking> list = repository.searchBookingByOwnerIdCurrent(user2.getId(), new Timestamp(System.currentTimeMillis() + 2000), Sort.by(Sort.Direction.DESC, "id"));
         assertThat(list).hasSize(1).contains(booking);
     }
+
     @Test
     public void findInPastByOwnerIdTest() {
         User user = userRepository.save(User.builder()
@@ -230,9 +232,6 @@ public class JPABookingEMTests {
         List<Booking> list = repository.searchBookingsByOwnerIdWaitingAndRejected(user2.getId(), StatusOfItem.WAITING, Sort.by(Sort.Direction.DESC, "id"));
         assertThat(list).hasSize(1).contains(booking);
     }
-
-
-
 
 
 }

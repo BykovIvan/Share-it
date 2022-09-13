@@ -66,11 +66,9 @@ public class BookingServiceImpl implements BookingService {
         List<Booking> listOfItemsById = bookingRepository.findByItemId(item.getId(), Sort.by("start"));
 
         for (Booking booking : listOfItemsById) {
-            if ((bookingDto.getStart().isBefore(booking.getStart().toLocalDateTime()) && bookingDto.getEnd().isBefore(booking.getStart().toLocalDateTime()))
-                    || (bookingDto.getStart().isAfter(booking.getEnd().toLocalDateTime()) && bookingDto.getEnd().isAfter(booking.getEnd().toLocalDateTime()))) {
-
-            } else {
-                throw new BadRequestException("Вещь в данный переод времени забронирована!");
+            if (!((bookingDto.getStart().isBefore(booking.getStart().toLocalDateTime()) && bookingDto.getEnd().isBefore(booking.getStart().toLocalDateTime()))
+                    || (bookingDto.getStart().isAfter(booking.getEnd().toLocalDateTime()) && bookingDto.getEnd().isAfter(booking.getEnd().toLocalDateTime())))) {
+                    throw new BadRequestException("Вещь в данный переод времени забронирована!");
             }
         }
         Booking booking = BookingMapping.toBooking(bookingDto, booker, item);
