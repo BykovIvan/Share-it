@@ -7,6 +7,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.BookingDto;
 import ru.practicum.shareit.booking.BookingService;
+import ru.practicum.shareit.exceptions.NoUserInHeaderException;
+import ru.practicum.shareit.exceptions.NotFoundException;
 import ru.practicum.shareit.user.UserDto;
 import ru.practicum.shareit.user.UserService;
 
@@ -18,6 +20,8 @@ import java.util.List;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Transactional
 @SpringBootTest(
@@ -33,9 +37,25 @@ public class ItemServiceTests {
 
     @Test
     void saveItemTest() {
+
+        Exception exception = assertThrows(NoUserInHeaderException.class, () -> {
+            service.create(null, new ItemDto());
+        });
+        String expectedMessage = "В запросе отсутсвует пользователь при создании задачи!";
+        String actualMessage = exception.getMessage();
+        assertTrue(actualMessage.contains(expectedMessage));
+
+        Exception exception2 = assertThrows(NotFoundException.class, () -> {
+            service.create(1L, new ItemDto());
+        });
+        String expectedMessage2 = "Такого пользователя не существует!";
+        String actualMessage2 = exception2.getMessage();
+        assertTrue(actualMessage2.contains(expectedMessage2));
+
         UserDto userDto = makeUserDto("Пётр", "some@email.com");
         UserDto getUser = userService.create(userDto);
         ItemDto itemDto = makeItemDto("Hammer", "Hammer for test", true);
+
         service.create(getUser.getId(), itemDto);
 
         TypedQuery<Item> query = em.createQuery("Select i from Item i where i.name = :name", Item.class);
@@ -45,6 +65,24 @@ public class ItemServiceTests {
         assertThat(item.getName(), equalTo(itemDto.getName()));
         assertThat(item.getDescription(), equalTo(itemDto.getDescription()));
         assertThat(item.getAvailable(), equalTo(itemDto.getAvailable()));
+
+        ItemDto itemDto2 = makeItemDtoWithRequest("Hammer", 1L, "Hammer for test", true);
+
+        Exception exception3 = assertThrows(NotFoundException.class, () -> {
+            service.create(getUser.getId(), itemDto2);
+        });
+        String expectedMessage3 = "Такого запроса не существует!";
+        String actualMessage3 = exception3.getMessage();
+        assertTrue(actualMessage3.contains(expectedMessage3));
+//        service.create(getUser.getId(), itemDto2);
+//
+//        TypedQuery<Item> query2 = em.createQuery("Select i from Item i where i.name = :name", Item.class);
+//        Item item2 = query2.setParameter("name", itemDto.getName()).getSingleResult();
+//
+//        assertThat(item2.getId(), notNullValue());
+//        assertThat(item2.getName(), equalTo(itemDto2.getName()));
+//        assertThat(item2.getDescription(), equalTo(itemDto2.getDescription()));
+//        assertThat(item2.getAvailable(), equalTo(itemDto2.getAvailable()));
 
     }
 
@@ -227,6 +265,15 @@ public class ItemServiceTests {
         ItemDto dto = new ItemDto();
         dto.setName(name);
         dto.setDescription(description);
+        dto.setAvailable(available);
+        return dto;
+    }
+
+    private ItemDto makeItemDtoWithRequest(String name, Long requestId, String description, Boolean available) {
+        ItemDto dto = new ItemDto();
+        dto.setName(name);
+        dto.setDescription(description);
+        dto.setRequestId(requestId);
         dto.setAvailable(available);
         return dto;
     }
