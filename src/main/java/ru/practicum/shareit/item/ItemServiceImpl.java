@@ -9,8 +9,6 @@ import ru.practicum.shareit.exceptions.BadRequestException;
 import ru.practicum.shareit.exceptions.NoUserInHeaderException;
 import ru.practicum.shareit.exceptions.NotFoundException;
 import ru.practicum.shareit.requests.ItemRequestRepository;
-import ru.practicum.shareit.user.User;
-import ru.practicum.shareit.user.UserDto;
 import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.utils.FromSizeSortPageable;
 

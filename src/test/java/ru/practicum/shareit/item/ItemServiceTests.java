@@ -373,7 +373,7 @@ public class ItemServiceTests {
 
     }
 
-    private ItemRequestDto makeItemRequestDto(String description){
+    private ItemRequestDto makeItemRequestDto(String description) {
         ItemRequestDto dto = ItemRequestDto.builder()
                 .description(description)
                 .created(LocalDateTime.now())
@@ -431,6 +431,7 @@ public class ItemServiceTests {
         bookingDto.setStatus(StatusOfItem.WAITING);
         return bookingDto;
     }
+
     private BookingDto makeBookingDtoWithFutureEndTime(ItemDto itemDto, UserDto booker) {
         BookingDto bookingDto = new BookingDto();
         bookingDto.setStart(LocalDateTime.now().plusSeconds(1));
