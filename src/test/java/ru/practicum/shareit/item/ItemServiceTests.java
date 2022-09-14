@@ -179,6 +179,53 @@ public class ItemServiceTests {
     }
 
     @Test
+    void findByTextTest() {
+        Exception exception = assertThrows(NotFoundException.class, () -> {
+            service.findByText(1L, "Hammer", 0, 1);
+        });
+        String expectedMessage = "Такого пользователя не существует!";
+        String actualMessage = exception.getMessage();
+        assertTrue(actualMessage.contains(expectedMessage));
+
+        UserDto userDto = makeUserDto("Пётр", "some@email.com");
+        UserDto getUser = userService.create(userDto);
+
+        Exception exception2 = assertThrows(BadRequestException.class, () -> {
+            service.findByText(getUser.getId(), "Hammer", -1, 0);
+        });
+        String expectedMessage2 = "Введены неверные параметры!";
+        String actualMessage2 = exception2.getMessage();
+        assertTrue(actualMessage2.contains(expectedMessage2));
+
+        ItemDto itemDto = makeItemDto("Hammer", "Hammer for test", true);
+        ItemDto itemDtoGet = service.create(getUser.getId(), itemDto);
+
+        List<ItemDto> itemDtoFind = service.findByText(getUser.getId(), "Hammer", 0, 1);
+
+        TypedQuery<Item> query = em.createQuery("Select i from Item i where i.id = :id", Item.class);
+        List<Item> listItem = query.setParameter("id", itemDtoGet.getId()).getResultList();
+
+        assertThat(listItem.get(0).getId(), notNullValue());
+        assertThat(listItem.get(0).getName(), equalTo(itemDtoFind.get(0).getName()));
+        assertThat(listItem.get(0).getDescription(), equalTo(itemDtoFind.get(0).getDescription()));
+        assertThat(listItem.get(0).getAvailable(), equalTo(itemDtoFind.get(0).getAvailable()));
+
+        List<ItemDto> itemDtoFind2 = service.findByText(getUser.getId(), "", 0, 1);
+        assertThat(itemDtoFind2.size(), equalTo(0));
+
+        List<ItemDto> itemDtoFind3 = service.findByText(getUser.getId(), "Hammer", null, null);
+
+        TypedQuery<Item> query2 = em.createQuery("Select i from Item i where i.id = :id", Item.class);
+        List<Item> listItem2 = query2.setParameter("id", itemDtoGet.getId()).getResultList();
+
+        assertThat(listItem2.get(0).getId(), notNullValue());
+        assertThat(listItem2.get(0).getName(), equalTo(itemDtoFind3.get(0).getName()));
+        assertThat(listItem2.get(0).getDescription(), equalTo(itemDtoFind3.get(0).getDescription()));
+        assertThat(listItem2.get(0).getAvailable(), equalTo(itemDtoFind3.get(0).getAvailable()));
+
+    }
+
+    @Test
     void findByUserIdAndItemIdAllTest() {
         UserDto userDto = makeUserDto("Пётр", "some@email.com");
         UserDto getUser = userService.create(userDto);
@@ -370,6 +417,58 @@ public class ItemServiceTests {
         assertThat(item.getId(), notNullValue());
         assertThat(item.getName(), equalTo(itemDtoWithComments.getName()));
         assertThat(item.getDescription(), equalTo(itemDtoWithComments.getDescription()));
+
+    }
+
+    @Test
+    void getItemsTest() {
+        Exception exception = assertThrows(NotFoundException.class, () -> {
+            service.findAllItems(1L, 0, 1);
+        });
+        String expectedMessage = "Такого пользователя не существует!";
+        String actualMessage = exception.getMessage();
+        assertTrue(actualMessage.contains(expectedMessage));
+
+        UserDto userDto = makeUserDto("Пётр", "some@email.com");
+        UserDto getUser = userService.create(userDto);
+
+        UserDto userDto2 = makeUserDto("Пётр2", "some2@email.com");
+        UserDto getUser2 = userService.create(userDto2);
+
+        ItemDto itemDto = makeItemDto("Hammer", "Hammer for test", true);
+        ItemDto itemDtoGet = service.create(getUser.getId(), itemDto);
+
+        BookingDto bookingDto = makeBookingDto(itemDtoGet, getUser);
+        bookingService.create(getUser2.getId(), bookingDto);
+        try {
+            Thread.sleep(4000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        CommentDto commentDto = makeCommentDto("Hello text", userDto2.getName());
+        service.addCommentToItem(getUser2.getId(), itemDtoGet.getId(), commentDto);
+
+        Exception exception2 = assertThrows(BadRequestException.class, () -> {
+            service.findAllItems(getUser.getId(), -1, 0);
+        });
+        String expectedMessage2 = "Введены неверные параметры!";
+        String actualMessage2 = exception2.getMessage();
+        assertTrue(actualMessage2.contains(expectedMessage2));
+
+        List<ItemDtoWithComments> itemDtoWithComments = service.findAllItems(getUser.getId(), 0, 1);
+
+        TypedQuery<Item> query = em.createQuery("Select i from Item i where i.id = :id ", Item.class);
+        Item item = query.setParameter("id", itemDtoGet.getId()).getSingleResult();
+
+        assertThat(item.getId(), notNullValue());
+        assertThat(item.getName(), equalTo(itemDtoWithComments.get(0).getName()));
+        assertThat(item.getDescription(), equalTo(itemDtoWithComments.get(0).getDescription()));
+
+        List<ItemDtoWithComments> itemDtoWithComments2 = service.findAllItems(getUser.getId(), null, null);
+
+        assertThat(item.getId(), notNullValue());
+        assertThat(item.getName(), equalTo(itemDtoWithComments2.get(0).getName()));
+        assertThat(item.getDescription(), equalTo(itemDtoWithComments2.get(0).getDescription()));
 
     }
 

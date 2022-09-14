@@ -62,7 +62,7 @@ public class RequestServiceTests {
         list.add(item);
         ItemRequestDto itemRequestDtoWithNullDecr = makeItemRequestDtoWithOutDec(list);
 
-        Exception exception2 = assertThrows(NotFoundException.class, () -> {
+        Exception exception2 = assertThrows(BadRequestException.class, () -> {
             service.create(getUser.getId(), itemRequestDtoWithNullDecr);
         });
         String expectedMessage2 = "Отсутсвует описание в запросе!";
@@ -237,13 +237,4 @@ public class RequestServiceTests {
         dto.setName(name);
         return dto;
     }
-
-//    private ItemDto makeItemDto(String name, String description, Boolean available) {
-//        ItemDto dto = new ItemDto();
-//        dto.setName(name);
-//        dto.setDescription(description);
-//        dto.setAvailable(available);
-//        return dto;
-//    }
-
 }

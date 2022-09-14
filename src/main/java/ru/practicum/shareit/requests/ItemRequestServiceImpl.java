@@ -37,7 +37,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
             throw new NotFoundException("Такого пользователя не существует!");
         }
         if (itemRequestDto.getDescription() == null || itemRequestDto.getDescription().isEmpty()) {
-            throw new NotFoundException("Отсутсвует описание в запросе!");
+            throw new BadRequestException("Отсутсвует описание в запросе!");
         }
         @Valid ItemRequest itemRequest = ItemRequestMapping.toItemRequest(itemRequestDto, userRepository.findById(userId).get());
         itemRequest.setRequestor(userRepository.findById(userId).get());

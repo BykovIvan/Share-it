@@ -6,23 +6,12 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.practicum.shareit.exceptions.BadRequestException;
-import ru.practicum.shareit.exceptions.ConflictException;
 import ru.practicum.shareit.exceptions.NoUserInHeaderException;
 import ru.practicum.shareit.exceptions.NotFoundException;
 import ru.practicum.shareit.exceptions.model.ErrorResponse;
 
 @RestControllerAdvice
 public class ExceptionHandler {
-
-    /**
-     * Ошибка валидации, код 409
-     * Validation error
-     */
-    @org.springframework.web.bind.annotation.ExceptionHandler
-    @ResponseStatus(HttpStatus.CONFLICT)
-    public ErrorResponse handleIncorrectParameterException(final ConflictException e) {
-        return new ErrorResponse(e.getMessage());
-    }
 
     /**
      * Все ситуаций, когда искомый объект не найден, код 404

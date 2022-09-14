@@ -131,6 +131,11 @@ public class BookingServiceImpl implements BookingService {
         if (userRepository.findById(userId).isEmpty()) {
             throw new NotFoundException("Такого пользователя не существует!");
         }
+        if (from != null && size != null) {
+            if (from < 0 || size <= 0) {
+                throw new BadRequestException("Введены неверные параметры!");
+            }
+        }
         switch (state) {
             case "ALL":
                 if (from == null || size == null) {
@@ -138,9 +143,6 @@ public class BookingServiceImpl implements BookingService {
                             .map(BookingMapping::toBookingDto)
                             .collect(Collectors.toList());
                 } else {
-                    if (from < 0 || size <= 0) {
-                        throw new BadRequestException("Введены неверные параметры!");
-                    }
                     return bookingRepository.findByBookerId(userId, FromSizeSortPageable.of(from, size, Sort.by(Sort.Direction.DESC, "id")))
                             .stream()
                             .map(BookingMapping::toBookingDto)
@@ -153,9 +155,6 @@ public class BookingServiceImpl implements BookingService {
                             .map(BookingMapping::toBookingDto)
                             .collect(Collectors.toList());
                 } else {
-                    if (from < 0 || size <= 0) {
-                        throw new BadRequestException("Введены неверные параметры!");
-                    }
                     return bookingRepository.findByBookerIdByUserId(userId, new Timestamp(System.currentTimeMillis()), FromSizeSortPageable.of(from, size, Sort.by(Sort.Direction.DESC, "id")))
                             .stream()
                             .map(BookingMapping::toBookingDto)
@@ -168,9 +167,6 @@ public class BookingServiceImpl implements BookingService {
                             .map(BookingMapping::toBookingDto)
                             .collect(Collectors.toList());
                 } else {
-                    if (from < 0 || size <= 0) {
-                        throw new BadRequestException("Введены неверные параметры!");
-                    }
                     return bookingRepository.findByBookerIdAndEndIsBefore(userId, new Timestamp(System.currentTimeMillis()), FromSizeSortPageable.of(from, size, Sort.by(Sort.Direction.DESC, "id")))
                             .stream()
                             .map(BookingMapping::toBookingDto)
@@ -183,9 +179,6 @@ public class BookingServiceImpl implements BookingService {
                             .map(BookingMapping::toBookingDto)
                             .collect(Collectors.toList());
                 } else {
-                    if (from < 0 || size <= 0) {
-                        throw new BadRequestException("Введены неверные параметры!");
-                    }
                     return bookingRepository.findByBookerIdAndStartAfter(userId, new Timestamp(System.currentTimeMillis()), FromSizeSortPageable.of(from, size, Sort.by(Sort.Direction.DESC, "id")))
                             .stream()
                             .map(BookingMapping::toBookingDto)
@@ -198,9 +191,6 @@ public class BookingServiceImpl implements BookingService {
                             .map(BookingMapping::toBookingDto)
                             .collect(Collectors.toList());
                 } else {
-                    if (from < 0 || size <= 0) {
-                        throw new BadRequestException("Введены неверные параметры!");
-                    }
                     return bookingRepository.findByBookerIdAndStatus(userId, StatusOfItem.WAITING, FromSizeSortPageable.of(from, size, Sort.by(Sort.Direction.DESC, "id")))
                             .stream()
                             .map(BookingMapping::toBookingDto)
@@ -213,9 +203,6 @@ public class BookingServiceImpl implements BookingService {
                             .map(BookingMapping::toBookingDto)
                             .collect(Collectors.toList());
                 } else {
-                    if (from < 0 || size <= 0) {
-                        throw new BadRequestException("Введены неверные параметры!");
-                    }
                     return bookingRepository.findByBookerIdAndStatus(userId, StatusOfItem.REJECTED, FromSizeSortPageable.of(from, size, Sort.by(Sort.Direction.DESC, "id")))
                             .stream()
                             .map(BookingMapping::toBookingDto)
@@ -231,6 +218,11 @@ public class BookingServiceImpl implements BookingService {
         if (userRepository.findById(userId).isEmpty()) {
             throw new NotFoundException("Такого пользователя не существует!");
         }
+        if (from != null && size != null) {
+            if (from < 0 || size <= 0) {
+                throw new BadRequestException("Введены неверные параметры!");
+            }
+        }
         switch (state) {
             case "ALL":
                 if (from == null || size == null) {
@@ -238,9 +230,6 @@ public class BookingServiceImpl implements BookingService {
                             .map(BookingMapping::toBookingDto)
                             .collect(Collectors.toList());
                 } else {
-                    if (from < 0 || size <= 0) {
-                        throw new BadRequestException("Введены неверные параметры!");
-                    }
                     return bookingRepository.searchBookingsByOwnerId(userId, FromSizeSortPageable.of(from, size, Sort.by(Sort.Direction.DESC, "id"))).stream()
                             .map(BookingMapping::toBookingDto)
                             .collect(Collectors.toList());
@@ -252,9 +241,6 @@ public class BookingServiceImpl implements BookingService {
                             .map(BookingMapping::toBookingDto)
                             .collect(Collectors.toList());
                 } else {
-                    if (from < 0 || size <= 0) {
-                        throw new BadRequestException("Введены неверные параметры!");
-                    }
                     return bookingRepository.searchBookingByOwnerIdCurrent(userId, new Timestamp(System.currentTimeMillis()), FromSizeSortPageable.of(from, size, Sort.by(Sort.Direction.DESC, "id")))
                             .stream()
                             .map(BookingMapping::toBookingDto)
@@ -267,9 +253,6 @@ public class BookingServiceImpl implements BookingService {
                             .map(BookingMapping::toBookingDto)
                             .collect(Collectors.toList());
                 } else {
-                    if (from < 0 || size <= 0) {
-                        throw new BadRequestException("Введены неверные параметры!");
-                    }
                     return bookingRepository.searchBookingsByOwnerIdPast(userId, new Timestamp(System.currentTimeMillis()), FromSizeSortPageable.of(from, size, Sort.by(Sort.Direction.DESC, "id")))
                             .stream()
                             .map(BookingMapping::toBookingDto)
@@ -282,9 +265,6 @@ public class BookingServiceImpl implements BookingService {
                             .map(BookingMapping::toBookingDto)
                             .collect(Collectors.toList());
                 } else {
-                    if (from < 0 || size <= 0) {
-                        throw new BadRequestException("Введены неверные параметры!");
-                    }
                     return bookingRepository.searchBookingsByOwnerIdFuture(userId, new Timestamp(System.currentTimeMillis()), FromSizeSortPageable.of(from, size, Sort.by(Sort.Direction.DESC, "id")))
                             .stream()
                             .map(BookingMapping::toBookingDto)
@@ -297,9 +277,6 @@ public class BookingServiceImpl implements BookingService {
                             .map(BookingMapping::toBookingDto)
                             .collect(Collectors.toList());
                 } else {
-                    if (from < 0 || size <= 0) {
-                        throw new BadRequestException("Введены неверные параметры!");
-                    }
                     return bookingRepository.searchBookingsByOwnerIdWaitingAndRejected(userId, StatusOfItem.WAITING, FromSizeSortPageable.of(from, size, Sort.by(Sort.Direction.DESC, "id")))
                             .stream()
                             .map(BookingMapping::toBookingDto)
@@ -312,9 +289,6 @@ public class BookingServiceImpl implements BookingService {
                             .map(BookingMapping::toBookingDto)
                             .collect(Collectors.toList());
                 } else {
-                    if (from < 0 || size <= 0) {
-                        throw new BadRequestException("Введены неверные параметры!");
-                    }
                     return bookingRepository.searchBookingsByOwnerIdWaitingAndRejected(userId, StatusOfItem.REJECTED, FromSizeSortPageable.of(from, size, Sort.by(Sort.Direction.DESC, "id")))
                             .stream()
                             .map(BookingMapping::toBookingDto)
