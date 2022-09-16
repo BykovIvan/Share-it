@@ -15,7 +15,6 @@ import javax.transaction.Transactional;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -55,7 +54,7 @@ public class BookingServiceImpl implements BookingService {
         for (Booking booking : listOfItemsById) {
             if (!((bookingDto.getStart().isBefore(booking.getStart().toLocalDateTime()) && bookingDto.getEnd().isBefore(booking.getStart().toLocalDateTime()))
                     || (bookingDto.getStart().isAfter(booking.getEnd().toLocalDateTime()) && bookingDto.getEnd().isAfter(booking.getEnd().toLocalDateTime())))) {
-                    throw new BadRequestException("Вещь в данный переод времени забронирована!");
+                throw new BadRequestException("Вещь в данный переод времени забронирована!");
             }
         }
         Booking booking = BookingMapping.toBooking(bookingDto, booker, item);
@@ -90,29 +89,20 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public BookingDto findById(Long id, Long userId) {
         userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Такого пользователя не существует!"));
-        
         if (id == null) {
             throw new NoUserInHeaderException("Отсутсвует id бронирования в запросе!");
         }
-        Optional<Booking> bookingGet = bookingRepository.findById(id);
-        if (bookingGet.isPresent()) {
-            Booking booking = bookingGet.get();
-            if (booking.getBooker().getId().equals(userId) || booking.getItem().getOwner().getId().equals(userId)) {
-                return BookingMapping.toBookingDto(booking);
-            } else {
-                throw new NotFoundException("Не является владельцем или арентадателем вещи!");
-            }
+        Booking booking = bookingRepository.findById(id).orElseThrow(() -> new NotFoundException("Нет такого бронирования!"));
+        if (booking.getBooker().getId().equals(userId) || booking.getItem().getOwner().getId().equals(userId)) {
+            return BookingMapping.toBookingDto(booking);
         } else {
-            throw new NotFoundException("Нет такого бронирования!");
+            throw new NotFoundException("Не является владельцем или арентадателем вещи!");
         }
-
     }
 
     @Override
     public List<BookingDto> findBookingByUserIdAndState(String state, Long userId, Integer from, Integer size) {
-        if (userRepository.findById(userId).isEmpty()) {
-            throw new NotFoundException("Такого пользователя не существует!");
-        }
+        userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Такого пользователя не существует!"));
         if (from != null && size != null) {
             if (from < 0 || size <= 0) {
                 throw new BadRequestException("Введены неверные параметры!");
@@ -197,9 +187,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<BookingDto> findItemByOwnerIdAndState(String state, Long userId, Integer from, Integer size) {
-        if (userRepository.findById(userId).isEmpty()) {
-            throw new NotFoundException("Такого пользователя не существует!");
-        }
+        userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Такого пользователя не существует!"));
         if (from != null && size != null) {
             if (from < 0 || size <= 0) {
                 throw new BadRequestException("Введены неверные параметры!");
