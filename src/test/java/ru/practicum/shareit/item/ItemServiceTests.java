@@ -159,7 +159,7 @@ public class ItemServiceTests {
         Exception exception = assertThrows(NotFoundException.class, () -> {
             service.findById(1L);
         });
-        String expectedMessage = "Такой вещи не найдено";
+        String expectedMessage = "Такой вещи не существует!";
         String actualMessage = exception.getMessage();
         assertTrue(actualMessage.contains(expectedMessage));
 
