@@ -1,5 +1,6 @@
 package ru.practicum.shareit.item;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.Booking;
@@ -8,7 +9,9 @@ import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.exceptions.BadRequestException;
 import ru.practicum.shareit.exceptions.NoUserInHeaderException;
 import ru.practicum.shareit.exceptions.NotFoundException;
+import ru.practicum.shareit.requests.ItemRequest;
 import ru.practicum.shareit.requests.ItemRequestRepository;
+import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.utils.FromSizeSortPageable;
 
@@ -21,6 +24,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
@@ -28,31 +32,19 @@ public class ItemServiceImpl implements ItemService {
     private final BookingRepository bookingRepository;
     private final ItemRequestRepository itemRequestRepository;
 
-    public ItemServiceImpl(ItemRepository itemRepository, UserRepository userRepository, CommentRepository commentRepository, BookingRepository bookingRepository, ItemRequestRepository itemRequestRepository) {
-        this.itemRepository = itemRepository;
-        this.userRepository = userRepository;
-        this.commentRepository = commentRepository;
-        this.bookingRepository = bookingRepository;
-        this.itemRequestRepository = itemRequestRepository;
-    }
-
     @Override
     @Transactional
     public ItemDto create(Long userId, ItemDto itemDto) {
         if (userId == null) {
             throw new NoUserInHeaderException("В запросе отсутсвует пользователь при создании задачи!");
         }
-        if (userRepository.findById(userId).isEmpty()) {
-            throw new NotFoundException("Такого пользователя не существует!");
-        }
+        User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Такого пользователя не существует!"));
         Item item;
         if (itemDto.getRequestId() == null) {
             item = ItemMapping.toItem(itemDto, userRepository.findById(userId).get());
         } else {
-            if (itemRequestRepository.findById(itemDto.getRequestId()).isEmpty()) {
-                throw new NotFoundException("Такого запроса не существует!");
-            }
-            item = ItemMapping.toItem(itemDto, itemRequestRepository.findById(itemDto.getRequestId()).get(), userRepository.findById(userId).get());
+            ItemRequest itemRequest = itemRequestRepository.findById(itemDto.getRequestId()).orElseThrow(() -> new NotFoundException("Такого запроса не существует!"));
+            item = ItemMapping.toItem(itemDto, itemRequest, user);
         }
         return ItemMapping.toItemDto(itemRepository.save(item));
     }
@@ -63,17 +55,12 @@ public class ItemServiceImpl implements ItemService {
         if (userId == null) {
             throw new NoUserInHeaderException("В запросе отсутсвует пользователь при создании задачи!");
         }
-        if (userRepository.findById(userId).isEmpty()) {
-            throw new NotFoundException("Такого пользователя не существует!");
-        }
-        if (itemRepository.findById(itemId).isEmpty()) {
-            throw new NotFoundException("Такой вещи не существует!");
-        }
-        if (!itemRepository.findById(itemId).get().getOwner().getId().equals(userId)) {
+        userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Такого пользователя не существует!"));
+        Item item = itemRepository.findById(itemId).orElseThrow(() -> new NotFoundException("Такой вещи не существует!"));
+
+        if (!item.getOwner().getId().equals(userId)) {
             throw new NotFoundException("Пользователь не является владельцем данной вещи!");
         }
-
-        Item item = itemRepository.findById(itemId).get();
         if (itemDto.getName() != null) {
             item.setName(itemDto.getName());
         }
@@ -90,9 +77,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<ItemDtoWithComments> findAllItems(Long userId, Integer from, Integer size) {
-        if (userRepository.findById(userId).isEmpty()) {
-            throw new NotFoundException("Такого пользователя не существует!");
-        }
+        userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Такого пользователя не существует!"));
         if (from == null || size == null) {
             return itemRepository.findByOwnerId(userId, Sort.by(Sort.Direction.ASC, "id"))
                     .stream()
@@ -126,18 +111,12 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public Item findById(Long itemId) {
-        Optional<Item> item = itemRepository.findById(itemId);
-        if (item.isEmpty()) {
-            throw new NotFoundException("Такой вещи не найдено");
-        }
-        return item.get();
+        return itemRepository.findById(itemId).orElseThrow(() -> new NotFoundException("Такой вещи не существует!"));
     }
 
     @Override
     public ItemDtoWithComments findByUserIdAndItemId(Long userId, Long itemId) {
-        if (userRepository.findById(userId).isEmpty()) {
-            throw new NotFoundException("Такого пользователя не существует!");
-        }
+        userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Такого пользователя не существует!"));
         Item item = itemRepository.findByIdAndAvailable(itemId, true);
         if (item == null) {
             throw new NotFoundException("Такой вещи не существует!");
@@ -159,9 +138,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<ItemDto> findByText(Long userId, String text, Integer from, Integer size) {
-        if (userRepository.findById(userId).isEmpty()) {
-            throw new NotFoundException("Такого пользователя не существует!");
-        }
+        userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Такого пользователя не существует!"));
         if (text == null || text.isEmpty()) {
             return new ArrayList<>();
         } else if (from == null || size == null) {
@@ -190,12 +167,8 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public CommentDto addCommentToItem(Long userId, Long itemId, CommentDto commentDto) {
-        if (userRepository.findById(userId).isEmpty()) {
-            throw new NotFoundException("Такого пользователя не существует!");
-        }
-        if (itemRepository.findById(itemId).isEmpty()) {
-            throw new NotFoundException("Такой вещи не существует!");
-        }
+        userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Такого пользователя не существует!"));
+        itemRepository.findById(itemId).orElseThrow(() -> new NotFoundException("Такой вещи не существует!"));
         if (commentDto.getText() == null || commentDto.getText().isEmpty()) {
             throw new BadRequestException("Комментарий отсутсвует!");
         }

@@ -1,5 +1,6 @@
 package ru.practicum.shareit.requests;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
@@ -9,17 +10,14 @@ import java.util.List;
 @RestController
 @RequestMapping(path = "/requests")
 @Slf4j
+@RequiredArgsConstructor
 public class ItemRequestController {
 
     private final ItemRequestService itemRequestService;
 
-    public ItemRequestController(ItemRequestService itemRequestService) {
-        this.itemRequestService = itemRequestService;
-    }
-
     @PostMapping
     public ItemRequestDto create(@RequestHeader(value = "X-Sharer-User-Id", required = false) Long userId,
-                                 @Valid @RequestBody ItemRequestDto itemRequestDto) {
+                                 @RequestBody ItemRequestDto itemRequestDto) {
         log.info("Получен запрос к эндпоинту /requests. Метод POST");
         return itemRequestService.create(userId, itemRequestDto);
     }

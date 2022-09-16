@@ -1,14 +1,12 @@
 package ru.practicum.shareit.booking;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exceptions.BadRequestException;
 import ru.practicum.shareit.exceptions.NoUserInHeaderException;
 import ru.practicum.shareit.exceptions.NotFoundException;
-import ru.practicum.shareit.item.Item;
-import ru.practicum.shareit.item.ItemMapping;
-import ru.practicum.shareit.item.ItemService;
-import ru.practicum.shareit.item.StatusOfItem;
+import ru.practicum.shareit.item.*;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.utils.FromSizeSortPageable;
@@ -21,27 +19,18 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class BookingServiceImpl implements BookingService {
     private final BookingRepository bookingRepository;
     private final UserRepository userRepository;
+    private final ItemRepository itemRepository;
     private final ItemService itemService;
-
-
-    public BookingServiceImpl(BookingRepository bookingRepository, UserRepository userRepository, ItemService itemService) {
-        this.bookingRepository = bookingRepository;
-        this.userRepository = userRepository;
-        this.itemService = itemService;
-    }
 
     @Override
     @Transactional
     public BookingDto create(Long userId, BookingDto bookingDto) {
-        if (userRepository.findById(userId).isEmpty()) {
-            throw new NotFoundException("Такого пользователя не существует!");
-        }
-        if (!itemService.containsById(bookingDto.getItemId())) {
-            throw new NotFoundException("Такой вещи не существует!");
-        }
+        User booker = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Такого пользователя не существует!"));
+        Item item = itemRepository.findById(bookingDto.getItemId()).orElseThrow(() -> new NotFoundException("Такой вещи не существует!"));
         LocalDateTime startDay = bookingDto.getStart();
         LocalDateTime endDay = bookingDto.getEnd();
         LocalDateTime nowDate = LocalDateTime.now();
@@ -54,8 +43,6 @@ public class BookingServiceImpl implements BookingService {
         if (bookingDto.getEnd().isBefore(bookingDto.getStart())) {
             throw new BadRequestException("Время окончания не может быть раньше начала бронирования!");
         }
-        Item item = itemService.findById(bookingDto.getItemId());
-        User booker = userRepository.findById(userId).get();
         User owner = userRepository.findById(item.getOwner().getId()).get();
         if (booker.getId().equals(owner.getId())) {
             throw new NotFoundException("Владелец не может забронировать свою вещь!");
@@ -77,18 +64,14 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public BookingDto approvedStatusOfItem(Long userId, Long bookingId, Boolean approved) {
-        Optional<Booking> bookingOptional = bookingRepository.findById(bookingId);
-        if (bookingOptional.isEmpty()) {
-            throw new NotFoundException("Такое бронирование не найдено!");
-        }
-        Booking booking = bookingOptional.get();
+        Booking booking = bookingRepository.findById(bookingId).orElseThrow(() -> new NotFoundException("Такое бронирование не найдено!"));
         if (approved && booking.getStatus().equals(StatusOfItem.APPROVED)) {
             throw new BadRequestException("Статус уже подтвержден!");
         }
         if (!approved && booking.getStatus().equals(StatusOfItem.REJECTED)) {
             throw new BadRequestException("Статус уже не подтвержден!");
         }
-        Item item = bookingOptional.get().getItem();
+        Item item = booking.getItem();
         User owner = item.getOwner();
         if (!owner.getId().equals(userId)) {
             throw new NotFoundException("Пользователь не является владельцем вещи!");
@@ -106,9 +89,8 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public BookingDto findById(Long id, Long userId) {
-        if (userRepository.findById(userId).isEmpty()) {
-            throw new NotFoundException("Такого пользователя не существует!");
-        }
+        userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Такого пользователя не существует!"));
+        
         if (id == null) {
             throw new NoUserInHeaderException("Отсутсвует id бронирования в запросе!");
         }

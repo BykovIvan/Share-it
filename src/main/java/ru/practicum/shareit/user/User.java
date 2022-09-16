@@ -25,6 +25,5 @@ public class User {
     @NonNull
     @Size(min = 1, max = 200)
     @Email()
-
     private String email;
 }

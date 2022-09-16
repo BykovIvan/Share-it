@@ -1,5 +1,6 @@
 package ru.practicum.shareit.requests;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exceptions.BadRequestException;
@@ -8,6 +9,7 @@ import ru.practicum.shareit.item.Item;
 import ru.practicum.shareit.item.ItemDtoForRequest;
 import ru.practicum.shareit.item.ItemMapping;
 import ru.practicum.shareit.item.ItemRepository;
+import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.utils.FromSizeSortPageable;
 
@@ -18,38 +20,29 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class ItemRequestServiceImpl implements ItemRequestService {
 
     private final UserRepository userRepository;
     private final ItemRepository itemRepository;
     private final ItemRequestRepository itemRequestRepository;
 
-    public ItemRequestServiceImpl(UserRepository userRepository, ItemRepository itemRepository, ItemRequestRepository itemRequestRepository) {
-        this.userRepository = userRepository;
-        this.itemRepository = itemRepository;
-        this.itemRequestRepository = itemRequestRepository;
-    }
-
     @Override
     @Transactional
     public ItemRequestDto create(Long userId, ItemRequestDto itemRequestDto) {
-        if (userRepository.findById(userId).isEmpty()) {
-            throw new NotFoundException("Такого пользователя не существует!");
-        }
+        User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Такого пользователя не существует!"));
         if (itemRequestDto.getDescription() == null || itemRequestDto.getDescription().isEmpty()) {
             throw new BadRequestException("Отсутсвует описание в запросе!");
         }
-        @Valid ItemRequest itemRequest = ItemRequestMapping.toItemRequest(itemRequestDto, userRepository.findById(userId).get());
-        itemRequest.setRequestor(userRepository.findById(userId).get());
+        @Valid ItemRequest itemRequest = ItemRequestMapping.toItemRequest(itemRequestDto, user);
+        itemRequest.setRequestor(user);
         itemRequest.setCreated(LocalDateTime.now());
         return ItemRequestMapping.toItemRequestDto(itemRequestRepository.save(itemRequest));
     }
 
     @Override
     public List<ItemRequestDto> findRequestByUserId(Long userId) {
-        if (userRepository.findById(userId).isEmpty()) {
-            throw new NotFoundException("Такого пользователя не существует!");
-        }
+        userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Такого пользователя не существует!"));
         return itemRequestRepository.findByRequestorId(userId)
                 .stream()
                 .map((ItemRequest itemRequest) -> ItemRequestMapping.toItemRequestDto(itemRequest, itemRepository.findByRequestId(itemRequest.getId())
@@ -61,9 +54,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
     @Override
     public List<ItemRequestDto> findRequestByParam(Long userId, Integer from, Integer size) {
-        if (userRepository.findById(userId).isEmpty()) {
-            throw new NotFoundException("Такого пользователя не существует!");
-        }
+        userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Такого пользователя не существует!"));
         if (from == null || size == null) {
             return itemRequestRepository.findAll()
                     .stream()
@@ -89,13 +80,8 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
     @Override
     public ItemRequestDto findById(Long userId, Long requestId) {
-        if (userRepository.findById(userId).isEmpty()) {
-            throw new NotFoundException("Такого пользователя не существует!");
-        }
-        if (itemRequestRepository.findById(requestId).isEmpty()) {
-            throw new NotFoundException("Такого запроса не существует!");
-        }
-        ItemRequest itemRequest = itemRequestRepository.findById(requestId).get();
+        userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Такого пользователя не существует!"));
+        ItemRequest itemRequest = itemRequestRepository.findById(requestId).orElseThrow(() -> new NotFoundException("Такого запроса не существует!"));
         List<ItemDtoForRequest> items = itemRepository.findByRequestId(requestId)
                 .stream()
                 .map((Item item) -> ItemMapping.toItemDtoForRequest(item, itemRequest.getRequestor().getId()))

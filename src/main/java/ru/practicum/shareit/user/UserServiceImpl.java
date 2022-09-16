@@ -1,5 +1,6 @@
 package ru.practicum.shareit.user;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exceptions.NotFoundException;
 
@@ -10,12 +11,9 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
-
-    public UserServiceImpl(UserRepository repository) {
-        this.userRepository = repository;
-    }
 
     @Override
     @Transactional
@@ -27,29 +25,21 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UserDto update(Long id, UserDto userDto) {
-        if (userRepository.findById(id).isPresent()) {
-            User user = userRepository.findById(id).get();
-            if (userDto.getName() != null) {
-                user.setName(userDto.getName());
-            }
-            if (userDto.getEmail() != null) {
-                user.setEmail(userDto.getEmail());
-            }
-            userRepository.save(user);
-            return UserMapping.toUserDto(userRepository.findById(id).get());
-        } else {
-            throw new NotFoundException("Такого пользователя не существует!");
+        User user = userRepository.findById(id).orElseThrow(() -> new NotFoundException("Такого пользователя не существует!"));
+        if (userDto.getName() != null) {
+            user.setName(userDto.getName());
         }
+        if (userDto.getEmail() != null) {
+            user.setEmail(userDto.getEmail());
+        }
+        userRepository.save(user);
+        return UserMapping.toUserDto(userRepository.findById(id).get());
+
     }
 
     @Override
     public UserDto findById(Long id) {
-        Optional<User> userGet = userRepository.findById(id);
-        if (userGet.isPresent()) {
-            return UserMapping.toUserDto(userGet.get());
-        } else {
-            throw new NotFoundException("Нет такого пользователя!");
-        }
+        return UserMapping.toUserDto(userRepository.findById(id).orElseThrow(() -> new NotFoundException("Нет такого пользователя!")));
     }
 
     @Override
@@ -61,9 +51,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void deleteById(Long userId) {
-        if (userRepository.findById(userId).isEmpty()) {
-            throw new NotFoundException("Нет такого пользователя c ID = " + userId);
-        }
+        userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Такого пользователя не существует!"));
         userRepository.deleteById(userId);
     }
 
