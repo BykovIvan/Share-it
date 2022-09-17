@@ -23,13 +23,10 @@ public class Booking {
     private Timestamp start;
     @Column(name = "end_date")
     private Timestamp end;
-
     @ManyToOne(fetch = FetchType.EAGER)
     private Item item;                      //Вещь
-
     @ManyToOne(fetch = FetchType.EAGER)
     private User booker;                    //Пользователь, который осуществляет бронирование
-
     @Enumerated(EnumType.STRING)
     private StatusOfItem status;            //статус вещи, должен выставлять пользователь
 }

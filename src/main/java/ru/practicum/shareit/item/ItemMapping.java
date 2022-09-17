@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item;
 
 import ru.practicum.shareit.booking.BookingDto;
+import ru.practicum.shareit.requests.ItemRequest;
 import ru.practicum.shareit.user.User;
 
 import java.time.LocalDateTime;
@@ -17,14 +18,19 @@ public class ItemMapping {
      * Method to convert Item to ItemDto
      */
     public static ItemDto toItemDto(Item item) {
-        return ItemDto.builder()
+        ItemDto itemDto = ItemDto.builder()
                 .id(item.getId())
                 .name(item.getName())
                 .description(item.getDescription())
                 .available(item.getAvailable())
                 .ownerId(item.getOwner().getId())
                 .build();
-
+        if (item.getRequest() == null) {
+            return itemDto;
+        } else {
+            itemDto.setRequestId(item.getRequest().getId());
+            return itemDto;
+        }
     }
 
     /**
@@ -40,21 +46,21 @@ public class ItemMapping {
                 .comments(comment)
                 .build();
 
-        if (bookings.isEmpty()){
+        if (bookings.isEmpty()) {
             return itemDtoWithComments;
         }
         if (item.getOwner().getId().equals(userId)) {
             LocalDateTime timeNow = LocalDateTime.now();
             for (BookingDto booking : bookings) {
                 if (booking.getStatus().equals(StatusOfItem.APPROVED) ||
-                        booking.getStatus().equals(StatusOfItem.WAITING)){
+                        booking.getStatus().equals(StatusOfItem.WAITING)) {
                     LocalDateTime timeStart = booking.getStart();
                     LocalDateTime timeEnd = booking.getEnd();
-                    if (timeStart.isBefore(timeNow) && timeEnd.isBefore(timeNow)){
+                    if (timeStart.isBefore(timeNow) && timeEnd.isBefore(timeNow)) {
                         itemDtoWithComments.setLastBooking(booking);
                     }
-                    if (timeStart.isAfter(timeNow) && timeEnd.isAfter(timeNow)){
-                        if (itemDtoWithComments.getNextBooking() == null){
+                    if (timeStart.isAfter(timeNow) && timeEnd.isAfter(timeNow)) {
+                        if (itemDtoWithComments.getNextBooking() == null) {
                             itemDtoWithComments.setNextBooking(booking);
                         }
                     }
@@ -66,6 +72,20 @@ public class ItemMapping {
     }
 
     /**
+     * Метод для преобразования Item в ItemDtoForRequest
+     * Method to convert Item to ItemDtoForRequest
+     */
+    public static ItemDtoForRequest toItemDtoForRequest(Item item, Long userId) {
+        return ItemDtoForRequest.builder()
+                .id(item.getId())
+                .name(item.getName())
+                .description(item.getDescription())
+                .available(item.getAvailable())
+                .requestId(userId)
+                .build();
+    }
+
+    /**
      * Метод для преобразования ItemDto в Item
      * Method to convert ItemDto to Item
      */
@@ -74,6 +94,21 @@ public class ItemMapping {
                 .name(itemDTO.getName())
                 .description(itemDTO.getDescription())
                 .available(itemDTO.getAvailable())
+                .owner(user)
+                .build();
+
+    }
+
+    /**
+     * Метод для преобразования ItemDto в Item
+     * Method to convert ItemDto to Item
+     */
+    public static Item toItem(ItemDto itemDTO, ItemRequest itemRequest, User user) {
+        return Item.builder()
+                .name(itemDTO.getName())
+                .description(itemDTO.getDescription())
+                .available(itemDTO.getAvailable())
+                .request(itemRequest)
                 .owner(user)
                 .build();
 

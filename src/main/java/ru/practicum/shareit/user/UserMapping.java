@@ -1,7 +1,7 @@
 package ru.practicum.shareit.user;
 
 public class UserMapping {
-    public static UserDto toUserDto(User user){
+    public static UserDto toUserDto(User user) {
         return UserDto.builder()
                 .id(user.getId())
                 .name(user.getName())
@@ -9,10 +9,11 @@ public class UserMapping {
                 .build();
     }
 
-    public static User toUser(UserDto userDto){
+    public static User toUser(UserDto userDto) {
         return User.builder()
                 .name(userDto.getName())
                 .email(userDto.getEmail())
                 .build();
     }
+
 }

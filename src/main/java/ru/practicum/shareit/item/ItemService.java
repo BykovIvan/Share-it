@@ -8,9 +8,7 @@ import java.util.List;
  * Класс отвечающий за логику работы бронирования
  * The class responsible for the logic of the booking operation
  */
-
 public interface ItemService {
-
     /**
      * Проверяет наличие человека, который создает, сначала в запросе,
      * затем наличие его в хранилеще, затем создает вещь
@@ -33,7 +31,7 @@ public interface ItemService {
      * находит все вещи пользователя, id пользователя в запросе
      * finds all the things of the user, the user id in the request
      */
-    List<ItemDtoWithComments> findAllItems(Long userId);
+    List<ItemDtoWithComments> findAllItems(Long userId, Integer from, Integer size);
 
     /**
      * Находит вещь для любого пользователя
@@ -57,7 +55,7 @@ public interface ItemService {
      * поиск вещи по слову в пути запроса
      * search for a thing by a word in the query path
      */
-    List<ItemDto> findByText(Long userId, String text);
+    List<ItemDto> findByText(Long userId, String text, Integer from, Integer size);
 
     /**
      * Проверяет наличие вещи в хранилище
