@@ -20,6 +20,7 @@ import javax.validation.constraints.Positive;
 public class UserController {
 
     private final UserClient userClient;
+
     @PostMapping
     public ResponseEntity<Object> safeUser(@RequestBody @Valid UserDto userDto) {
         log.info("Creating user");
@@ -28,8 +29,8 @@ public class UserController {
 
     @PatchMapping("/{userId}")
     public ResponseEntity<Object> updateById(@Positive @PathVariable("userId") Long userId,
-                                             @RequestBody @Valid  UserDtoUpdate userDto) {
-        log.info("Update user with id = {}" , userId);
+                                             @RequestBody @Valid UserDtoUpdate userDto) {
+        log.info("Update user with id = {}", userId);
         return userClient.updateUser(userId, userDto);
     }
 
