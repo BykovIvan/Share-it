@@ -19,13 +19,10 @@ public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-//    @NotNull
-//    @NotBlank
     private String text;
     @ManyToOne(fetch = FetchType.EAGER)
     private Item item;
     @ManyToOne(fetch = FetchType.EAGER)
     private User author;
-//    @NotNull
     private Timestamp created;
 }

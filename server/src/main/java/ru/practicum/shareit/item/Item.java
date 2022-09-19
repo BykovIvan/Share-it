@@ -19,13 +19,8 @@ public class Item {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-//    @NotNull
-//    @NotBlank
     private String name;                         //Имя вещи
-//    @NotNull
-//    @NotBlank
     private String description;                  //Описание
-//    @NotNull
     @Column(name = "is_available")
     private Boolean available;                   //доступность
     @ManyToOne(fetch = FetchType.EAGER)
