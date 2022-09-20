@@ -22,22 +22,22 @@ public class UserController {
     private final UserClient userClient;
 
     @PostMapping
-    public ResponseEntity<Object> safeUser(@RequestBody @Valid UserDto userDto) {
+    public ResponseEntity<Object> create(@RequestBody @Valid UserDto userDto) {
         log.info("Creating user");
-        return userClient.safeUser(userDto);
+        return userClient.create(userDto);
     }
 
     @PatchMapping("/{userId}")
     public ResponseEntity<Object> updateById(@Positive @PathVariable("userId") Long userId,
                                              @RequestBody @Valid UserDtoUpdate userDto) {
         log.info("Update user with id = {}", userId);
-        return userClient.updateUser(userId, userDto);
+        return userClient.update(userId, userDto);
     }
 
     @GetMapping
     public ResponseEntity<Object> allUsers() {
         log.info("Get all users");
-        return userClient.getUsers();
+        return userClient.getAllUsers();
     }
 
     @GetMapping("/{userId}")

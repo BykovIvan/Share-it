@@ -29,9 +29,9 @@ public class BookingController {
     }
 
     @PatchMapping("/{bookingId}")
-    public ResponseEntity<Object> bookItem(@RequestHeader("X-Sharer-User-Id") long userId,
-                                           @PathVariable("bookingId") Long bookingId,
-                                           @RequestParam(value = "approved") Boolean approved) {
+    public ResponseEntity<Object> updateStatusItem(@RequestHeader("X-Sharer-User-Id") long userId,
+                                                   @PathVariable("bookingId") Long bookingId,
+                                                   @RequestParam(value = "approved") Boolean approved) {
         log.info("Update status of booking {}, userId={}", bookingId, userId);
         return bookingClient.updateStatusOfBooking(userId, bookingId, approved);
     }
@@ -56,16 +56,14 @@ public class BookingController {
 
     @GetMapping("/owner")
     public ResponseEntity<Object> getBookingsByOwner(@RequestHeader("X-Sharer-User-Id") long userId,
-                                              @RequestParam(name = "state", defaultValue = "all") String stateParam,
-                                              @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") Integer from,
-                                              @Positive @RequestParam(name = "size", defaultValue = "10") Integer size) {
+                                                     @RequestParam(name = "state", defaultValue = "all") String stateParam,
+                                                     @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") Integer from,
+                                                     @Positive @RequestParam(name = "size", defaultValue = "10") Integer size) {
         BookingState state = BookingState.from(stateParam)
                 .orElseThrow(() -> new IllegalArgumentException("Unknown state: " + stateParam));
         log.info("Get booking with state {}, userId={}, from={}, size={}", stateParam, userId, from, size);
         return bookingClient.getBookingsByOwner(userId, state, from, size);
     }
-
-
 
 
 }

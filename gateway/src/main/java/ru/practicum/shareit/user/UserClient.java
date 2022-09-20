@@ -26,11 +26,11 @@ public class UserClient extends BaseClient {
         );
     }
 
-    public ResponseEntity<Object> safeUser(UserDto userDto) {
+    public ResponseEntity<Object> create(UserDto userDto) {
         return post("", userDto);
     }
 
-    public ResponseEntity<Object> updateUser(Long userId, UserDtoUpdate userDto) {
+    public ResponseEntity<Object> update(Long userId, UserDtoUpdate userDto) {
         return patch("/" + userId, userDto);
     }
 
@@ -38,7 +38,7 @@ public class UserClient extends BaseClient {
         return get("/" + userId);
     }
 
-    public ResponseEntity<Object> getUsers() {
+    public ResponseEntity<Object> getAllUsers() {
         return get("");
     }
 

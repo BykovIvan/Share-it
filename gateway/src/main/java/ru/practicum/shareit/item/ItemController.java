@@ -26,15 +26,15 @@ public class ItemController {
     public ResponseEntity<Object> createItem(@RequestHeader("X-Sharer-User-Id") long userId,
                                              @RequestBody @Valid ItemDto itemDto) {
         log.info("Creating item {}, userId={}", itemDto, userId);
-        return itemClient.saveItem(userId, itemDto);
+        return itemClient.create(userId, itemDto);
     }
 
     @PatchMapping("/{itemId}")
     public ResponseEntity<Object> updateItem(@RequestHeader("X-Sharer-User-Id") long userId,
                                              @Positive @PathVariable("itemId") long itemId,
-                                             @RequestBody @Valid ItemDtoUpdate itemDto) {
+                                             @RequestBody ItemDtoUpdate itemDto) {
         log.info("Update item {}, userId={}", itemId, userId);
-        return itemClient.updateItem(userId, itemId, itemDto);
+        return itemClient.update(userId, itemId, itemDto);
     }
 
     @GetMapping

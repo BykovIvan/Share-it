@@ -28,11 +28,11 @@ public class ItemClient extends BaseClient {
         );
     }
 
-    public ResponseEntity<Object> saveItem(long userId, ItemDto itemDto) {
+    public ResponseEntity<Object> create(long userId, ItemDto itemDto) {
         return post("", userId, itemDto);
     }
 
-    public ResponseEntity<Object> updateItem(long userId, long itemId, ItemDtoUpdate userDto) {
+    public ResponseEntity<Object> update(long userId, long itemId, ItemDtoUpdate userDto) {
         return patch("/" + itemId, userId, userDto);
     }
 
@@ -60,8 +60,6 @@ public class ItemClient extends BaseClient {
     public ResponseEntity<Object> saveComment(long userId, long itemId, CommentDto commentDto) {
         return post("/" + itemId + "/comment", userId, commentDto);
     }
-
-
 
 
 }
